@@ -1,45 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-// import './App.css' // You might not need App.css anymore if all styles are utility classes
+import React from 'react';
+import Header from './layouts/Header';
+import Footer from './layouts/Footer';
+// import { Routes, Route } from 'react-router-dom'; // Will be uncommented in Phase 5
+// Import page components later when needed
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      {/* Apply classes using the className attribute */}
-      <div className="flex justify-center items-center space-x-4 p-4"> {/* Added flex layout classes too */}
-        <a href="https://vite.dev" target="_blank">
-          {/* You can add classes to the image too if needed */}
-          <img src={viteLogo} className="logo h-24" alt="Vite logo" /> 
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react h-24" alt="React logo" /> 
-        </a>
-      </div>
+    <div className="flex flex-col min-h-screen bg-white"> {/* Using flex to pin footer */}
+      <Header />
 
-      {/* Apply classes using the className attribute */}
-      <h1 className="text-3xl font-bold text-center my-4 bg-blue-500 text-white p-4"> 
-        Vite + React
-      </h1>
+      <main className="flex-grow container mx-auto p-4"> {/* Added container and padding */}
+        {/* Page content will be rendered here by the router later */}
+        {/* Placeholder for now: */}
+        <h1 className="text-center text-2xl py-10">Page Content Goes Here</h1> 
+        <p className="text-center">(This content will be replaced by page components like HomePage, AboutPage, etc. via routing)</p>
+        
+        {/* Example of using router later (Phase 5):
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          {/* ... other routes ... }
+        </Routes>
+        */}
+      </main>
 
-      <div className="card text-center"> {/* Added text-center */}
-        <button 
-          className="bg-gray-200 hover:bg-gray-300 text-black font-bold py-2 px-4 rounded" // Basic Tailwind button styling
-          onClick={() => setCount((count) => count + 1)}
-        >
-          count is {count}
-        </button>
-        <p className="mt-4"> {/* Added margin-top */}
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs text-center text-gray-500 mt-8"> {/* Added text-center, color, margin */}
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;
