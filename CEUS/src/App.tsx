@@ -12,7 +12,7 @@ function App() {
       <main className="flex-grow"> {/* Removed container/padding here, let HomePage handle it */}
         <HomePage /> {/* <-- Render HomePage directly */}
 
-        <PublicationsPage />
+       
       </main>
       <Footer />
     </div>

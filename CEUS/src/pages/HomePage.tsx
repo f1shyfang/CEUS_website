@@ -1,20 +1,55 @@
-// src/pages/HomePage.tsx (Partial - only intro sections updated)
-import React from 'react';
+// src/pages/HomePage.tsx
+import React, { useEffect, useRef } from 'react'; // Import useEffect and useRef
+import gsap from 'gsap'; // Import gsap
 
+// Import images used on the homepage
 import groupPhoto from '../assets/images/Ceus_ball_group_edited.jpg'; 
 import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
 import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
 
 const HomePage: React.FC = () => {
+
+  // --- GSAP Animation Refs ---
+  const heroTitleRef = useRef<HTMLDivElement>(null); // Ref for the main title div
+  const heroSubtitleRef = useRef<HTMLDivElement>(null); // Ref for the subtitle div
+  // Add more refs here for other elements you want to animate later
+
+  // --- GSAP Animation Effect ---
+  useEffect(() => {
+    // Ensure both refs are connected before animating
+    if (heroTitleRef.current && heroSubtitleRef.current) {
+      
+      // Create a GSAP timeline for sequenced animations
+      // Defaults apply to all tweens in the timeline unless overridden
+      const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
+
+      // Animate title: fade in and slide up slightly from its initial position
+      tl.fromTo(heroTitleRef.current, 
+        { opacity: 0, y: 20 }, // Start state (opacity 0, slightly lower)
+        { opacity: 1, y: 0, delay: 0.3 } // End state (opacity 1, original y, delayed)
+      ); 
+      
+      // Animate subtitle: fade in and slide up, starting slightly after the title animation begins
+      tl.fromTo(heroSubtitleRef.current, 
+        { opacity: 0, y: 20 }, // Start state
+        { opacity: 1, y: 0 }, // End state
+        "-=0.6" // Start 0.6s before the previous tween *ends* (overlaps slightly)
+      ); 
+
+      // Cleanup function to kill timeline if component unmounts
+      // Good practice, especially for more complex animations or components
+      return () => {
+        tl.kill(); 
+      };
+    }
+  }, []); // Empty dependency array runs this effect only once on mount
+
+
+  // --- Component Return (JSX) ---
   return (
     <> 
-      {/* --- Group Photo / Hero Section (Keep as is) --- */}
-       {/* --- Group Photo / Hero Section --- */}
-      {/* Let's try a viewport height unit vh for responsiveness, constrained by max-h */}
-      {/* Removed min-h, added overflow-hidden */}
+      {/* --- Group Photo / Hero Section --- */}
       <section className="GroupPhoto relative w-full h-[75vh] max-h-[600px] overflow-hidden"> 
-
-        {/* Image container takes full height of section */}
         <div className="GroupImg absolute inset-0"> 
           <img 
             draggable={false} 
@@ -22,21 +57,16 @@ const HomePage: React.FC = () => {
             alt="CEUS Ball Group Photo" 
             className="w-full h-full object-cover object-center" 
           />
-          {/* Overlay */}
           <div className="ImgOverlay absolute inset-0 bg-black/40 z-10"></div>
         </div>
-
-        {/* Title Overlay - Adjusted font/tracking/leading */}
-        {/* Added container mx-auto px-6 for consistent padding with other sections */}
         <div className="relative z-20 h-full flex items-center container mx-auto px-6"> 
-          {/* Removed absolute positioning, let flexbox handle vertical centering */}
           <div className="title-overlay text-white text-left"> 
-             {/* Arbitrary font size, tracking. Adjusted leading. */}
-            <div className="UNSWCEUS text-[63px] font-bold tracking-[3px] leading-normal"> 
+            {/* Attach refs to the elements to be animated */}
+            {/* REMOVED opacity-0 here, letting GSAP handle the start state */}
+            <div ref={heroTitleRef} className="UNSWCEUS text-[63px] font-bold tracking-[3px] leading-normal"> 
               UNSW CEUS
             </div>
-             {/* Arbitrary font size, tracking. Adjusted leading. */}
-            <div className="FULLNAME text-[22px] font-normal tracking-[2.5px] leading-normal">
+            <div ref={heroSubtitleRef} className="FULLNAME text-[22px] font-normal tracking-[2.5px] leading-normal">
                Chemical Engineering Undergraduate Society
             </div>
           </div>
@@ -44,9 +74,8 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* --- Intro Section 1 (Welcome) --- */}
-      {/* Using container for padding/max-width, flex layout, gap for spacing */}
+      {/* Add refs here later if you want to animate these sections on scroll */}
       <section className="intro container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch"> 
-        {/* Text div: flex-1 allows it to grow/shrink. Added max-w-2xl (~672px) which is less than 800px but a common Tailwind size */}
         <div className="introdiv bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl"> 
           <h3 className="h3intro text-gray-100 text-2xl md:text-3xl mb-5 font-semibold">
             Welcome to CEUS,
@@ -60,21 +89,19 @@ const HomePage: React.FC = () => {
             robust relationships with industry leaders.
           </p>
         </div>
-        {/* Image container: Allow it to take remaining space (flex-1), set aspect ratio for responsive height */}
-        <div className="introimg relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> {/* Added aspect-ratio and min-height */}
+        <div className="introimg relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> 
           <img 
             id="introimg1" 
             src={introImage1} 
             alt="CEUS Cruise Event" 
-            className="absolute inset-0 w-full h-full object-cover" // Simplified positioning
+            className="absolute inset-0 w-full h-full object-cover" 
           />
         </div>
       </section>
 
       {/* --- Intro Section 2 (Events) --- */}
-       {/* Same layout structure, but md:flex-row-reverse */}
+       {/* Add refs here later if you want to animate these sections on scroll */}
       <section className="intro2 container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row-reverse gap-8 lg:gap-12 items-stretch">
-         {/* Image container */}
         <div className="introimg2 relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> 
           <img 
             id="introimg2" 
@@ -83,7 +110,6 @@ const HomePage: React.FC = () => {
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
-        {/* Text div */}
         <div className="introdiv2 bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl">
           <p className="pintro text-gray-200 text-base leading-relaxed mb-4">
             Throughout the year, CEUS hosts an array of engaging 
@@ -101,19 +127,13 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-  
-
-
       {/* --- Video Section --- */}
-      {/* Converted videocontainer class to Tailwind */}
       <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
-        {/* Converted ytvideo class (basic centering) */}
         <div className="ytvideo relative w-full h-full"> 
-          {/* Converted iframeyt class to Tailwind */}
           <iframe 
             className="iframeyt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[80%]" 
-            src="https://www.youtube.com/embed/x3DD5gMo3fA" // Removed trailing '?'
-            title="YouTube video player" // Added title attribute for accessibility
+            src="https://www.youtube.com/embed/x3DD5gMo3fA" 
+            title="YouTube video player" 
             frameBorder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
             referrerPolicy="strict-origin-when-cross-origin" 
@@ -121,7 +141,6 @@ const HomePage: React.FC = () => {
           </iframe>
         </div>
       </section>
-
     </>
   );
 };
