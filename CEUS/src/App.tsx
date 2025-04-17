@@ -1,6 +1,7 @@
 // src/App.tsx - TEMPORARY CHANGE FOR TESTING
 import React from 'react';
 import Header from './layouts/Header';
+import PublicationsPage from './pages/PublicationsPage';
 import Footer from './layouts/Footer';
 import HomePage from './pages/HomePage'; // <-- Import HomePage
 
@@ -10,6 +11,8 @@ function App() {
       <Header />
       <main className="flex-grow"> {/* Removed container/padding here, let HomePage handle it */}
         <HomePage /> {/* <-- Render HomePage directly */}
+
+        <PublicationsPage />
       </main>
       <Footer />
     </div>
