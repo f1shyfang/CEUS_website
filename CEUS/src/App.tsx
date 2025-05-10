@@ -22,7 +22,8 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/contact" element={<ContactPage />} /> {/* Use '/contact' or '/contactus' based on links */}
-          {/* Optional: Catch-all route for 404 */}
+
+          {/* Optional todo : Catch-all route for 404 */}
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
       </main>
