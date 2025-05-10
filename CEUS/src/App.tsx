@@ -9,6 +9,8 @@ import AboutPage from './pages/AboutPage';
 import EventsPage from './pages/EventsPage';
 import PublicationsPage from './pages/PublicationsPage';
 import ContactPage from './pages/ContactPage';
+import TeamPage from './pages/TeamPage'
+
 // Optional: Create a NotFoundPage component later
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
         <Routes> 
           <Route path="/" element={<HomePage />} /> 
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/Team" element={<TeamPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/contact" element={<ContactPage />} /> {/* Use '/contact' or '/contactus' based on links */}
