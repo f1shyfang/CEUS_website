@@ -16,6 +16,7 @@ const Navbar: React.FC = () => {
     <nav className="navbar flex items-center"> 
       <NavLink to="/" className={linkClasses}>Home</NavLink> 
       <NavLink to="/about" className={linkClasses}>About</NavLink>
+      <NavLink to="/team" className={linkClasses}>Team</NavLink>
       <NavLink to="/events" className={linkClasses}>Events</NavLink>
       <NavLink to="/publications" className={linkClasses}>Publications</NavLink>
       <NavLink to="/contact" className={linkClasses}>Contact Us</NavLink> {/* Match path in App.tsx */}

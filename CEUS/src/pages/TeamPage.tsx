@@ -1,23 +1,13 @@
-
-
-
-
 // src/pages/TeamPage.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { gsap } from 'gsap';
 import MemberCard from '../components/MemberCard';
 import FilterButton from '../components/FilterButton';
-// Corrected Line 6: Added 'from' and path to your data file
-import { allTeams, mainFilterCategories, subFilterCategories } from '../data/teamData';
-// Corrected Line 7: Removed '.ts' extension
-import { TeamCategory, Member, FilterButtonData } from '../types';
-
-
+// Ensure this import only brings what's defined (mainFilterCategories and allTeams)
+import { allTeams, mainFilterCategories } from '../data/teamData';
+import { TeamCategory, Member } from '../types';
 
 const TeamPage: React.FC = () => {
-  // Normalize category names for IDs (e.g., "Information Technology" -> "informationTechnology")
-  const normalizeCategoryName = (name: string) => name.toLowerCase().replace(/\s+/g, '');
-
   const initialCategory = mainFilterCategories[0]?.label || 'Executives';
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
 
@@ -26,8 +16,6 @@ const TeamPage: React.FC = () => {
     return foundTeam ? foundTeam.members : [];
   }, [selectedCategory, allTeams]);
 
-
-  // GSAP Animation for cards
   useEffect(() => {
     if (displayedMembers.length > 0) {
       gsap.fromTo(".member-card-gsap",
@@ -42,30 +30,19 @@ const TeamPage: React.FC = () => {
         }
       );
     }
-  }, [displayedMembers]); // Rerun animation when displayedMembers change
+  }, [displayedMembers]);
 
   const handleFilterClick = (categoryLabel: string) => {
     setSelectedCategory(categoryLabel);
   };
 
   return (
-    <div className="bg-slate-900 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Main Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
-          {mainFilterCategories.map((cat) => (
-            <FilterButton
-              key={cat.id}
-              label={cat.label}
-              isActive={selectedCategory === cat.label}
-              onClick={() => handleFilterClick(cat.label)}
-            />
-          ))}
-        </div>
-
-        {/* Sub Filter Buttons (e.g., Information Technology) */}
+        {/* Combined Filter Buttons */}
+        {/* Adjusted bottom margin to mb-8 since there's only one block of buttons now */}
         <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {subFilterCategories.map((cat) => (
+          {mainFilterCategories.map((cat) => (
             <FilterButton
               key={cat.id}
               label={cat.label}
@@ -83,7 +60,7 @@ const TeamPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-slate-400 text-xl">
+          <p className="text-center text-gray-600 text-xl">
             No members found for "{selectedCategory}".
           </p>
         )}
