@@ -30,3 +30,20 @@ export interface Event {
   description: string; // Short description for the card
   category: 'Flagship' | 'Careers' | 'Social' | 'Academic' | 'Welfare' | 'Recruitment' | 'Collaboration' | 'Other';
 }
+
+
+
+
+
+
+
+export type SponsorTier = 'Major' | 'Supporting' | 'Other'; // Or Gold, Silver etc.
+
+export interface Sponsor {
+  id: string; // Unique identifier (e.g., 'kpmg', 'atlassian')
+  name: string; // Company name (e.g., "KPMG Australia")
+  logoUrl: string; // Path to the logo image (e.g., '/images/sponsors/kpmg.png')
+  websiteUrl: string; // Link to the sponsor's website
+  description: string; // Text to display in the modal popup
+  tier: SponsorTier;
+}
