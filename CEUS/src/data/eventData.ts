@@ -13,7 +13,7 @@ export const allEventsData: Event[] = [
     id: 'ceusEventUpcoming1',
     title: 'CEUS First Year Senior assassin',
     date: createDate(2025, 10, 15), // October 15, 2025
-    imageUrl: '../images/2022Cruise.jpeg', // USE A REAL, EXISTING IMAGE PATH IN public/images/events/
+    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH IN public/images/events/
     facebookEventLink: 'https://www.facebook.com/events/550799454699655',
     description: 'Explore the future of chemical engineering with industry leaders and workshops. A flagship event not to be missed!',
     category: 'Flagship',
@@ -23,7 +23,7 @@ export const allEventsData: Event[] = [
     id: 'ceusEventPast1',
     title: 'CEUS Camp',
     date: createDate(2024, 3, 20), // March 20, 2024
-    imageUrl: '../images/2022Cruise.jpeg', // USE A REAL, EXISTING IMAGE PATH
+    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH
     facebookEventLink: 'https://www.facebook.com/events/550799454699655',
     description: 'Connect with CEUS alumni and gain valuable career insights. A great opportunity for networking.',
     category: 'Flagship',
@@ -32,7 +32,7 @@ export const allEventsData: Event[] = [
     id: 'ceusEventPast2',
     title: 'CEUS Welcome Pizza',
     date: createDate(2024, 2, 15), // February 15, 2024
-    imageUrl: '../images/2022Cruise.jpeg', // USE A REAL, EXISTING IMAGE PATH
+    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH
     facebookEventLink: 'https://www.facebook.com/events/550799454699655',
     description: 'Kick off the semester with a fun hangout, meet new friends, and learn about CEUS activities.',
     category: 'Social',

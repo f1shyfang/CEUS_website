@@ -20,7 +20,7 @@ const yearRepMembers: Member[] = [
   { id: 'abdelrahmanE', name: 'Abdelrahman el Atawna', role: '4th Year Representative (Chem Prod Eng)', imageUrl: '/images/team/abdelrahman.jpg' },
 ];
 const executivesMembers: Member[] = [
-  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/veronica.jpg' },
+  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Exec ceus fsa.jpeg' },
   { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Vice President (Industry)', imageUrl: '/images/team/nina.jpg' },
   { id: 'kerriW', name: 'Kerri Wainstein', role: 'Vice President (Social)', imageUrl: '/images/team/kerri.jpg' },
   { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/anna.jpg' },
@@ -59,35 +59,29 @@ const AdminMembers: Member[] = [
   { id: 'annabelleS', name: 'Annabelle Scarlett', role: 'Admin Officer', imageUrl: '/images/team/annabelle.jpg' },
 ];
 
-// --- OTHER TEAMS (Academics, Human Resources, Creative) - Define if needed ---
-const academicsMembers: Member[] = [];
-// ... (define other empty arrays if you have filter buttons for them)
+
 
 
 // --- ALL TEAMS DEFINITION ---
 export const allTeams: TeamCategory[] = [
   { name: 'Executives', members: executivesMembers },
-  { name: 'Year Representatives', members: yearRepMembers }, // Added Year Reps as a distinct team
+  { name: 'Year Representatives', members: yearRepMembers },
   { name: 'Information Technology', members: itMembers },
   { name: 'Marketing', members: marketingTeamMembers },
   { name: 'Socials', members: socialsTeamMembers },
   { name: 'Careers', members: careersTeamMembers },
   { name: 'Admin', members: AdminMembers },
-  // { name: 'Academics', members: academicsMembers },
 ];
 
 // --- FILTER BUTTONS ---
 export const mainFilterCategories = [
     { id: 'executives', label: 'Executives' },
-    { id: 'yearRepresentatives', label: 'Year Representatives' }, // Added filter button for Year Reps
-    // { id: 'academics', label: 'Academics' },
+    { id: 'yearRepresentatives', label: 'Year Representatives' },
     { id: 'Admin', label: 'Admin' },
     { id: 'careers', label: 'Careers' },
     { id: 'socials', label: 'Socials' },
-    // { id: 'humanResources', label: 'Human Resources' },
     { id: 'marketing', label: 'Marketing' },
-    // { id: 'creative', label: 'Creative' },
     { id: 'informationTechnology', label: 'Information Technology' },
 ];
 
-// export const subFilterCategories = []; // Likely not needed
+// export const subFilterCategories = []; //probs not needed

@@ -10,6 +10,7 @@ import EventsPage from './pages/EventsPage';
 import PublicationsPage from './pages/PublicationsPage';
 import ContactPage from './pages/ContactPage';
 import TeamPage from './pages/TeamPage'
+import SponsersPage from './pages/SponsersPage'
 
 // Optional: Create a NotFoundPage component later
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/Team" element={<TeamPage />} />
           <Route path="/events" element={<EventsPage />} />
+          <Route path="/Sponsers" element={<SponsersPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/contact" element={<ContactPage />} /> {/* Use '/contact' or '/contactus' based on links */}
 
