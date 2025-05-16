@@ -3,9 +3,9 @@ export interface Member {
   id: string | number;
   name: string;
   role: string;
-  imageUrl: string;
+  imageUrl?: string;
   email?: string; // Optional
-  linkedIn?: string; // Optional
+  linkedInUrl?: string; // Optional
 }
 
 export interface TeamCategory {

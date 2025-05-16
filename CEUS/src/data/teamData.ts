@@ -20,7 +20,7 @@ const yearRepMembers: Member[] = [
   { id: 'abdelrahmanE', name: 'Abdelrahman el Atawna', role: '4th Year Representative (Chem Prod Eng)', imageUrl: '/images/team/abdelrahman.jpg' },
 ];
 const executivesMembers: Member[] = [
-  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Exec ceus fsa.jpeg' },
+  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Exec ceus fsa.jpeg' ,linkedInUrl: 'https://www.linkedin.com/in/veronica-pelipos-45427821b/'},
   { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Vice President (Industry)', imageUrl: '/images/team/nina.jpg' },
   { id: 'kerriW', name: 'Kerri Wainstein', role: 'Vice President (Social)', imageUrl: '/images/team/kerri.jpg' },
   { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/anna.jpg' },
