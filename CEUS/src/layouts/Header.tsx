@@ -8,7 +8,7 @@ const Header: React.FC = () => {
     // bg-white, flex layout, centering, padding matching original somewhat
     <header className="bg-white w-full flex justify-between items-center py-2 px-6 shadow-sm"> {/* Simplified padding, added shadow */}
       <div className="logo"> {/* No specific Tailwind needed if parent handles layout */}
-        <a href="index.html">
+        <a href="/">
           {/* CSS width: 100px -> w-24 (96px) or w-28(112px). Using h-auto */}
           <img id="logoimg" src={logoImage} alt="CEUS Logo" className="w-24 h-auto" /> 
         </a>
