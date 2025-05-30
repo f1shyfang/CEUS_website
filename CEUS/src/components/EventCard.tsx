@@ -39,7 +39,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         <p className="text-xs sm:text-sm font-semibold text-blue-600 mb-2 sm:mb-3">
           {formattedDate}
         </p>
-        <p className="text-gray-600 text-sm leading-relaxed line-clamp-3"> {/* Ensure @tailwindcss/line-clamp is installed */}
+        <p className="text-gray-600 text-sm leading-relaxed line-clamp-3"> 
           {event.description}
         </p>
       </div>

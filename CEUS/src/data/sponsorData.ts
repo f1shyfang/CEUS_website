@@ -13,8 +13,6 @@ import { Sponsor} from '../types';
 export const allSponsors: Sponsor[] = [
   // --- Major Sponsors ---
   
-  
-  
   {
     id: 'Beer!!!',
     name: 'Soju Group',
