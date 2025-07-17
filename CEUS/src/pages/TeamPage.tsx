@@ -5,7 +5,7 @@ import MemberCard from '../components/MemberCard';
 import FilterButton from '../components/FilterButton';
 // Ensure this import only brings what's defined (mainFilterCategories and allTeams)
 import { allTeams, mainFilterCategories } from '../data/teamData';
-import { TeamCategory, Member } from '../types';
+//import { TeamCategory, Member } from '../types';      //declared but never read
 
 const TeamPage: React.FC = () => {
   const initialCategory = mainFilterCategories[0]?.label || 'Executives';

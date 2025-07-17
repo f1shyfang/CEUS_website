@@ -1,5 +1,5 @@
 // src/App.tsx
-import React from 'react';
+//import React from 'react';    //error declared but never read therefore commented out
 import { Routes, Route } from 'react-router-dom'; // Import Routes/Route
 import Header from './layouts/Header';
 import Footer from './layouts/Footer';
@@ -12,7 +12,7 @@ import ContactPage from './pages/ContactPage';
 import TeamPage from './pages/TeamPage'
 import SponsersPage from './pages/SponsersPage'
 
-// Optional: Create a NotFoundPage component later
+//  Create a NotFoundPage component later
 
 function App() {
   return (
