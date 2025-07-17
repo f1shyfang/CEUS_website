@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boiling Flask</title>
+  <style>
+    body {
+      background: #1e1e2f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .flask {
+      width: 200px;
+      animation: pulse 4s infinite;
+    }
+
+    .bubble {
+      fill: white;
+      animation: bubble 3s infinite ease-in-out;
+    }
+
+    @keyframes bubble {
+      0% {
+        transform: translateY(0);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-60px);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.01);
+      }
+    }
+  </style>
+</head>
+<body>
+  <svg class="flask" viewBox="0 0 100 150" xmlns="http://www.w3.org/2000/svg">
+    <!-- Flask outline -->
+    <path d="M40 10 v50 l-20 60 h60 l-20 -60 v-50 z" fill="none" stroke="white" stroke-width="2"/>
+    
+    <!-- Liquid -->
+    <path d="M20 120 Q50 100 80 120 Q50 110 20 120 Z" fill="#6ccff6" />
+
+    <!-- Bubbles -->
+    <circle class="bubble" cx="50" cy="110" r="3"/>
+    <circle class="bubble" cx="40" cy="115" r="2.5" style="animation-delay: 1s"/>
+    <circle class="bubble" cx="60" cy="117" r="2" style="animation-delay: 2s"/>
+  </svg>
+</body>
+</html>
+
