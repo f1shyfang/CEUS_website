@@ -1,11 +1,19 @@
 // src/pages/HomePage.tsx
 import React, { useEffect, useRef } from 'react'; // Import useEffect and useRef
 import gsap from 'gsap'; // Import gsap
+import Slider from 'react-slick'; // Import Slider from react-slick
+import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
+import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
 
 // Import images used on the homepage
 import groupPhoto from '../assets/images/Ceus_ball_group_edited.jpg'; 
 import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
 import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
+
+// Import sponsor data
+import { allSponsors } from '../data/sponsorData';
+// Import event data
+import { allEventsData } from '../data/eventData';
 
 const HomePage: React.FC = () => {
 
@@ -43,6 +51,73 @@ const HomePage: React.FC = () => {
       };
     }
   }, []); // Empty dependency array runs this effect only once on mount
+
+  // Settings for the react-slick carousel
+  const sponsorSettings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 3, // Show 3 logos at a time
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 1000, // Increased autoplay speed for slower rotation
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          initialSlide: 3
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1
+        }
+      }
+    ]
+  };
+
+  // Settings for the event carousel
+  const eventSettings = {
+    dots: true,
+    infinite: true,
+    slidesToShow: 3, // Show 3 events at a time (adjust as needed)
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 1000, // Adjust speed as needed
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          initialSlide: 1
+        }
+      }
+    ]
+  };
 
 
   // --- Component Return (JSX) ---
@@ -140,6 +215,40 @@ const HomePage: React.FC = () => {
             allowFullScreen>
           </iframe>
         </div>
+      </section>
+
+      {/* --- Events Section --- */}
+      <section className="events-section container mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
+        <Slider {...eventSettings}>
+          {allEventsData.map(event => (
+            <div key={event.id} className="px-4">
+              <img 
+                src={event.imageUrl} 
+                alt={event.title} 
+                className="mx-auto max-h-[200px] object-contain"
+              />
+              <h3 className="text-xl font-semibold text-center mt-4">{event.title}</h3>
+              {/* You might want to add more event details here */}
+            </div>
+          ))}
+        </Slider>
+      </section>
+
+      {/* --- Sponsors Section --- */}
+      <section className="sponsors-section container mx-auto px-6 py-12 md:py-16">
+        <h2 className="text-3xl font-bold text-center mb-8">Our Sponsors</h2>
+        <Slider {...sponsorSettings}>
+          {allSponsors.map(sponsor => (
+            <div key={sponsor.name} className="px-4">
+              <img 
+                src={sponsor.logoUrl} 
+                alt={sponsor.name} 
+                className="mx-auto max-h-[100px] object-contain"
+              />
+            </div>
+          ))}
+        </Slider>
       </section>
     </>
   );
