@@ -185,6 +185,7 @@ const HomePage: React.FC = () => {
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
+        
         <div className="introdiv2 bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl">
           <p className="pintro text-gray-200 text-base leading-relaxed mb-4">
             Throughout the year, CEUS hosts an array of engaging 
@@ -195,27 +196,15 @@ const HomePage: React.FC = () => {
             of Chemical Engineering.
           </p>
           <p className="pintro text-gray-200 text-base leading-relaxed">
-            Join us at CEUS, where tradition meets innovation, and where our 
+            Join us at CEUS, where our titrations are prefect, and where our 
             commitment to your university experience knows no bounds. Together, 
             let's make your time at UNSW truly exceptional!
           </p>
         </div>
+        
       </section>
 
-      {/* --- Video Section --- */}
-      <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
-        <div className="ytvideo relative w-full h-full"> 
-          <iframe 
-            className="iframeyt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[80%]" 
-            src="https://www.youtube.com/embed/x3DD5gMo3fA" 
-            title="YouTube video player" 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerPolicy="strict-origin-when-cross-origin" 
-            allowFullScreen>
-          </iframe>
-        </div>
-      </section>
+      
 
       {/* --- Events Section --- */}
       <section className="events-section container mx-auto px-6 py-12 md:py-16">
@@ -249,6 +238,21 @@ const HomePage: React.FC = () => {
             </div>
           ))}
         </Slider>
+      </section>
+
+      {/* --- Video Section --- */}
+      <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
+        <div className="ytvideo relative w-full h-full"> 
+          <iframe 
+            className="iframeyt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[80%]" 
+            src="https://www.youtube.com/embed/x3DD5gMo3fA" 
+            title="YouTube video player" 
+            frameBorder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerPolicy="strict-origin-when-cross-origin" 
+            allowFullScreen>
+          </iframe>
+        </div>
       </section>
     </>
   );
