@@ -26,7 +26,7 @@ export const allSponsors: Sponsor[] = [
   {
     id: 'ARC',
     name: 'UNSW arc',
-    logoUrl: '/images/sponsors/Arc_icon.png', // Replace
+    logoUrl: '/images/sponsors/ansto_logo_transparent.', // Replace
     websiteUrl: 'https://www.suncorpgroup.com.au/', // Replace
     description: 'Arc.',
     tier: 'Supporting',
