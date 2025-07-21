@@ -4,11 +4,12 @@ import gsap from 'gsap'; // Import gsap
 import Slider from 'react-slick'; // Import Slider from react-slick
 import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
 import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
+import { Link } from 'react-router-dom'; // Import Link for navigation
 
 // Import images used on the homepage
 import groupPhoto from '../assets/images/Ceus_ball_group_edited.jpg'; 
-import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
-import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
+//import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
+//import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
 
 // Import sponsor data
 import { allSponsors } from '../data/sponsorData';
@@ -56,10 +57,10 @@ const HomePage: React.FC = () => {
   const sponsorSettings = {
     dots: true,
     infinite: true,
-    slidesToShow: 3, // Show 3 logos at a time
+    slidesToShow: 5, // Show 5 logos at a time
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 1000, // Increased autoplay speed for slower rotation
+    autoplaySpeed: 5000, // Increased autoplay speed for slower rotation
     pauseOnHover: true,
     responsive: [
       {
@@ -96,7 +97,7 @@ const HomePage: React.FC = () => {
     slidesToShow: 3, // Show 3 events at a time (adjust as needed)
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 1000, // Adjust speed as needed
+    autoplaySpeed: 7000, // Adjust speed as needed
     pauseOnHover: true,
     responsive: [
       {
@@ -120,7 +121,7 @@ const HomePage: React.FC = () => {
   };
 
 
-  // --- Component Return (JSX) ---
+  // --- Component Return (JSX) --- For example purposes, I have added a new section here.
   return (
     <> 
       {/* --- Group Photo / Hero Section --- */}
@@ -148,8 +149,25 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* --- Intro Section 1 (Welcome) --- */}
-      {/* Add refs here later if you want to animate these sections on scroll */}
+      {/* --- About Us Section --- */}
+      <section className="about-us-section container mx-auto px-6 py-12 md:py-16 text-center">
+        <h2 className="text-3xl font-bold mb-8">About Us</h2>
+        <p className="text-gray-600 leading-relaxed max-w-3xl mx-auto mb-6">
+          The Chemical Engineering Undergraduate Society (CEUS) is the vibrant student-run society 
+          for students within the School of Chemical Engineering at The University of New South Wales (UNSW).
+          We are dedicated to enhancing the academic, social, and professional lives of our members.
+          Through a diverse range of events and initiatives, we foster a strong sense of community 
+          and provide valuable opportunities for growth and connection.
+        </p>
+        <Link to="/about">
+          <button className="mt-4 px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow hover:bg-blue-700 transition duration-300">
+            Find out more...
+          </button>
+        </Link>
+      </section>
+{/*
+      // --- Intro Section 1 (Welcome) --- 
+      // Add refs here later if you want to animate these sections on scroll 
       <section className="intro container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch"> 
         <div className="introdiv bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl"> 
           <h3 className="h3intro text-gray-100 text-2xl md:text-3xl mb-5 font-semibold">
@@ -174,8 +192,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* --- Intro Section 2 (Events) --- */}
-       {/* Add refs here later if you want to animate these sections on scroll */}
+      // --- Intro Section 2 (Events) --- 
+       // Add refs here later if you want to animate these sections on scroll 
       <section className="intro2 container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row-reverse gap-8 lg:gap-12 items-stretch">
         <div className="introimg2 relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> 
           <img 
@@ -185,7 +203,6 @@ const HomePage: React.FC = () => {
             className="absolute inset-0 w-full h-full object-cover"
           />
         </div>
-        
         <div className="introdiv2 bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl">
           <p className="pintro text-gray-200 text-base leading-relaxed mb-4">
             Throughout the year, CEUS hosts an array of engaging 
@@ -196,14 +213,13 @@ const HomePage: React.FC = () => {
             of Chemical Engineering.
           </p>
           <p className="pintro text-gray-200 text-base leading-relaxed">
-            Join us at CEUS, where our titrations are prefect, and where our 
+            Join us at CEUS, where tradition meets innovation, and where our 
             commitment to your university experience knows no bounds. Together, 
             let's make your time at UNSW truly exceptional!
           </p>
         </div>
-        
       </section>
-
+      */}
       
 
       {/* --- Events Section --- */}
@@ -239,7 +255,6 @@ const HomePage: React.FC = () => {
           ))}
         </Slider>
       </section>
-
       {/* --- Video Section --- */}
       <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
         <div className="ytvideo relative w-full h-full"> 
@@ -254,6 +269,7 @@ const HomePage: React.FC = () => {
           </iframe>
         </div>
       </section>
+
     </>
   );
 };
