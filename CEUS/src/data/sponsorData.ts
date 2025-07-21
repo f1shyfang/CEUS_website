@@ -14,11 +14,11 @@ export const allSponsors: Sponsor[] = [
   // --- Major Sponsors ---
   
   {
-    id: 'Beer!!!',
-    name: 'Soju Group',
-    logoUrl: '/images/sponsors/macquarie.png', // Replace
+    id: 'Ansto!!!',
+    name: 'Ansto',
+    logoUrl: '/images/sponsors/Arc_icon.png', // Replace
     websiteUrl: 'https://www.macquarie.com/', // Replace
-    description: 'I love soju.',
+    description: 'I .',
     tier: 'Major',
   },
 
@@ -26,11 +26,57 @@ export const allSponsors: Sponsor[] = [
   {
     id: 'ARC',
     name: 'UNSW arc',
-    logoUrl: '/images/sponsors/suncorp.png', // Replace
+    logoUrl: '/images/sponsors/Arc_icon.png', // Replace
     websiteUrl: 'https://www.suncorpgroup.com.au/', // Replace
     description: 'Arc.',
     tier: 'Supporting',
   },
+
+  // Added Ansto
+  {
+    id: 'ansto',
+    name: 'ANSTO',
+    logoUrl: '/images/sponsors/ansto_logo.png', // Placeholder - Replace with actual logo path
+    websiteUrl: 'https://www.ansto.gov.au/', // Placeholder - Replace with actual website URL
+    description: 'Details about ANSTO.', // Placeholder - Add actual description
+    tier: 'Supporting', // Placeholder - Specify the correct tier
+  },
+  // Added Ventia
+  {
+    id: 'ventia',
+    name: 'Ventia',
+    logoUrl: '/images/sponsors/ventia_logo.png', // Placeholder - Replace with actual logo path
+    websiteUrl: 'https://www.ventia.com/', // Placeholder - Replace with actual website URL
+    description: 'Details about Ventia.', // Placeholder - Add actual description
+    tier: 'Supporting', // Placeholder - Specify the correct tier
+  },
+    // Added IChemE
+    {
+      id: 'icheme',
+      name: 'IChemE',
+      logoUrl: '/images/sponsors/icheme_logo.png', // Placeholder
+      websiteUrl: '#', // Placeholder
+      description: 'Details about IChemE.', // Placeholder
+      tier: 'Supporting', // Placeholder
+    },
+    // Added Engineers Australia
+    {
+      id: 'engineers-australia',
+      name: 'Engineers Australia',
+      logoUrl: '/images/sponsors/engineers_australia_logo.png', // Placeholder
+      websiteUrl: '#', // Placeholder
+      description: 'Details about Engineers Australia.', // Placeholder
+      tier: 'Supporting', // Placeholder
+    },
+    // Added Australian Coal Preparation Society
+    {
+      id: 'acps',
+      name: 'Australian Coal Preparation Society',
+      logoUrl: '/images/sponsors/acps_logo.png', // Placeholder
+      websiteUrl: '#', // Placeholder
+      description: 'Details about the Australian Coal Preparation Society.', // Placeholder
+      tier: 'Supporting', // Placeholder
+    },
 
   // Add more sponsors as needed...
   // {
