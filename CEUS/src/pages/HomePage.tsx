@@ -53,51 +53,63 @@ const HomePage: React.FC = () => {
     }
   }, []); // Empty dependency array runs this effect only once on mount
 
-  // Settings for the react-slick carousel
+
+  // --- Date Filtering for Upcoming Events ---
+  const now = new Date();
+  const twoWeeksFromNow = new Date();
+  twoWeeksFromNow.setDate(now.getDate() + 14); // Set the date to 14 days from now
+
+  const upcomingEventsNextTwoWeeks = allEventsData.filter(event => {
+    const eventDate = new Date(event.date);
+    // Filter events that are between today and two weeks from now
+    return eventDate >= now && eventDate <= twoWeeksFromNow;
+  });
+
+
+  // --- Carousel Settings ---
   const sponsorSettings = {
     dots: true,
-    infinite: true,
-    slidesToShow: 5, // Show 5 logos at a time
+    infinite: allSponsors.length > 3,
+    slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000, // Increased autoplay speed for slower rotation
+    autoplaySpeed: 4500,
     pauseOnHover: true,
+    centerMode: allSponsors.length < 3,
+    centerPadding: "40px",
     responsive: [
       {
         breakpoint: 1024,
         settings: {
           slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: true
+          centerMode: false,
         }
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 3,
-          slidesToScroll: 1,
-          initialSlide: 3
+          centerMode: false,
         }
       },
       {
         breakpoint: 480,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 1
+          centerMode: false,
         }
       }
     ]
   };
 
-  // Settings for the event carousel
   const eventSettings = {
     dots: true,
-    infinite: true,
-    slidesToShow: 3, // Show 3 events at a time (adjust as needed)
+    // Set infinite to false if there are fewer events than slides to show to prevent cloning issues
+    infinite: upcomingEventsNextTwoWeeks.length > 3,
+    slidesToShow: 3, 
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 7000, // Adjust speed as needed
+    autoplaySpeed: 7000,
     pauseOnHover: true,
     responsive: [
       {
@@ -105,7 +117,7 @@ const HomePage: React.FC = () => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-          infinite: true,
+          infinite: upcomingEventsNextTwoWeeks.length > 2,
           dots: true
         }
       },
@@ -114,14 +126,15 @@ const HomePage: React.FC = () => {
         settings: {
           slidesToShow: 1,
           slidesToScroll: 1,
-          initialSlide: 1
+          initialSlide: 0, // Start from the first slide
+          infinite: upcomingEventsNextTwoWeeks.length > 1,
         }
       }
     ]
   };
 
 
-  // --- Component Return (JSX) --- For example purposes, I have added a new section here.
+  // --- Component Return (JSX) ---
   return (
     <> 
       {/* --- Group Photo / Hero Section --- */}
@@ -137,8 +150,6 @@ const HomePage: React.FC = () => {
         </div>
         <div className="relative z-20 h-full flex items-center container mx-auto px-6"> 
           <div className="title-overlay text-white text-left"> 
-            {/* Attach refs to the elements to be animated */}
-            {/* REMOVED opacity-0 here, letting GSAP handle the start state */}
             <div ref={heroTitleRef} className="UNSWCEUS text-[63px] font-bold tracking-[3px] leading-normal"> 
               UNSW CEUS
             </div>
@@ -165,79 +176,32 @@ const HomePage: React.FC = () => {
           </button>
         </Link>
       </section>
-{/*
-      // --- Intro Section 1 (Welcome) --- 
-      // Add refs here later if you want to animate these sections on scroll 
-      <section className="intro container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row gap-8 lg:gap-12 items-stretch"> 
-        <div className="introdiv bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl"> 
-          <h3 className="h3intro text-gray-100 text-2xl md:text-3xl mb-5 font-semibold">
-            Welcome to CEUS,
-          </h3>
-          <p className="pintro text-gray-200 text-base leading-relaxed mb-4">
-            The vibrant student-run society nestled within 
-            the School of Chemical Engineering at The University of New South Wales 
-            (UNSW). Our commitment extends beyond the academic realm, as we 
-            strive to mold well-rounded graduates by providing valuable 
-            insights into industry. Through collaborations, CEUS has established 
-            robust relationships with industry leaders.
-          </p>
-        </div>
-        <div className="introimg relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> 
-          <img 
-            id="introimg1" 
-            src={introImage1} 
-            alt="CEUS Cruise Event" 
-            className="absolute inset-0 w-full h-full object-cover" 
-          />
-        </div>
-      </section>
-
-      // --- Intro Section 2 (Events) --- 
-       // Add refs here later if you want to animate these sections on scroll 
-      <section className="intro2 container mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row-reverse gap-8 lg:gap-12 items-stretch">
-        <div className="introimg2 relative flex-1 rounded-lg overflow-hidden aspect-video md:aspect-auto min-h-[300px]"> 
-          <img 
-            id="introimg2" 
-            src={introImage2} 
-            alt="CEUS and FSA executives"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-        <div className="introdiv2 bg-[#3697c1] p-8 md:p-10 rounded-lg text-left flex-1 max-w-2xl">
-          <p className="pintro text-gray-200 text-base leading-relaxed mb-4">
-            Throughout the year, CEUS hosts an array of engaging 
-            social events, including the iconic first-year camp, exciting 
-            cruises, glamorous balls, and spirited pub crawls. These events 
-            serve as platforms for fostering connections, creating lasting 
-            memories, and building a supportive community within the School 
-            of Chemical Engineering.
-          </p>
-          <p className="pintro text-gray-200 text-base leading-relaxed">
-            Join us at CEUS, where tradition meets innovation, and where our 
-            commitment to your university experience knows no bounds. Together, 
-            let's make your time at UNSW truly exceptional!
-          </p>
-        </div>
-      </section>
-      */}
       
-
       {/* --- Events Section --- */}
       <section className="events-section container mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Upcoming Events</h2>
-        <Slider {...eventSettings}>
-          {allEventsData.map(event => (
-            <div key={event.id} className="px-4">
-              <img 
-                src={event.imageUrl} 
-                alt={event.title} 
-                className="mx-auto max-h-[200px] object-contain"
-              />
-              <h3 className="text-xl font-semibold text-center mt-4">{event.title}</h3>
-              {/* You might want to add more event details here */}
-            </div>
-          ))}
-        </Slider>
+        <h2 className="text-3xl font-bold text-center mb-8">Happening Soon</h2>
+        {/* Check if there are any events in the next two weeks */}
+        {upcomingEventsNextTwoWeeks.length > 0 ? (
+          <Slider {...eventSettings}>
+            {/* Map over the filtered list of events */}
+            {upcomingEventsNextTwoWeeks.map(event => (
+              <div key={event.id} className="px-4">
+                <img 
+                  src={event.imageUrl} 
+                  alt={event.title} 
+                  className="mx-auto max-h-[200px] object-contain"
+                />
+                <h3 className="text-xl font-semibold text-center mt-4">{event.title}</h3>
+                {/* You might want to add more event details here */}
+              </div>
+            ))}
+          </Slider>
+        ) : (
+          // Display this message if no events are scheduled in the next two weeks
+          <p className="text-center text-gray-600 text-lg">
+            No events scheduled for the next two weeks. Check out the full calendar on our events page!
+          </p>
+        )}
       </section>
 
       {/* --- Sponsors Section --- */}
@@ -255,6 +219,7 @@ const HomePage: React.FC = () => {
           ))}
         </Slider>
       </section>
+
       {/* --- Video Section --- */}
       <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
         <div className="ytvideo relative w-full h-full"> 

@@ -8,33 +8,250 @@ const createDate = (year: number, month: number, day: number, hour: number = 17,
 };
 
 export const allEventsData: Event[] = [
-  // --- UPCOMING EVENT EXAMPLE ---
+  // --- UPCOMING EVENTS (From Term 2, Week 8 onwards) ---
   {
     id: 'ceusEventUpcoming1',
-    title: 'CEUS First Year Senior assassin',
-    date: createDate(2025, 10, 15), // October 15, 2025
-    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH IN public/images/events/
-    facebookEventLink: 'https://www.facebook.com/events/550799454699655',
-    description: 'Explore the future of chemical engineering with industry leaders and workshops. A flagship event not to be missed!',
-    category: 'Flagship',
+    title: 'CEUS x Pokersoc Poker Night',
+    date: createDate(2025, 8, 1), // Estimated: Term 2, Week 8
+    imageUrl: '/images/events/ceus-poker-night.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'A night of cards and friendly competition with Pokersoc. Beginners and experts are welcome!',
+    category: 'Social',
   },
-  // --- PAST EVENT EXAMPLE ---
+  {
+    id: 'ceusEventUpcoming2',
+    title: 'Year Reps Event',
+    date: createDate(2025, 8, 2), // Estimated: Term 2, Week 8
+    imageUrl: '/images/events/ceus-year-reps.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'An event hosted by your year representatives. Come along to meet your peers and have a great time.',
+    category: 'Social',
+  },
+    {
+    id: 'ceusEventUpcoming3',
+    title: 'CEUS x ANSTO at Roundhouse',
+    date: createDate(2025, 8, 8), // Estimated: Term 2, Week 9
+    imageUrl: '/images/events/ceus-ansto-roundhouse.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'A special collaborative event with ANSTO held at the iconic Roundhouse.',
+    category: 'Collaboration', // FIX: Changed 'Mix' to 'Collaboration'
+  },
+  {
+    id: 'ceusEventUpcoming4',
+    title: 'Study With CEUS',
+    date: createDate(2025, 8, 11), // Estimated: Term 2, Week 10
+    imageUrl: '/images/events/ceus-study-session.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Prepare for your final exams with our supported study sessions. Snacks and good company provided!',
+    category: 'Academic', // FIX: Changed 'School' to 'Academic'
+  },
+  {
+    id: 'ceusEventUpcoming5',
+    title: 'Team Bonding Dinner',
+    date: createDate(2025, 8, 12), // Estimated: Term 2, Week 10
+    imageUrl: '/images/events/ceus-team-dinner.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Celebrate the end of term with a dinner for all our members. A great way to relax and bond.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming6',
+    title: 'CEUS x SUCES Pub Crawl',
+    date: createDate(2025, 8, 15), // Estimated: Term 2, Week 10
+    imageUrl: '/images/events/ceus-pub-crawl.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'The legendary pub crawl in collaboration with SUCES is back! Not to be missed.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming7',
+    title: 'CEUS x SUCES Trivia',
+    date: createDate(2025, 9, 8), // Estimated: Term 3, Week 0
+    imageUrl: '/images/events/ceus-suces-trivia.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming8',
+    title: 'Opal Site Tour',
+    date: createDate(2025, 10, 29), // Estimated: Term 3, Week 7
+    imageUrl: '/images/events/ceus-opal-tour.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'An exclusive industrial site tour of the Opal facility. A fantastic opportunity for practical insights.',
+    category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
+  },
+  {
+    id: 'ceusEventUpcoming9',
+    title: 'Speed Networking Night',
+    date: createDate(2025, 11, 5), // Estimated: Term 3, Week 8
+    imageUrl: '/images/events/ceus-speed-networking.jpeg',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Quick-fire networking rounds to meet a variety of industry professionals and peers.',
+    category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
+  },
+
+  // --- PAST EVENTS ---
   {
     id: 'ceusEventPast1',
-    title: 'CEUS Camp',
-    date: createDate(2024, 3, 20), // March 20, 2024
-    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH
-    facebookEventLink: 'https://www.facebook.com/events/550799454699655',
-    description: 'Connect with CEUS alumni and gain valuable career insights. A great opportunity for networking.',
-    category: 'Flagship',
+    title: 'Trivia Night',
+    date: createDate(2025, 2, 19), // Estimated: Term 1, Week 0
+    imageUrl: '/images/events/ceus-trivia-night.jpeg',
+    facebookEventLink: '#',
+    description: 'Kicked off the year with a fun and challenging trivia night for all members.',
+    category: 'Social',
   },
   {
     id: 'ceusEventPast2',
-    title: 'CEUS Welcome Pizza',
-    date: createDate(2024, 2, 15), // February 15, 2024
-    imageUrl: '/images/events/CEUS-industry-night.jpeg', // USE A REAL, EXISTING IMAGE PATH
-    facebookEventLink: 'https://www.facebook.com/events/550799454699655',
-    description: 'Kick off the semester with a fun hangout, meet new friends, and learn about CEUS activities.',
+    title: 'Pizza Welcome Lunch',
+    date: createDate(2025, 2, 26), // Estimated: Term 1, Week 1
+    imageUrl: '/images/events/ceus-welcome-pizza.jpeg',
+    facebookEventLink: '#',
+    description: 'Welcomed new and returning students with free pizza to start the term right.',
     category: 'Social',
+  },
+  {
+    id: 'ceusEventPast3',
+    title: 'What is My Degree',
+    date: createDate(2025, 2, 27), // Estimated: Term 1, Week 1
+    imageUrl: '/images/events/ceus-what-is-my-degree.jpeg',
+    facebookEventLink: '#',
+    description: 'An info session for first-year students to understand the chemical engineering curriculum and specializations.',
+    category: 'Academic', // FIX: Changed 'School' to 'Academic'
+  },
+  {
+    id: 'ceusEventPast4',
+    title: 'Lab Coat x EWB',
+    date: createDate(2025, 2, 28), // Estimated: Term 1, Week 1
+    imageUrl: '/images/events/ceus-lab-coat-ewb.jpeg',
+    facebookEventLink: '#',
+    description: 'A collaboration with Engineers Without Borders, combining practical skills with social impact.',
+    category: 'Collaboration', // FIX: Changed 'School' to 'Collaboration'
+  },
+    {
+    id: 'ceusEventPast5',
+    title: 'Coffee Crawl',
+    date: createDate(2025, 3, 6), // Estimated: Term 1, Week 2
+    imageUrl: '/images/events/ceus-coffee-crawl.jpeg',
+    facebookEventLink: '#',
+    description: 'Explored the best campus coffee spots while mingling with fellow students.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast6',
+    title: 'CAMP Enchanted',
+    date: createDate(2025, 3, 28), // Estimated: Term 1, Week 4-5
+    imageUrl: '/images/events/ceus-camp.jpeg',
+    facebookEventLink: '#',
+    description: 'The annual CEUS camp, a weekend packed with fun activities, challenges, and team bonding.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast7',
+    title: 'Tooheys Tour',
+    date: createDate(2025, 4, 3), // Estimated: Term 1, Week 5
+    imageUrl: '/images/events/ceus-tooheys-tour.jpeg',
+    facebookEventLink: '#',
+    description: 'An industrial tour of the Tooheys brewery, exploring the chemical processes behind brewing.',
+    category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
+  },
+  {
+    id: 'ceusEventPast8',
+    title: 'Post Camp Roundy',
+    date: createDate(2025, 4, 10), // Estimated: Term 1, Week 6
+    imageUrl: '/images/events/ceus-post-camp-roundy.jpeg',
+    facebookEventLink: '#',
+    description: 'A casual catch-up at the Roundhouse to relive camp memories and reconnect with friends.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast9',
+    title: 'YR Beach Day',
+    date: createDate(2025, 4, 18), // Estimated: Term 1, Week 7
+    imageUrl: '/images/events/ceus-beach-day.jpeg',
+    facebookEventLink: '#',
+    description: 'A relaxing day at the beach organized by the Year Reps to de-stress before exams.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast10',
+    title: 'Bouldering',
+    date: createDate(2025, 4, 25), // Estimated: Term 1, Week 8
+    imageUrl: '/images/events/ceus-bouldering.jpeg',
+    facebookEventLink: '#',
+    description: 'A fun and active social event, tackling bouldering problems together.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast11',
+    title: 'O-day',
+    date: createDate(2025, 5, 26), // Estimated: Term 2, Week 0
+    imageUrl: '/images/events/ceus-o-day.jpeg',
+    facebookEventLink: '#',
+    description: 'Showcasing our society during O-week to welcome new students to the university.',
+    category: 'Recruitment',
+  },
+  {
+    id: 'ceusEventPast12',
+    title: 'Welcome Back Event',
+    date: createDate(2025, 6, 4), // Estimated: Term 2, Week 1
+    imageUrl: '/images/events/ceus-welcome-back.jpeg',
+    facebookEventLink: '#',
+    description: 'Kicked off Term 2 with a social event to welcome everyone back to campus.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast13',
+    title: 'Cruise',
+    date: createDate(2025, 6, 6), // Estimated: Term 2, Week 1
+    imageUrl: '/images/events/ceus-cruise.jpeg',
+    facebookEventLink: '#',
+    description: 'A memorable cruise event to socialize and enjoy the views.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast14',
+    title: 'Mineral Morning - Coffee Catch Up',
+    date: createDate(2025, 6, 18), // Estimated: Term 2, Week 3
+    imageUrl: '/images/events/ceus-mineral-morning.jpeg',
+    facebookEventLink: '#',
+    description: 'A morning coffee session with a focus on the minerals industry.',
+    category: 'Collaboration', // FIX: Changed 'Mix' to 'Collaboration'
+  },
+    {
+    id: 'ceusEventPast15',
+    title: 'Industry Night',
+    date: createDate(2025, 6, 26), // Estimated: Term 2, Week 4
+    imageUrl: '/images/events/ceus-industry-night.jpeg',
+    facebookEventLink: '#',
+    description: 'Our flagship industry night, connecting students with leading companies and professionals.',
+    category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
+  },
+  {
+    id: 'ceusEventPast16',
+    title: 'ANSTO Site Tour + TOES Party',
+    date: createDate(2025, 7, 3), // Estimated: Term 2, Week 5
+    imageUrl: '/images/events/ceus-ansto-tour.jpeg',
+    facebookEventLink: '#',
+    description: 'An exclusive tour of the ANSTO facility followed by a fun social party.',
+    category: 'Collaboration', // FIX: Changed 'Mix' to 'Collaboration'
+  },
+    {
+    id: 'ceusEventPast17',
+    title: 'CEUS Dinner',
+    date: createDate(2025, 7, 4), // Estimated: Term 2, Week 5
+    imageUrl: '/images/events/ceus-dinner.jpeg',
+    facebookEventLink: '#',
+    description: 'An annual formal dinner for members to celebrate the year in style.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventPast18',
+    title: 'Mineral Minds Trivia Night',
+    date: createDate(2025, 7, 17), // Estimated: Term 2, Week 7
+    imageUrl: '/images/events/ceus-mineral-minds-trivia.jpeg',
+    facebookEventLink: '#',
+    description: 'A trivia night with a twist, focused on minerals and mining, co-hosted with SUCES or as a CEUS Bingo Night at Roundy.',
+    category: 'Collaboration', // FIX: Changed 'Mix' to 'Collaboration'
   },
 ];
