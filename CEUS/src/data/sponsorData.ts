@@ -14,14 +14,22 @@ export const allSponsors: Sponsor[] = [
   // --- Major Sponsors ---
   
   {
-    id: 'Ansto!!!',
-    name: 'Ansto',
-    logoUrl: '/images/sponsors/Arc_icon.png', // Replace
-    websiteUrl: 'https://www.macquarie.com/', // Replace
-    description: 'I .',
-    tier: 'Major',
+    id: 'ansto',
+    name: 'ANSTO',
+    logoUrl: '/images/sponsors/ansto_logo.png', // Placeholder - Replace with actual logo path
+    websiteUrl: 'https://www.ansto.gov.au/', // Placeholder - Replace with actual website URL
+    description: 'Details about ANSTO.', // Placeholder - Add actual description
+    tier: 'Major', // Placeholder - Specify the correct tier
   },
-
+ // Added Australian Coal Preparation Society
+    {
+      id: 'acps',
+      name: 'Australian Coal Preparation Society',
+      logoUrl: '/images/sponsors/acps.png', // Placeholder
+      websiteUrl: '#', // Placeholder
+      description: 'Details about the Australian Coal Preparation Society.', // Placeholder
+      tier: 'Major', // Placeholder
+    },
   // --- Supporting Sponsors ---
   {
     id: 'ARC',
@@ -32,15 +40,7 @@ export const allSponsors: Sponsor[] = [
     tier: 'Supporting',
   },
 
-  // Added Ansto
-  {
-    id: 'ansto',
-    name: 'ANSTO',
-    logoUrl: '/images/sponsors/ansto_logo.png', // Placeholder - Replace with actual logo path
-    websiteUrl: 'https://www.ansto.gov.au/', // Placeholder - Replace with actual website URL
-    description: 'Details about ANSTO.', // Placeholder - Add actual description
-    tier: 'Supporting', // Placeholder - Specify the correct tier
-  },
+
   // Added Ventia
 
 
@@ -75,15 +75,7 @@ export const allSponsors: Sponsor[] = [
       description: 'Details about Engineers Australia.', // Placeholder
       tier: 'Supporting', // Placeholder
     },
-    // Added Australian Coal Preparation Society
-    {
-      id: 'acps',
-      name: 'Australian Coal Preparation Society',
-      logoUrl: '/images/sponsors/acps.png', // Placeholder
-      websiteUrl: '#', // Placeholder
-      description: 'Details about the Australian Coal Preparation Society.', // Placeholder
-      tier: 'Supporting', // Placeholder
-    },
+   
 
   // Add more sponsors as needed...
   // {
