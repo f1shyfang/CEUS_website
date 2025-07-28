@@ -1,7 +1,7 @@
 # CEUS Website
 
 > <!-- Add a brief, one-sentence description of the project here. -->
-> For example: The official website for the Computer Engineering Undergraduate Society (CEUS).
+> The official website for the Computer Engineering Undergraduate Society (CEUS).
 
 ---
 
