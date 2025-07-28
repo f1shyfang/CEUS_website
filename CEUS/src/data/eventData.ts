@@ -12,7 +12,7 @@ export const allEventsData: Event[] = [
   {
     id: 'ceusEventUpcoming1',
     title: 'CEUS x Pokersoc Poker Night',
-    date: createDate(2025, 8, 1), // Estimated: Term 2, Week 8
+    date: createDate(2025, 9, 1), // Estimated: Term 2, Week 8
     imageUrl: '/images/events/ceus-poker-night.jpeg',
     facebookEventLink: '#', // Add Facebook event link
     description: 'A night of cards and friendly competition with Pokersoc. Beginners and experts are welcome!',
@@ -40,7 +40,7 @@ export const allEventsData: Event[] = [
   {
     id: 'ceusEventUpcoming6',
     title: 'CEUS x SUCES Pub Crawl',
-    date: createDate(2025, 8, 15), // Estimated: Term 2, Week 10
+    date: createDate(2025, 8, 8), // Estimated: Term 2, Week 10
     imageUrl: '/images/events/ceus-pub-crawl.jpeg',
     facebookEventLink: '#', // Add Facebook event link
     description: 'The legendary pub crawl in collaboration with SUCES is back! Not to be missed.',
