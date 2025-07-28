@@ -1,8 +1,12 @@
 # CEUS_website
 
-#To see locally
+# To see locally
 
+git clone git@github.com:f1shyfang/CEUS_website.git
 
+cd CEUS
+npm install
+npm run dev
 
 
 ## To contribute
