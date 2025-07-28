@@ -3,7 +3,7 @@ import { TeamCategory, Member } from '../types';
 
 const yearRepMembers: Member[] = [
   // 1st Year
-  { id: 'daisyX', name: 'Daisy Xu', role: '1st Year Representative (Chem Eng)', imageUrl: '/images/team/daisy.jpg' },
+  { id: 'daisyX', name: 'Daisy Xu', role: '1st Year Representative (Chem Eng)', imageUrl: '/images/team/professional photo - Daisy X.JPG' },
   { id: 'brentH', name: 'Brent Heathcote', role: '1st Year Representative (Chem Eng)', imageUrl: '/images/team/brent.jpg' },
 
   // 2nd Year
@@ -20,10 +20,10 @@ const yearRepMembers: Member[] = [
   { id: 'abdelrahmanE', name: 'Abdelrahman el Atawna', role: '4th Year Representative (Chem Prod Eng)', imageUrl: '/images/team/abdelrahman.jpg' },
 ];
 const executivesMembers: Member[] = [
-  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Exec ceus fsa.jpeg' ,linkedInUrl: 'https://www.linkedin.com/in/veronica-pelipos-45427821b/'},
-  { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Vice President (Industry)', imageUrl: '/images/team/nina.jpg' },
+  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Veronica.jpeg' ,linkedInUrl: 'https://www.linkedin.com/in/veronica-pelipos-45427821b/'},
+  { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Vice President (Industry)', imageUrl: '/images/team/Nina Teerasuphaset.jpeg' },
   { id: 'kerriW', name: 'Kerri Wainstein', role: 'Vice President (Social)', imageUrl: '/images/team/kerri.jpg' },
-  { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/anna.jpg' },
+  { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/Anna_Koth.jpg' },
   { id: 'jonathanC_exec', name: 'Jonathan Cao', role: 'Treasurer', imageUrl: '/images/team/jonathan_exec.jpg' }, // Note: This is the Exec Treasurer. If same person as 3rd Yr Rep, decide on one entry or distinct roles/photos.
   { id: 'arianaH', name: 'Ariana Halar', role: 'Marketing Co-ordinator', imageUrl: '/images/team/ariana.jpg' },
   { id: 'sabrinaZ', name: 'Sabrina Zantua', role: 'Welfare Officer', imageUrl: '/images/team/sabrina.jpg' },
@@ -44,7 +44,7 @@ const marketingTeamMembers: Member[] = [
 // --- SOCIALS/EVENTS TEAM ---
 const socialsTeamMembers: Member[] = [
   { id: 'graceE', name: 'Grace', role: 'Event Officer', imageUrl: '/images/team/grace.jpg' },
-  { id: 'charlieJ', name: 'Charlie Jiang', role: 'Event Officer', imageUrl: '/images/team/charlie.jpg' },
+  { id: 'charlieJ', name: 'Charlie Jiang', role: 'Event Officer', imageUrl: '/images/team/charlie.JPG' },
   { id: 'devonD', name: 'Devon D', role: 'Events Administrator', imageUrl: '/images/team/devon.jpg' },
 ];
 
