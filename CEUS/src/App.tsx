@@ -1,6 +1,6 @@
 // src/App.tsx
 //import React from 'react';    //error declared but never read therefore commented out
-import { Routes, Route } from 'react-router-dom'; // Import Routes/Route
+import { Routes, Route , Navigate} from 'react-router-dom'; // Import Routes/Route
 import Header from './layouts/Header';
 import Footer from './layouts/Footer';
 // Import all page components
@@ -27,7 +27,7 @@ function App() {
           <Route path="/Sponsers" element={<SponsersPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/contact" element={<ContactPage />} /> {/* Use '/contact' or '/contactus' based on links */}
-
+          <Route path="*" element={<Navigate to="/" replace />} />
           {/* Optional todo : Catch-all route for 404 */}
           {/* <Route path="*" element={<NotFoundPage />} /> */}
         </Routes>
