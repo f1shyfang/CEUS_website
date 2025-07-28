@@ -28,7 +28,8 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           className="w-full h-full object-cover"
           onError={(e) => {
             // Optional: Handle broken image links by setting a default
-            (e.target as HTMLImageElement).src = '/images/events/default-event-placeholder.png';
+            //(e.target as HTMLImageElement).src = '/images/events/default-event-placeholder.png';
+            (e.target as HTMLImageElement).src = 'asdsadad   images/sponsors/Arc Clubs Logo 2019-outline black.png';
           }}
         />
       </div>
