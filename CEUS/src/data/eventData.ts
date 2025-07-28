@@ -18,15 +18,6 @@ export const allEventsData: Event[] = [
     description: 'A night of cards and friendly competition with Pokersoc. Beginners and experts are welcome!',
     category: 'Social',
   },
-  {
-    id: 'ceusEventUpcoming2',
-    title: 'Year Reps Event',
-    date: createDate(2025, 8, 2), // Estimated: Term 2, Week 8
-    imageUrl: '/images/events/ceus-year-reps.jpeg',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'An event hosted by your year representatives. Come along to meet your peers and have a great time.',
-    category: 'Social',
-  },
     {
     id: 'ceusEventUpcoming3',
     title: 'CEUS x ANSTO at Roundhouse',
@@ -45,15 +36,7 @@ export const allEventsData: Event[] = [
     description: 'Prepare for your final exams with our supported study sessions. Snacks and good company provided!',
     category: 'Academic', // FIX: Changed 'School' to 'Academic'
   },
-  {
-    id: 'ceusEventUpcoming5',
-    title: 'Team Bonding Dinner',
-    date: createDate(2025, 8, 12), // Estimated: Term 2, Week 10
-    imageUrl: '/images/events/ceus-team-dinner.jpeg',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'Celebrate the end of term with a dinner for all our members. A great way to relax and bond.',
-    category: 'Social',
-  },
+  
   {
     id: 'ceusEventUpcoming6',
     title: 'CEUS x SUCES Pub Crawl',
