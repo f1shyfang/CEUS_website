@@ -20,7 +20,7 @@ const yearRepMembers: Member[] = [
   { id: 'abdelrahmanE', name: 'Abdelrahman el Atawna', role: '4th Year Representative (Chem Prod Eng)', imageUrl: '/images/team/abdelrahman.jpg' ,linkedInUrl:"https://www.linkedin.com/in/abdelrahman-elatawna-337323255/"},
 ];
 const executivesMembers: Member[] = [
-  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Veronica.jpeg' ,linkedInUrl: 'http://linkedin.com/in/nina-teerasuphaset-654632257'},
+  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Veronica.jpeg' ,linkedInUrl: 'https://au.linkedin.com/in/veronica-pelipos-45427821b?original_referer=https%3A%2F%2Fwww.google.com%2F'},
   { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Industry Vice President', imageUrl: '/images/team/Nina Teerasuphaset.jpeg',linkedInUrl: 'https://www.linkedin.com/in/nina-teerasuphaset-8b6a1521b/'},
   { id: 'kerriW', name: 'Kerri Wainstein', role: 'Vice President (Social)', imageUrl: '/images/team/kerri.jpg' },
   { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/Anna_Koth.jpg' ,linkedInUrl: 'http://www.linkedin.com/in/anna-koth-094979199'},
@@ -37,7 +37,7 @@ const itMembers: Member[] = [
 
 // --- MARKETING TEAM ---
 const marketingTeamMembers: Member[] = [
-  { id: 'lucyL', name: 'Lucy Liu', role: 'Marketing Assistant', imageUrl: '/images/team/lucy.jpg' },
+  { id: 'lucyL', name: 'Lucy Liu', role: 'Marketing Assistant', imageUrl: '/images/team/lucy.jpg' ,linkedInUrl:"https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info"},
   { id: 'felicityP', name: 'Felicity Pham', role: 'Marketing Assistant', imageUrl: '/images/team/felicity.jpg',linkedInUrl:"https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info" },
 {id:'MitchellC',name:'Mitchell Cook ',role:'Marketing Assistant',imageUrl:'/images/team/mitchell.jpg',linkedInUrl:"https://www.linkedin.com/in/mitchell-cook-9690142a5/"},
 ];
@@ -52,8 +52,8 @@ const socialsTeamMembers: Member[] = [
 
 // --- CAREERS/INDUSTRY TEAM ---
 const careersTeamMembers: Member[] = [
-  { id: 'jaymeC', name: 'Jayme Cheong', role: 'Industry Liaison', imageUrl: '/images/team/jayme.jpg' },
-  { id: 'gabrielleS', name: 'Gabrielle Shoebridge', role: 'Industry Events Officer', imageUrl: '/images/team/gabrielle.jpg' },
+  { id: 'jaymeC', name: 'Jayme Cheong', role: 'Industry Liaison', imageUrl: '/images/team/jayme.jpg',linkedInUrl:"https://www.linkedin.com/in/jayme-cheong-63332a2b2/" },
+  { id: 'gabrielleS', name: 'Gabrielle Shoebridge', role: 'Industry Events Officer', imageUrl: '/images/team/gabrielle.jpg',linkedInUrl:"https://www.linkedin.com/in/gabrielle-shoebridge-087479281/" },
 ];
 
 // --- Admin TEAM ---
