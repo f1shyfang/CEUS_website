@@ -24,7 +24,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/Team" element={<TeamPage />} />
           <Route path="/events" element={<EventsPage />} />
-          <Route path="/Sponsers" element={<SponsersPage />} />
+          <Route path="/Sponsors" element={<SponsersPage />} />
           <Route path="/publications" element={<PublicationsPage />} />
           <Route path="/contact" element={<ContactPage />} /> {/* Use '/contact' or '/contactus' based on links */}
           <Route path="*" element={<Navigate to="/" replace />} />

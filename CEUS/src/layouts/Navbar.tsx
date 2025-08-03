@@ -19,7 +19,7 @@ const Navbar: React.FC = () => {
       <NavLink to="/team" className={linkClasses}>Team</NavLink>
       <NavLink to="/events" className={linkClasses}>Events</NavLink>
       <NavLink to="/publications" className={linkClasses}>Publications</NavLink>
-      <NavLink to="/Sponsers" className={linkClasses}>Sponsers</NavLink>
+      <NavLink to="/Sponsors" className={linkClasses}>Sponsors</NavLink>
       <NavLink to="/contact" className={linkClasses}>Contact Us</NavLink> {/* Match path in App.tsx */}
     </nav>
   );
