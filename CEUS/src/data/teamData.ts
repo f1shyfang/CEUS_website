@@ -3,7 +3,7 @@ import { TeamCategory, Member } from '../types';
 
 const yearRepMembers: Member[] = [
   // 1st Year
-  { id: 'daisyX', name: 'Daisy Xu', role: '1st Year Rep', imageUrl: '/images/team/professional photo - Daisy X.JPG',linkedInUrl:'http://www.linkedin.com/in/daisy-xu-9b115935a '},
+  { id: 'daisyX', name: 'Daisy Xu', role: '1st Year Rep', imageUrl: '/images/team/Daisy X.JPG',linkedInUrl:'http://www.linkedin.com/in/daisy-xu-9b115935a '},
   { id: 'brentH', name: 'Brent Heathcote', role: '1st Year Rep', imageUrl: '/images/team/brent.jpg' },
 
   // 2nd Year
