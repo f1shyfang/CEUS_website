@@ -10,9 +10,8 @@ const Footer: React.FC = () => {
     <footer className="FooterContainer bg-[#1B397E] py-3 px-5 text-white"> 
       {/* Flex layout, responsive direction, space-between */}
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm">
-        {/* Copyright color text-white/50 */}
         <div className="FooterCopyright mb-3 md:mb-0 text-white/50"> 
-          © 2024 UNSW CEUS. All Rights Reserved.
+          © 2025 UNSW CEUS. All Rights Reserved.
         </div>
         {/* Social links using flex and space-x instead of margin */}
         {/* space-x-12 approximates the 50px margin */}
