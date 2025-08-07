@@ -1,7 +1,7 @@
 // src/App.tsx
 //import React from 'react';    //error declared but never read therefore commented out
 import { Routes, Route , Navigate} from 'react-router-dom'; // Import Routes/Route
-import Header from './layouts/Header';
+//import Header from './layouts/Header';
 import Footer from './layouts/Footer';
 // Import all page components
 //import HomePage from './pages/HomePage';
