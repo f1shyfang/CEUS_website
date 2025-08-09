@@ -1,13 +1,15 @@
+'use client'
 // src/pages/HomePage.tsx
 import React, { useEffect, useRef } from 'react'; // Import useEffect and useRef
 import gsap from 'gsap'; // Import gsap
 import Slider from 'react-slick'; // Import Slider from react-slick
 import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
 import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import Link from 'next/link'; // Import Link for navigation
+import Image from 'next/image'; // Import Next.js Image component
 
 // Import images used on the homepage
-import groupPhoto from '../assets/images/Ceus_ball_group_edited.jpg'; 
+// Images are now served from public folder
 //import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
 //import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
 
@@ -140,11 +142,12 @@ const HomePage: React.FC = () => {
       {/* --- Group Photo / Hero Section --- */}
       <section className="GroupPhoto relative w-full h-[75vh] max-h-[600px] overflow-hidden"> 
         <div className="GroupImg absolute inset-0"> 
-          <img 
+          <Image 
             draggable={false} 
-            src={groupPhoto} 
+            src="/images/assets/Ceus_ball_group_edited.jpg" 
             alt="CEUS Ball Group Photo" 
-            className="w-full h-full object-cover object-center" 
+            fill
+            className="object-cover object-center" 
           />
           <div className="ImgOverlay absolute inset-0 bg-black/40 z-10"></div>
         </div>
@@ -170,7 +173,7 @@ const HomePage: React.FC = () => {
           Through a diverse range of events and initiatives, we foster a strong sense of community 
           and provide valuable opportunities for growth and connection.
         </p>
-        <Link to="/about">
+        <Link href="/about">
           <button className="mt-4 px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow hover:bg-blue-700 transition duration-300">
             Find out more...
           </button>
@@ -186,9 +189,11 @@ const HomePage: React.FC = () => {
             {/* Map over the filtered list of events */}
             {upcomingEventsNextTwoWeeks.map(event => (
               <div key={event.id} className="px-4">
-                <img 
+                <Image 
                   src={event.imageUrl} 
                   alt={event.title} 
+                  width={200}
+                  height={200}
                   className="mx-auto max-h-[200px] object-contain"
                 />
                 <h3 className="text-xl font-semibold text-center mt-4">{event.title}</h3>
@@ -210,9 +215,11 @@ const HomePage: React.FC = () => {
         <Slider {...sponsorSettings}>
           {allSponsors.map(sponsor => (
             <div key={sponsor.name} className="px-4">
-              <img 
+              <Image 
                 src={sponsor.logoUrl} 
                 alt={sponsor.name} 
+                width={100}
+                height={100}
                 className="mx-auto max-h-[100px] object-contain"
               />
             </div>

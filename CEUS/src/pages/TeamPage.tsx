@@ -1,4 +1,5 @@
 // src/pages/TeamPage.tsx
+'use client'
 import React, { useState, useEffect, useMemo } from 'react';
 import { gsap } from 'gsap';
 import MemberCard from '../components/MemberCard';
@@ -14,7 +15,7 @@ const TeamPage: React.FC = () => {
   const displayedMembers = useMemo(() => {
     const foundTeam = allTeams.find(team => team.name === selectedCategory);
     return foundTeam ? foundTeam.members : [];
-  }, [selectedCategory, allTeams]);
+  }, [selectedCategory]); // Removed allTeams as it's not needed
 
   useEffect(() => {
     if (displayedMembers.length > 0) {
