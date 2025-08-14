@@ -7,7 +7,7 @@ import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
 import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
 import Link from 'next/link'; // Import Link for navigation
 import Image from 'next/image'; // Import Next.js Image component
-import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
+//import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
 
 // Import images used on the homepage
 // Images are now served from public folder
@@ -165,23 +165,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* --- 3D Models Section --- */}
-      <section className="3d-models-section relative w-full h-[60vh] min-h-[400px] bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
-        <div className="relative z-10 h-full flex flex-col items-center justify-center">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-              Chemical Engineering in 3D
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto px-6">
-              Explore the tools and equipment that define chemical engineering
-            </p>
-          </div>
-          <div className="w-full h-[400px] max-w-4xl mx-auto">
-            <ThreeDModels />
-          </div>
-        </div>
-      </section>
+      
 
       {/* --- About Us Section --- */}
       <section className="about-us-section container mx-auto px-6 py-12 md:py-16 text-center">
