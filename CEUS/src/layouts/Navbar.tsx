@@ -1,26 +1,29 @@
 // src/layouts/Navbar.tsx
+'use client'
 import React from 'react';
-import { NavLink } from 'react-router-dom'; // Import NavLink
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Navbar: React.FC = () => {
+  const pathname = usePathname();
   
   // Helper function to define active/inactive classes
-  const linkClasses = ({ isActive }: { isActive: boolean }): string => {
+  const linkClasses = (path: string): string => {
     const baseClasses = "px-4 py-2 text-lg font-extrabold transition-colors duration-200";
     const activeClasses = "text-[#1B397E]"; // Active color
     const inactiveClasses = "text-black hover:text-[#1B397E]"; // Inactive + hover
-    return `${baseClasses} ${isActive ? activeClasses : inactiveClasses}`;
+    return `${baseClasses} ${pathname === path ? activeClasses : inactiveClasses}`;
   };
 
   return (
     <nav className="navbar flex items-center"> 
-      <NavLink to="/" className={linkClasses}>Home</NavLink> 
-      <NavLink to="/about" className={linkClasses}>About</NavLink>
-      <NavLink to="/team" className={linkClasses}>Team</NavLink>
-      <NavLink to="/events" className={linkClasses}>Events</NavLink>
-      <NavLink to="/publications" className={linkClasses}>Publications</NavLink>
-      <NavLink to="/Sponsors" className={linkClasses}>Sponsors</NavLink>
-      <NavLink to="/contact" className={linkClasses}>Contact Us</NavLink> {/* Match path in App.tsx */}
+      <Link href="/" className={linkClasses('/')}>Home</Link> 
+      <Link href="/about" className={linkClasses('/about')}>About</Link>
+      <Link href="/team" className={linkClasses('/team')}>Team</Link>
+      <Link href="/events" className={linkClasses('/events')}>Events</Link>
+      <Link href="/publications" className={linkClasses('/publications')}>Publications</Link>
+      <Link href="/sponsors" className={linkClasses('/sponsors')}>Sponsors</Link>
+      <Link href="/contact" className={linkClasses('/contact')}>Contact Us</Link>
     </nav>
   );
 };

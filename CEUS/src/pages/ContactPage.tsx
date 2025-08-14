@@ -1,3 +1,4 @@
+'use client'
 // src/pages/ContactPage.tsx
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';

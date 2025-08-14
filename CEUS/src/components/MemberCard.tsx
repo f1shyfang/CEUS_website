@@ -1,5 +1,7 @@
+'use client'
 // src/components/MemberCard.tsx
 import React from 'react';
+import Image from 'next/image';
 import { Member } from '../types';
 
 interface MemberCardProps {
@@ -9,9 +11,11 @@ interface MemberCardProps {
 const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
   const cardContent = (
     <>
-      <img
+      <Image
         src={member.imageUrl || '/images/team/no_profile_img.jpg'} // Added a fallback avatar
         alt={member.name}
+        width={112}
+        height={112}
         className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover mb-4 border-2 border-gray-200"
         onError={(e) => { (e.target as HTMLImageElement).src = '/images/team/no_profile_img.jpg'; }} // Fallback for broken image links
       />

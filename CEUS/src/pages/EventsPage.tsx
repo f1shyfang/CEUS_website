@@ -1,58 +1,52 @@
+'use client'
 // src/pages/EventsPage.tsx
-import React, { useState, useMemo, useEffect } from 'react';
-import { gsap } from 'gsap';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import EventCard from '../components/EventCard';
 import EventFilterButton from '../components/EventFilterButton';
-import { allEventsData } from '../data/eventData'; // Your event data (ensure it's populated)
-import { Event as EventType } from '../types'; // Rename imported Event to avoid conflict
-
-// Hero background image (ensure this path is valid and image exists in public folder)
-import heroBgImage from '../assets/images/2022Cruise.jpeg';
+import { allEventsData } from '../data/eventData';
+import { Event as EventType } from '../types';
+import { FaCalendarAlt, FaFilter, FaClock, FaHistory } from 'react-icons/fa';
 
 const EVENT_CATEGORIES: EventType['category'][] = ['Flagship', 'Careers', 'Social', 'Academic', 'Welfare', 'Recruitment', 'Collaboration', 'Other'];
 
 const EventsPage: React.FC = () => {
   const [upcomingFilter, setUpcomingFilter] = useState<EventType['category'] | 'All'>('All');
   const [pastFilter, setPastFilter] = useState<EventType['category'] | 'All'>('All');
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<'upcoming' | 'past'>('upcoming');
+  
+  const upcomingSectionRef = useRef<HTMLDivElement>(null);
+  const pastSectionRef = useRef<HTMLDivElement>(null);
 
-  // Memoize `now` to prevent re-calculating on every render unless necessary (though Date() is cheap)
+  // Memoize `now` to prevent re-calculating on every render
   const now = useMemo(() => new Date(), []);
 
   const upcomingEvents = useMemo(() => {
     return allEventsData
-      .filter(event => new Date(event.date) >= now) // Check if event date is in the future or today
-      .filter(event => upcomingFilter === 'All' || event.category === upcomingFilter) // Apply category filter
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()); // Sort upcoming events: oldest first
-  }, [now, upcomingFilter, allEventsData]); // allEventsData added as dependency
+      .filter(event => new Date(event.date) >= now)
+      .filter(event => upcomingFilter === 'All' || event.category === upcomingFilter)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }, [now, upcomingFilter]);
 
   const pastEvents = useMemo(() => {
     return allEventsData
-      .filter(event => new Date(event.date) < now) // Check if event date is in the past
-      .filter(event => pastFilter === 'All' || event.category === pastFilter) // Apply category filter
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Sort past events: newest first
-  }, [now, pastFilter, allEventsData]); // allEventsData added as dependency
+      .filter(event => new Date(event.date) < now)
+      .filter(event => pastFilter === 'All' || event.category === pastFilter)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [now, pastFilter]);
 
-  // GSAP for card animations
+  // Simulate loading for better UX
   useEffect(() => {
-    // Target cards that are currently visible based on the filters
-    // We give a slight delay to allow DOM to update after filter changes
-    const timer = setTimeout(() => {
-        gsap.fromTo(".event-card-animate:visible", // Attempt to target only visible ones (might need more specific targeting)
-            { opacity: 0, y: 20, scale: 0.98 },
-            {
-                opacity: 1,
-                y: 0,
-                scale: 1,
-                duration: 0.4,
-                stagger: 0.07,
-                ease: "power2.out",
-                overwrite: "auto" // Important for re-triggering on filter change
-            }
-        );
-    }, 50); // Small delay
+    const timer = setTimeout(() => setIsLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
-    return () => clearTimeout(timer); // Cleanup timer
-  }, [upcomingEvents, pastEvents]); // Re-run animation when filtered events change
+  // Smooth scroll to section
+  const scrollToSection = (section: 'upcoming' | 'past') => {
+    setActiveSection(section);
+    const targetRef = section === 'upcoming' ? upcomingSectionRef : pastSectionRef;
+    targetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const renderFilterButtons = (
     currentFilter: EventType['category'] | 'All',
@@ -65,95 +59,201 @@ const EventsPage: React.FC = () => {
         onClick={() => setFilter('All')}
       />
       {EVENT_CATEGORIES.map(category => {
-        // Only render filter buttons for categories that actually have events in the full dataset (optional optimization)
         const hasEventsInThisCategory = allEventsData.some(event => event.category === category);
         if (!hasEventsInThisCategory) return null;
 
         return (
-            <EventFilterButton
+          <EventFilterButton
             key={category}
             label={category}
             isActive={currentFilter === category}
             onClick={() => setFilter(category)}
-            />
+          />
         );
-    })}
+      })}
     </div>
   );
 
+  const renderEventGrid = (events: EventType[], sectionType: 'upcoming' | 'past') => {
+    if (isLoading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
+              <div className="h-52 sm:h-56 bg-gray-200"></div>
+              <div className="p-4 sm:p-5">
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-3 w-1/2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (events.length === 0) {
+      return (
+        <div className="text-center py-16 px-6 bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+            <FaCalendarAlt className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No {sectionType === 'upcoming' ? 'Upcoming' : 'Past'} Events
+          </h3>
+          <p className="text-gray-600 max-w-md mx-auto">
+            {sectionType === 'upcoming' 
+              ? "Check back soon for new events, or follow us on social media for updates!"
+              : "No past events to display currently."
+            }
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {events.map((event, index) => (
+          <div 
+            key={`${sectionType}-${event.id}`} 
+            className="transform transition-all duration-500 ease-out"
+            style={{
+              animationDelay: `${index * 50}ms`,
+              animation: 'fadeInUp 0.6s ease-out forwards'
+            }}
+          >
+            <EventCard event={event} />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
       {/* Hero Section */}
-      <div
-        className="relative h-[50vh] sm:h-[60vh] bg-cover bg-center flex items-center justify-center text-white"
-        style={{ backgroundImage: `url(${heroBgImage})` }}
-      >
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div> {/* Dark overlay */}
-        <div className="relative z-10 text-center px-4">
-          {/* Optional: CEUS Logo here if desired */}
-          {/* <img src="/images/logos/ceus-logo-white.png" alt="CEUS Logo" className="h-16 mx-auto mb-4" /> */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">Events</h1>
+      <div className="relative h-[60vh] bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-72 h-72 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/2 translate-y-1/2"></div>
+        </div>
+        
+        <div className="relative z-10 h-full flex items-center justify-center text-white">
+          <div className="text-center px-4 max-w-4xl mx-auto">
+            <div className="mb-6">
+              <FaCalendarAlt className="w-16 h-16 mx-auto mb-4 text-blue-200" />
+            </div>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-4">
+              Events
+            </h1>
+            <p className="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto">
+              Join us for exciting events, workshops, and social gatherings
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            <button
+              onClick={() => scrollToSection('upcoming')}
+              className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeSection === 'upcoming'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FaClock className="w-4 h-4" />
+              <span>Upcoming Events ({upcomingEvents.length})</span>
+            </button>
+            <button
+              onClick={() => scrollToSection('past')}
+              className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeSection === 'past'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <FaHistory className="w-4 h-4" />
+              <span>Past Events ({pastEvents.length})</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Upcoming Events Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3 text-center">
-            Upcoming Events
-          </h2>
-          <hr className="border-t-2 border-blue-500 w-24 mx-auto mb-8" /> {/* Accent line */}
-          {renderFilterButtons(upcomingFilter, setUpcomingFilter)}
-          {upcomingEvents.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {upcomingEvents.map(event => (
-                <div key={`upcoming-${event.id}`} className="event-card-animate"> {/* Ensure unique keys */}
-                  <EventCard event={event} />
-                </div>
-              ))}
+        <section ref={upcomingSectionRef} className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
+              Upcoming Events
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
+          </div>
+          
+          <div className="mb-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <FaFilter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-600">Filter by category:</span>
             </div>
-          ) : (
-            <div className="text-center py-10 px-6 bg-white rounded-lg shadow-md">
-                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <h3 className="mt-2 text-lg font-medium text-gray-900">No Upcoming Events</h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {upcomingFilter === 'All'
-                    ? "Check back soon for new events, or follow us on social media!"
-                    : `No upcoming events match the "${upcomingFilter}" filter.`
-                  }
-                </p>
-            </div>
-          )}
+            {renderFilterButtons(upcomingFilter, setUpcomingFilter)}
+          </div>
+          
+          {renderEventGrid(upcomingEvents, 'upcoming')}
         </section>
 
         {/* Past Events Section */}
-        <section>
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3 text-center">
-            Past Events
-          </h2>
-          <hr className="border-t-2 border-blue-500 w-20 mx-auto mb-8" /> {/* Accent line */}
-          {renderFilterButtons(pastFilter, setPastFilter)}
-          {pastEvents.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {pastEvents.map(event => (
-                <div key={`past-${event.id}`} className="event-card-animate"> {/* Ensure unique keys */}
-                  <EventCard event={event} />
-                </div>
-              ))}
+        <section ref={pastSectionRef}>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
+              Past Events
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-gray-500 to-gray-600 mx-auto rounded-full"></div>
+          </div>
+          
+          <div className="mb-8">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <FaFilter className="w-4 h-4 text-gray-500" />
+              <span className="text-sm font-medium text-gray-600">Filter by category:</span>
             </div>
-          ) : (
-            <p className="text-center text-gray-600 py-8">
-                {pastFilter === 'All'
-                    ? "No past events to display currently."
-                    : `No past events match the "${pastFilter}" filter.`
-                }
-            </p>
-          )}
+            {renderFilterButtons(pastFilter, setPastFilter)}
+          </div>
+          
+          {renderEventGrid(pastEvents, 'past')}
         </section>
       </div>
+
+      {/* Custom CSS for animations */}
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-pulse {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: .5;
+          }
+        }
+      `}</style>
     </div>
   );
 };
