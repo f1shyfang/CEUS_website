@@ -1,4 +1,3 @@
-// src/layouts/Navbar.tsx
 'use client'
 import React from 'react';
 import Link from 'next/link';
@@ -6,18 +5,19 @@ import { usePathname } from 'next/navigation';
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
-  
-  // Helper function to define active/inactive classes
+
+  // Active/inactive link classes
   const linkClasses = (path: string): string => {
-    const baseClasses = "px-4 py-2 text-lg font-extrabold transition-colors duration-200";
-    const activeClasses = "text-[#1B397E]"; // Active color
-    const inactiveClasses = "text-black hover:text-[#1B397E]"; // Inactive + hover
+    const baseClasses =
+      "px-4 py-2 text-lg font-extrabold transition-colors duration-200 whitespace-nowrap";
+    const activeClasses = "text-[#1B397E]";
+    const inactiveClasses = "text-black hover:text-[#1B397E]";
     return `${baseClasses} ${pathname === path ? activeClasses : inactiveClasses}`;
   };
 
   return (
-    <nav className="navbar flex items-center"> 
-      <Link href="/" className={linkClasses('/')}>Home</Link> 
+    <nav className="flex flex-wrap gap-2 justify-end">
+      <Link href="/" className={linkClasses('/')}>Home</Link>
       <Link href="/about" className={linkClasses('/about')}>About</Link>
       <Link href="/team" className={linkClasses('/team')}>Team</Link>
       <Link href="/events" className={linkClasses('/events')}>Events</Link>
