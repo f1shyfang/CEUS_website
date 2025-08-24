@@ -7,7 +7,7 @@ import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
 import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
 import Link from 'next/link'; // Import Link for navigation
 import Image from 'next/image'; // Import Next.js Image component
-//import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
+import ThreeDScene from '../components/ThreeDScene'; // Import 3D scene component
 
 // Import images used on the homepage
 // Images are now served from public folder
@@ -229,6 +229,30 @@ const HomePage: React.FC = () => {
             </div>
           ))}
         </Slider>
+      </section>
+
+      {/* --- 3D Laboratory Section --- */}
+      <section className="3d-laboratory-section container mx-auto px-6 py-12 md:py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Interactive 3D Laboratory</h2>
+          <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+            Explore our virtual chemical engineering laboratory featuring animated equipment and interactive 3D models.
+          </p>
+        </div>
+        
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8">
+          <div className="h-[400px] md:h-[500px]">
+            <ThreeDScene />
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <Link href="/3d-scene">
+            <button className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow hover:bg-blue-700 transition duration-300">
+              Explore Full 3D Laboratory
+            </button>
+          </Link>
+        </div>
       </section>
 
       {/* --- Video Section --- */}

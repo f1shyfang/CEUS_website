@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
       <Link href="/events" className={linkClasses('/events')}>Events</Link>
       <Link href="/publications" className={linkClasses('/publications')}>Publications</Link>
       <Link href="/sponsors" className={linkClasses('/sponsors')}>Sponsors</Link>
+      <Link href="/3d-scene" className={linkClasses('/3d-scene')}>3D Lab</Link>
       <Link href="/contact" className={linkClasses('/contact')}>Contact Us</Link>
     </nav>
   );
