@@ -18,7 +18,6 @@ const Navbar: React.FC = () => {
   return (
     <nav className="flex flex-wrap gap-2 justify-end">
       <Link href="/" className={linkClasses('/')}>Home</Link>
-      <Link href="/about" className={linkClasses('/about')}>About</Link>
       <Link href="/team" className={linkClasses('/team')}>Team</Link>
       <Link href="/events" className={linkClasses('/events')}>Events</Link>
       <Link href="/publications" className={linkClasses('/publications')}>Publications</Link>

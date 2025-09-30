@@ -65,23 +65,14 @@ const ContactPage: React.FC = () => {
                   <p className="text-gray-600">K-F10, June Griffith, UNSW Sydney, High St, Kensington NSW 2052, Australia</p>
                 </div>
               </div>
-              {/* Phone */}
-              <div className="flex items-start">
-                <FaPhone className="text-blue-500 text-2xl mt-1 mr-4 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-gray-700">Phone</h3>
-                  <p className="text-gray-600 hover:text-blue-600 transition-colors">
-                    <a href="tel:+1234567890">(61) 000000000</a>
-                  </p>
-                </div>
-              </div>
+              
               {/* Email */}
               <div className="flex items-start">
                 <FaEnvelope className="text-blue-500 text-2xl mt-1 mr-4 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-gray-700">Email</h3>
                   <p className="text-gray-600 hover:text-blue-600 transition-colors">
-                    <a href="mailto:support@example.com">unswceussecretary@gmail.com</a>
+                    <a href="mailto:support@example.com">ceus@unsw.edu.au</a>
                   </p>
                 </div>
               </div>

@@ -57,7 +57,7 @@ export const allSponsors: Sponsor[] = [
   {
     id: 'engineers-australia',
     name: 'Engineers Australia',
-    logoUrl: '/images/sponsors/EngineersAu.png',
+    logoUrl: '/images/sponsors/engineersaustralia!.png',
     websiteUrl: 'https://www.engineersaustralia.org.au/',
     description: 'Engineers Australia is the national forum for the advancement of engineering and the professional development of engineers.',
     tier: 'Supporting',

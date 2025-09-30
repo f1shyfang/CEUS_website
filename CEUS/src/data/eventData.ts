@@ -73,6 +73,42 @@ export const allEventsData: Event[] = [
     description: 'Quick-fire networking rounds to meet a variety of industry professionals and peers.',
     category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
   },
+  {
+    id: 'ceusEventUpcoming10',
+    title: 'Ceus ball',
+    date: createDate(2025, 9, 30), // Estimated: Term 3, Week 0
+    imageUrl: '/images/events/default-event-placeholder.png',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming11',
+    title: 'Ceus AGM',
+    date: createDate(2025, 10, 9), // Estimated: Term 3, Week 0
+    imageUrl: '/images/events/default-event-placeholder.png',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming12',
+    title: 'Networking Night',
+    date: createDate(2025, 10, 16), // Estimated: Term 3, Week 0
+    imageUrl: '/images/events/default-event-placeholder.png',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming13',
+    title: 'Christmas Party',
+    date: createDate(2025, 8, 16), // Estimated: Term 3, Week 0
+    imageUrl: '/images/events/default-event-placeholder.png',
+    facebookEventLink: '#', // Add Facebook event link
+    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    category: 'Social',
+  },
 
   // --- PAST EVENTS ---
   {

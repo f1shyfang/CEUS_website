@@ -165,23 +165,16 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      
-
       {/* --- About Us Section --- */}
       <section className="about-us-section container mx-auto px-6 py-12 md:py-16 text-center">
         <h2 className="text-3xl font-bold mb-8">About Us</h2>
         <p className="text-gray-600 leading-relaxed max-w-3xl mx-auto mb-6">
-          The Chemical Engineering Undergraduate Society (CEUS) is the vibrant student-run society 
+          Welcome to the Chemical Engineering Undergraduate Society's (CEUS's) is the vibrant student-run society 
           for students within the School of Chemical Engineering at The University of New South Wales (UNSW).
           We are dedicated to enhancing the academic, social, and professional lives of our members.
           Through a diverse range of events and initiatives, we foster a strong sense of community 
           and provide valuable opportunities for growth and connection.
         </p>
-        <Link href="/about">
-          <button className="mt-4 px-8 py-3 bg-blue-600 text-white font-semibold rounded-full shadow hover:bg-blue-700 transition duration-300">
-            Find out more...
-          </button>
-        </Link>
       </section>
       
       {/* --- Events Section --- */}
