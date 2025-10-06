@@ -1,6 +1,6 @@
 'use client'
 // src/pages/HomePage.tsx
-import React, { useEffect, useRef } from 'react'; // Import useEffect and useRef
+import React, { useEffect, useRef, useState } from 'react'; // Import useEffect, useRef, and useState
 import gsap from 'gsap'; // Import gsap
 import Slider from 'react-slick'; // Import Slider from react-slick
 import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
@@ -18,6 +18,18 @@ import Image from 'next/image'; // Import Next.js Image component
 import { allSponsors } from '../data/sponsorData';
 // Import event data
 import { allEventsData } from '../data/eventData';
+
+// Helper function to format date
+const formatEventDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  return date.toLocaleDateString('en-US', options);
+};
 
 const HomePage: React.FC = () => {
 
@@ -137,6 +149,46 @@ const HomePage: React.FC = () => {
   };
 
 
+  // --- EventCard Component ---
+  const EventCard: React.FC<{ event: any }> = ({ event }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+      <a
+        href={event.facebookEventLink || '#'}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-4 block focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-md"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative mx-auto max-h-[260px] overflow-hidden rounded-lg">
+          <Image
+            src={event.imageUrl}
+            alt={event.title}
+            width={280}
+            height={280}
+            className="w-full h-full object-cover transition-opacity duration-300"
+          />
+          <div
+            className={`absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-center items-center text-white p-4 transition-opacity duration-300 ${
+              isHovered ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <h3 className="text-xl font-bold text-center mb-2">{event.title}</h3>
+            <p className="text-sm text-center mb-2 opacity-90">{event.description}</p>
+            <p className="text-xs text-center opacity-75 font-medium">
+              {formatEventDate(event.date)}
+            </p>
+          </div>
+        </div>
+        <h3 className={`text-2xl font-semibold text-center mt-5 transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}>
+          {event.title}
+        </h3>
+      </a>
+    );
+  };
+
   // --- Component Return (JSX) ---
   return (
     <> 
@@ -155,10 +207,10 @@ const HomePage: React.FC = () => {
         
         <div className="relative z-20 h-full flex items-center container mx-auto px-6"> 
           <div className="title-overlay text-white text-left"> 
-            <div ref={heroTitleRef} className="UNSWCEUS text-[63px] font-bold tracking-[3px] leading-normal"> 
+            <div ref={heroTitleRef} className="UNSWCEUS text-[30px] md:text-[50px] font-bold tracking-[3px] leading-tight"> 
               UNSW CEUS
             </div>
-            <div ref={heroSubtitleRef} className="FULLNAME text-[22px] font-normal tracking-[2.5px] leading-normal">
+            <div ref={heroSubtitleRef} className="FULLNAME text-[28px] md:text-[32px] font-normal tracking-[2.5px] leading-snug">
                Chemical Engineering Undergraduate Society
             </div>
           </div>
@@ -167,7 +219,7 @@ const HomePage: React.FC = () => {
 
       {/* --- About Us Section --- */}
       <section className="about-us-section container mx-auto px-6 py-12 md:py-16 text-center">
-        <h2 className="text-3xl font-bold mb-8">About Us</h2>
+        <h2 className="text-4xl md:text-5xl font-bold mb-10">About Us</h2>
         <p className="text-gray-600 leading-relaxed max-w-3xl mx-auto mb-6">
           Welcome to the Chemical Engineering Undergraduate Society's (CEUS's) is the vibrant student-run society 
           for students within the School of Chemical Engineering at The University of New South Wales (UNSW).
@@ -179,23 +231,13 @@ const HomePage: React.FC = () => {
       
       {/* --- Events Section --- */}
       <section className="events-section container mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Happening Soon</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Happening Soon</h2>
         {/* Check if there are any events in the next two weeks */}
         {upcomingEventsNextTwoWeeks.length > 0 ? (
           <Slider {...eventSettings}>
             {/* Map over the filtered list of events */}
             {upcomingEventsNextTwoWeeks.map(event => (
-              <div key={event.id} className="px-4">
-                <Image 
-                  src={event.imageUrl} 
-                  alt={event.title} 
-                  width={200}
-                  height={200}
-                  className="mx-auto max-h-[200px] object-contain"
-                />
-                <h3 className="text-xl font-semibold text-center mt-4">{event.title}</h3>
-                {/* You might want to add more event details here */}
-              </div>
+              <EventCard key={event.id} event={event} />
             ))}
           </Slider>
         ) : (
@@ -204,20 +246,27 @@ const HomePage: React.FC = () => {
             No events scheduled for the next two weeks. Check out the full calendar on our events page!
           </p>
         )}
+
+        {/* --- View All Events Button --- */}
+        <div className="text-center mt-10">
+          <Link href="/events" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            View All Events
+          </Link>
+        </div>
       </section>
 
       {/* --- Sponsors Section --- */}
       <section className="sponsors-section container mx-auto px-6 py-12 md:py-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Our Sponsors</h2>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Our Sponsors</h2>
         <Slider {...sponsorSettings}>
           {allSponsors.map(sponsor => (
             <div key={sponsor.name} className="px-4">
               <Image 
                 src={sponsor.logoUrl} 
                 alt={sponsor.name} 
-                width={100}
-                height={100}
-                className="mx-auto max-h-[100px] object-contain"
+                width={140}
+                height={140}
+                className="mx-auto max-h-[140px] object-contain"
               />
             </div>
           ))}

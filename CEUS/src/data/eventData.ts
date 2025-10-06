@@ -60,7 +60,7 @@ export const allEventsData: Event[] = [
     title: 'Opal Site Tour',
     date: createDate(2025, 10, 29), // Estimated: Term 3, Week 7
     imageUrl: 'images/events/T325 OPAL SITE TOUR (1920 x 1080 px).png',
-    facebookEventLink: '#', // Add Facebook event link
+    facebookEventLink: 'https://www.facebook.com/events/1299631415149356/?acontext=%7B%22event_action_history%22%3A[]%7D', // Add Facebook event link
     description: 'An exclusive industrial site tour of the Opal facility. A fantastic opportunity for practical insights.',
     category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
   },
@@ -79,17 +79,17 @@ export const allEventsData: Event[] = [
     title: 'Ceus AGM',
     date: createDate(2025, 10, 9), // Estimated: Term 3, Week 0
     imageUrl: '/images/events/AGM 2025.png',
-    facebookEventLink: '#', // Add Facebook event link
+    facebookEventLink: 'https://www.facebook.com/events/1139291967640035/', // Add Facebook event link
     description: 'AGM 2025.',
     category: 'Social',
   },
   {
     id: 'ceusEventUpcoming12',
-    title: 'Networking Night',
+    title: 'SpeedNetworking Night',
     date: createDate(2025, 10, 16), // Estimated: Term 3, Week 0
     imageUrl: '/images/events/T325 Speed Networking Night (1920 x 1080 px).png',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'T325 Speed Networking.',
+    facebookEventLink: 'https://www.facebook.com/events/1092542282994218/?acontext=%7B%22event_action_history%22%3A[]%7D', // Add Facebook event link
+    description: 'Speed Networking.',
     category: 'Social',
   },
   
