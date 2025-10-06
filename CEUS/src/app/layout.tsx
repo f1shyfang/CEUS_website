@@ -38,6 +38,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: '/SVG logo (1).svg',
+    apple: '/SVG logo (1).svg',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_AU',
