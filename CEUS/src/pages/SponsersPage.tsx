@@ -93,7 +93,7 @@ const SponsorsPage: React.FC = () => {
                 <FaStar className="text-white text-2xl" />
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-                Principal Sponsor
+                Gold Partner
               </h2>
               <div className="w-24 h-1 bg-yellow-500 mx-auto"></div>
             </div>

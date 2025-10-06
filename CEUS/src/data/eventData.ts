@@ -59,20 +59,12 @@ export const allEventsData: Event[] = [
     id: 'ceusEventUpcoming8',
     title: 'Opal Site Tour',
     date: createDate(2025, 10, 29), // Estimated: Term 3, Week 7
-    imageUrl: '/images/events/ANSTO SITE TOUR.png',
+    imageUrl: 'images/events/T325 OPAL SITE TOUR (1920 x 1080 px).png',
     facebookEventLink: '#', // Add Facebook event link
     description: 'An exclusive industrial site tour of the Opal facility. A fantastic opportunity for practical insights.',
     category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
   },
-  {
-    id: 'ceusEventUpcoming9',
-    title: 'Speed Networking Night',
-    date: createDate(2025, 11, 5), // Estimated: Term 3, Week 8
-    imageUrl: '/images/events/INDUSTRY NIGHT T2 2025 FB EVENT.png',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'Quick-fire networking rounds to meet a variety of industry professionals and peers.',
-    category: 'Careers', // FIX: Changed 'Industry' to 'Careers'
-  },
+ 
   {
     id: 'ceusEventUpcoming10',
     title: 'Ceus ball',
@@ -86,29 +78,21 @@ export const allEventsData: Event[] = [
     id: 'ceusEventUpcoming11',
     title: 'Ceus AGM',
     date: createDate(2025, 10, 9), // Estimated: Term 3, Week 0
-    imageUrl: '/images/events/default-event-placeholder.png',
+    imageUrl: '/images/events/AGM 2025.png',
     facebookEventLink: '#', // Add Facebook event link
-    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    description: 'AGM 2025.',
     category: 'Social',
   },
   {
     id: 'ceusEventUpcoming12',
     title: 'Networking Night',
     date: createDate(2025, 10, 16), // Estimated: Term 3, Week 0
-    imageUrl: '/images/events/default-event-placeholder.png',
+    imageUrl: '/images/events/T325 Speed Networking Night (1920 x 1080 px).png',
     facebookEventLink: '#', // Add Facebook event link
-    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
+    description: 'T325 Speed Networking.',
     category: 'Social',
   },
-  {
-    id: 'ceusEventUpcoming13',
-    title: 'Christmas Party',
-    date: createDate(2025, 8, 16), // Estimated: Term 3, Week 0
-    imageUrl: '/images/events/default-event-placeholder.png',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'Test your knowledge at the start of term with a fun trivia night co-hosted with SUCES.',
-    category: 'Social',
-  },
+  
 
   // --- PAST EVENTS ---
   {
@@ -255,15 +239,7 @@ export const allEventsData: Event[] = [
     description: 'An exclusive tour of the ANSTO facility followed by a fun social party.',
     category: 'Collaboration', // FIX: Changed 'Mix' to 'Collaboration'
   },
-    {
-    id: 'ceusEventPast17',
-    title: 'CEUS Dinner',
-    date: createDate(2025, 7, 4), // Estimated: Term 2, Week 5
-    imageUrl: '/images/events/default-event-placeholder.png',
-    facebookEventLink: '#',
-    description: 'An annual formal dinner for members to celebrate the year in style.',
-    category: 'Social',
-  },
+  
   {
     id: 'ceusEventPast18',
     title: 'Mineral Minds Trivia Night',
