@@ -21,10 +21,10 @@ const Navbar: React.FC = () => {
     };
   }, [isMenuOpen]);
 
-  // Active/inactive link classes
+  // Desktop link classes (horizontal navigation)
   const linkClasses = (path: string): string => {
     const baseClasses =
-      "px-4 py-3 text-lg font-extrabold transition-colors duration-200 block w-full text-left";
+      "px-4 py-2 text-lg font-extrabold transition-colors duration-200 whitespace-nowrap";
     const activeClasses = "text-[#1B397E]";
     const inactiveClasses = "text-black hover:text-[#1B397E]";
     return `${baseClasses} ${pathname === path ? activeClasses : inactiveClasses}`;
@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
   // Mobile link classes (for hamburger menu)
   const mobileLinkClasses = (path: string): string => {
     const baseClasses =
-      "block px-4 py-3 text-lg font-extrabold transition-colors duration-200 hover:bg-gray-50";
+      "block px-4 py-4 text-lg font-extrabold transition-colors duration-200 hover:bg-gray-50 min-h-[56px] w-full";
     const activeClasses = "text-[#1B397E] bg-blue-50";
     const inactiveClasses = "text-black hover:text-[#1B397E]";
     return `${baseClasses} ${pathname === path ? activeClasses : inactiveClasses}`;
@@ -58,27 +58,26 @@ const Navbar: React.FC = () => {
         {/* Hamburger Menu Button */}
         <button
           onClick={toggleMenu}
-          className="p-2 text-black hover:text-[#1B397E] transition-colors duration-200"
+          className="p-3 text-black hover:text-[#1B397E] transition-colors duration-200 min-h-[48px] min-w-[48px] flex items-center justify-center hover:bg-gray-50 rounded-md"
           aria-label="Toggle menu"
         >
           <svg
-            className="w-6 h-6"
+            className="w-8 h-8"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            strokeWidth={2.5}
           >
             {isMenuOpen ? (
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
                 d="M6 18L18 6M6 6l12 12"
               />
             ) : (
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
                 d="M4 6h16M4 12h16M4 18h16"
               />
             )}
@@ -87,8 +86,8 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Dropdown */}
         {isMenuOpen && (
-          <div className="absolute top-full left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
-            <div className="py-2">
+          <div className="absolute top-full right-0 bg-white border border-gray-200 shadow-xl z-50 min-w-[200px]">
+            <div className="py-1">
               <Link href="/" className={mobileLinkClasses('/')} onClick={() => setIsMenuOpen(false)}>
                 Home
               </Link>
