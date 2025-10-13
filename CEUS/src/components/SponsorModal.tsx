@@ -1,4 +1,5 @@
 // src/components/SponsorModal.tsx
+'use client'
 import React, { useEffect } from 'react';
 import { Sponsor } from '../types';
 import { gsap } from 'gsap';
