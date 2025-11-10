@@ -7,39 +7,36 @@ const yearRepMembers: Member[] = [
   { id: 'brentH', name: 'Brent Heathcote', role: '1st Year Rep', imageUrl: '/images/team/brent.jpg' },
 
   // 2nd Year
-  { id: 'pavleH', name: 'Pavle Hornby', role: '2nd Year Rep', imageUrl: '/images/team/pavle.jpg' }, // Note: 'Hornsby' not 'Hornby' as in prev list
-  { id: 'megI', name: 'Meg Idosaka', role: '2nd Year Rep', imageUrl: '/images/team/meg.jpg' },
+  { id: 'nathanaelW', name: 'Nathanael Widjaya', role: '2nd Year Rep', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'janiceY', name: 'Janice Ye', role: '2nd Year Rep', imageUrl: '/images/team/no_profile_img.jpg' },
 
   // 3rd Year
-  { id: 'jonathanC_yr', name: 'Jonathan Cao', role: '3rd Year Representative (Chem Eng)', imageUrl: '/images/team/jonathan_yr.jpg' }, // Added _yr to distinguish from Exec Jonathan Cao if different person or different photo needed
-  { id: 'erikaD', name: 'Erika Daubaras', role: '3rd Year Representative (Chem Eng)', imageUrl: '/images/team/erika.jpg' ,linkedInUrl:"https://www.linkedin.com/in/erika-d-bbb301280?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"},
-  { id: 'alasterY', name: 'Alaster Yong', role: '3rd Year Representative (Chem Prod Eng)', imageUrl: '/images/team/alaster.jpg' ,linkedInUrl:'https://www.linkedin.com/in/alaster-yong-a7a2642a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app'},
+  { id: 'jasonY', name: 'Jason Yang', role: '3rd Year Rep', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'cassieW', name: 'Cassie Wood', role: '3rd Year Rep', imageUrl: '/images/team/no_profile_img.jpg' },
 
   // 4th Year
   // Chemical Engineering 4th Year is listed as "-", so no one for that specific slot
   { id: 'abdelrahmanE', name: 'Abdelrahman el Atawna', role: '4th Year Representative (Chem Prod Eng)', imageUrl: '/images/team/abdelrahman.jpg' ,linkedInUrl:"https://www.linkedin.com/in/abdelrahman-elatawna-337323255/"},
 ];
 const executivesMembers: Member[] = [
-  { id: 'veronicaP', name: 'Veronica Pelipos', role: 'President', imageUrl: '/images/team/Veronica.jpeg' ,linkedInUrl: 'https://au.linkedin.com/in/veronica-pelipos-45427821b?original_referer=https%3A%2F%2Fwww.google.com%2F'},
-  { id: 'ninaT', name: 'Nina Teerasuphaset', role: 'Industry Vice President', imageUrl: '/images/team/Nina Teerasuphaset.jpeg',linkedInUrl: 'https://www.linkedin.com/in/nina-teerasuphaset-8b6a1521b/'},
-  { id: 'kerriW', name: 'Kerri Wainstein', role: 'Vice President (Social)', imageUrl: '/images/team/kerri.jpg' },
-  { id: 'annaK', name: 'Anna Koth-Ofoegbu', role: 'Secretary', imageUrl: '/images/team/Anna_Koth.jpg' ,linkedInUrl: 'http://www.linkedin.com/in/anna-koth-094979199'},
-  { id: 'jonathanC_exec', name: 'Jonathan Cao', role: 'Treasurer', imageUrl: '/images/team/jonathan_exec.jpg' }, 
-  { id: 'arianaH', name: 'Ariana Halar', role: 'Marketing Co-ordinator', imageUrl: '/images/team/ariana.jpg' },
-  { id: 'sabrinaZ', name: 'Sabrina Zantua', role: 'Welfare Officer', imageUrl: '/images/team/sabrina.jpg' ,linkedInUrl:"www.linkedin.com/in/sabrina-zantua"},
+  { id: 'mayankV', name: 'Mayank Verma', role: 'President', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'amelieVB', name: 'Amelie von Bibra', role: 'Industry VP', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'jaxC_exec', name: 'Jax Carrick', role: 'Social VP', imageUrl: '/images/team/jax.jpg', linkedInUrl: 'http://linkedin.com/in/jax-carrick-267351371' },
+  { id: 'pavleH_exec', name: 'Pavle Hornby', role: 'Treasurer', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'lucyL_exec', name: 'Lucy Liu', role: 'Marketing', imageUrl: '/images/team/lucy.jpg', linkedInUrl: 'https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info' },
+  { id: 'mitchellC_exec', name: 'Mitchell Cook', role: 'Secretary', imageUrl: '/images/team/mitchell.jpg', linkedInUrl: 'https://www.linkedin.com/in/mitchell-cook-9690142a5/' },
+  { id: 'annabelleS_exec', name: 'Annabelle Scarlett', role: 'Arc Delegate', imageUrl: '/images/team/annabelle.jpg', linkedInUrl: 'https://www.linkedin.com/in/annabelle-scarlett-6b7a03372' },
+  { id: 'felicityP_exec', name: 'Felicity Pham', role: 'Welfare Officer', imageUrl: '/images/team/felicity.jpg' },
+  { id: 'michaelF_exec', name: 'Michael Feng', role: 'IT Director', imageUrl: '/images/team/no_profile_img.jpg' },
 ];
 
 // --- INFORMATION TECHNOLOGY TEAM ---
 const itMembers: Member[] = [
   { id: 'nirvanP', name: 'Nirvan Pulakhandam', role: 'Web Designer', imageUrl: '/images/team/nirvan.jpg' },
-  { id: 'michaelF', name: 'Michael Feng', role: 'Web Designer', imageUrl: '/images/team/michael.jpg' },
 ];
 
 // --- MARKETING TEAM ---
 const marketingTeamMembers: Member[] = [
-  { id: 'lucyL', name: 'Lucy Liu', role: 'Marketing Assistant', imageUrl: '/images/team/lucy.jpg' ,linkedInUrl:"https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info"},
-  { id: 'felicityP', name: 'Felicity Pham', role: 'Marketing Assistant', imageUrl: '/images/team/felicity.jpg',linkedInUrl:"https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info" },
-{id:'MitchellC',name:'Mitchell Cook ',role:'Marketing Assistant',imageUrl:'/images/team/mitchell.jpg',linkedInUrl:"https://www.linkedin.com/in/mitchell-cook-9690142a5/"},
 ];
 
 // --- SOCIALS/EVENTS TEAM ---
@@ -47,7 +44,6 @@ const socialsTeamMembers: Member[] = [
   { id: 'graceE', name: 'Grace', role: 'Event Officer', imageUrl: '/images/team/grace.jpg' },
   { id: 'charlieJ', name: 'Charlie Jiang', role: 'Event Officer', imageUrl: '/images/team/charlie.JPG', linkedInUrl: 'http://www.linkedin.com/in/charlie-jiang-0065a6239' },
   { id: 'devonD', name: 'Devon D', role: 'Events Administrator', imageUrl: '/images/team/devon.jpg' },
-  {id:'jaxC',name:'Jax Carrick',role:'Events Coordinator ',imageUrl:'/images/team/jax.jpg',linkedInUrl:"http://linkedin.com/in/jax-carrick-267351371"},
 ];
 
 // --- CAREERS/INDUSTRY TEAM ---
@@ -58,7 +54,6 @@ const careersTeamMembers: Member[] = [
 
 // --- Admin TEAM ---
 const AdminMembers: Member[] = [
-  { id: 'annabelleS', name: 'Annabelle Scarlett', role: 'Admin Officer', imageUrl: '/images/team/annabelle.jpg',linkedInUrl:"https://www.linkedin.com/in/annabelle-scarlett-6b7a03372" },
 ];
 
 

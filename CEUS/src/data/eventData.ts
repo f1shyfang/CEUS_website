@@ -11,11 +11,11 @@ export const allEventsData: Event[] = [
   // --- UPCOMING EVENTS (From Term 2, Week 8 onwards) ---
   {
     id: 'ceusEventUpcoming1',
-    title: 'CEUS x Pokersoc Poker Night',
-    date: createDate(2025, 9, 1), // Estimated: Term 2, Week 8
+    title: 'CEUS x POKERSOC Games Night',
+    date: createDate(2025, 11, 6, 18, 0), // Thursday 6th November, 6PM
     imageUrl: '/images/events/default-event-placeholder.png',
-    facebookEventLink: '#', // Add Facebook event link
-    description: 'A night of cards and friendly competition with Pokersoc. Beginners and experts are welcome!',
+    facebookEventLink: 'https://www.facebook.com/events/1343960497184441/',
+    description: 'All in for Games Night?? Join us in Matthews to relax and unwind with some boardgames, friendly competition, and snacks 🔥. It\'s time to test your 🃏 pokerface next Thursday at CEUS x POKERSOC Games Night♣️✨! Whether you\'re a seasoned player who knows when to hold \'em or a total beginner, everyone\'s welcome at the table 🙌. And if poker\'s not your strong suit 😅... don\'t worry — there\'ll be plenty of UNO, Catan, and other classics to keep the good times rolling. NO money involved 💸.',
     category: 'Social',
   },
     {
@@ -90,6 +90,15 @@ export const allEventsData: Event[] = [
     imageUrl: '/images/events/T325 Speed Networking Night (1920 x 1080 px).png',
     facebookEventLink: 'https://www.facebook.com/events/1092542282994218/?acontext=%7B%22event_action_history%22%3A[]%7D', // Add Facebook event link
     description: 'Speed Networking.',
+    category: 'Social',
+  },
+  {
+    id: 'ceusEventUpcoming13',
+    title: 'Sunset at Coogee Beach',
+    date: createDate(2025, 11, 13, 16, 0), // Thursday 13th November, 4PM
+    imageUrl: '/images/events/default-event-placeholder.png',
+    facebookEventLink: 'https://www.facebook.com/events/805904652215995',
+    description: 'Come with CEUS to relax and enjoy the sunset 🌅 at Coogee Beach next Thursday as we wrap up the day with some beachside fun 🤩 🌊. Join us for a laid-back afternoon of swimming, snacks, and a few rounds of beach volleyball 🏐. Meet up with us on campus (GYG) or go to Coogee directly!',
     category: 'Social',
   },
   

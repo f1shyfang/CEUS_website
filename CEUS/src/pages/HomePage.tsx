@@ -274,7 +274,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* --- Video Section --- */}
-      <section className="videocontainer relative h-[600px] bg-black/10 p-12"> 
+      <section className="videocontainer relative h-[600px] bg-black/10 p-4 md:p-6"> 
         <div className="ytvideo relative w-full h-full"> 
           <iframe 
             className="iframeyt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[80%]" 
