@@ -205,7 +205,7 @@ const HomePage: React.FC = () => {
           <div className="ImgOverlay absolute inset-0 bg-black/40 z-10"></div>
         </div>
         
-        <div className="relative z-20 h-full flex items-center container mx-auto px-6"> 
+        <div className="relative z-20 h-full flex items-center container mx-auto px-4"> 
           <div className="title-overlay text-white text-left"> 
             <div ref={heroTitleRef} className="UNSWCEUS text-[30px] md:text-[50px] font-bold tracking-[3px] leading-tight"> 
               UNSW CEUS
@@ -218,19 +218,23 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* --- About Us Section --- */}
-      <section className="about-us-section container mx-auto px-6 py-12 md:py-16 text-left">
+      <section className="about-us-section container mx-auto px-4 py-16 md:py-24 text-left">
         <h2 className="text-4xl md:text-5xl font-bold mb-16 text-center">About Us</h2>
-        <p className="text-xl md:text-1xl text-gray-600 leading-relaxed max-w-5xl mx-auto mb-1">
-          Welcome to the Chemical Engineering Undergraduate Society's (CEUS's) is the vibrant student-run society 
-          for students within the School of Chemical Engineering at The University of New South Wales (UNSW).
-          We are dedicated to enhancing the academic, social, and professional lives of our members.
-          Through a diverse range of events and initiatives, we foster a strong sense of community 
-          and provide valuable opportunities for growth and connection.
-        </p>
+        <div className="text-xl md:text-1xl text-gray-600 leading-relaxed max-w-5xl mx-auto space-y-6">
+          <p>
+            Welcome to the Chemical Engineering Undergraduate Society (CEUS)! We are a vibrant, student-run organisation representing all students within the School of Chemical Engineering at the University of New South Wales (UNSW).
+          </p>
+          <p>
+            Our mission is to enrich the university experience by supporting the academic, social, and professional growth of our members. Through a diverse range of events, industry networking opportunities, and community initiatives, CEUS fosters connection, collaboration, and a strong sense of belonging among chemical engineering students.
+          </p>
+          <p>
+            Whether you’re looking to build your career, meet like-minded peers, or simply make the most of your time at UNSW, CEUS is here to help you get involved and thrive.
+          </p>
+        </div>
       </section>
       
       {/* --- Events Section --- */}
-      <section className="events-section container mx-auto px-6 py-12 md:py-16">
+      <section className="events-section container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Happening Soon</h2>
         {/* Check if there are any events in the next two weeks */}
         {upcomingEventsNextTwoWeeks.length > 0 ? (
@@ -256,7 +260,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* --- Sponsors Section --- */}
-      <section className="sponsors-section container mx-auto px-6 py-12 md:py-16">
+      <section className="sponsors-section container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Our Sponsors</h2>
         <Slider {...sponsorSettings}>
           {allSponsors.map(sponsor => (
