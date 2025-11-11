@@ -101,6 +101,15 @@ export const allEventsData: Event[] = [
     description: 'Come with CEUS to relax and enjoy the sunset 🌅 at Coogee Beach next Thursday as we wrap up the day with some beachside fun 🤩 🌊. Join us for a laid-back afternoon of swimming, snacks, and a few rounds of beach volleyball 🏐. Meet up with us on campus (GYG) or go to Coogee directly!',
     category: 'Social',
   },
+  {
+    id: 'ceusEventUpcoming14',
+    title: 'EOY Pubcrawl — MECHSOC x BESS x CEUS',
+    date: createDate(2025, 11, 21, 18, 0), // Friday 21st November, 6PM
+    imageUrl: '/images/events/PUBCRAWL (1920 x 1080 px).png',
+    facebookEventLink: 'https://www.facebook.com/events/822281220668226',
+    description: '💥 TICKETS OUT NOW 💥 Mariah Carey’s almost done defrosting, and so are we ❄️🎅. Celebrate the end of term (and year) in full festive colour at MECHSOC x BESS x CEUS End of Year PUBCRAWL 🔥. One last crawl before exams hit and we crawl into the holidays. Venue: Shark Hotel. 🎶🍻',
+    category: 'Social',
+  },
   
 
   // --- PAST EVENTS ---
