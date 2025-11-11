@@ -96,7 +96,7 @@ export const allEventsData: Event[] = [
     id: 'ceusEventUpcoming13',
     title: 'Sunset at Coogee Beach',
     date: createDate(2025, 11, 13, 16, 0), // Thursday 13th November, 4PM
-    imageUrl: '/images/events/default-event-placeholder.png',
+    imageUrl: '/images/events/beach-day-coogee-nov-2025.png',
     facebookEventLink: 'https://www.facebook.com/events/805904652215995',
     description: 'Come with CEUS to relax and enjoy the sunset 🌅 at Coogee Beach next Thursday as we wrap up the day with some beachside fun 🤩 🌊. Join us for a laid-back afternoon of swimming, snacks, and a few rounds of beach volleyball 🏐. Meet up with us on campus (GYG) or go to Coogee directly!',
     category: 'Social',

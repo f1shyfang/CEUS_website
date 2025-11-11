@@ -26,34 +26,43 @@ const executivesMembers: Member[] = [
   { id: 'lucyL_exec', name: 'Lucy Liu', role: 'Marketing', imageUrl: '/images/team/lucy.jpg', linkedInUrl: 'https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info' },
   { id: 'mitchellC_exec', name: 'Mitchell Cook', role: 'Secretary', imageUrl: '/images/team/mitchell.jpg', linkedInUrl: 'https://www.linkedin.com/in/mitchell-cook-9690142a5/' },
   { id: 'annabelleS_exec', name: 'Annabelle Scarlett', role: 'Arc Delegate', imageUrl: '/images/team/annabelle.jpg', linkedInUrl: 'https://www.linkedin.com/in/annabelle-scarlett-6b7a03372' },
-  { id: 'felicityP_exec', name: 'Felicity Pham', role: 'Welfare Officer', imageUrl: '/images/team/felicity.jpg' },
-  { id: 'michaelF_exec', name: 'Michael Feng', role: 'IT Director', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'felicityP_exec', name: 'Felicity Pham', role: 'Welfare Officer', imageUrl: '/images/team/felicity.jpg', linkedInUrl: 'https://www.linkedin.com/in/felicity-pham-aa293b365/' },
+  { id: 'michaelF_exec', name: 'Michael Feng', role: 'IT Director', imageUrl: '/images/team/no_profile_img.jpg', linkedInUrl: 'https://www.linkedin.com/in/michaelfeng7/' },
 ];
 
 // --- INFORMATION TECHNOLOGY TEAM ---
 const itMembers: Member[] = [
-  { id: 'nirvanP', name: 'Nirvan Pulakhandam', role: 'Web Designer', imageUrl: '/images/team/nirvan.jpg' },
+  { id: 'michaelF_exec', name: 'Michael Feng', role: 'IT Director', imageUrl: '/images/team/no_profile_img.jpg', linkedInUrl: 'https://www.linkedin.com/in/michaelfeng7/' },
+  { id: 'nirvanP', name: 'Nirvan Pulakhandam', role: 'IT Assistant', imageUrl: '/images/team/nirvan.jpg' },
 ];
 
 // --- MARKETING TEAM ---
 const marketingTeamMembers: Member[] = [
+  { id: 'lucyL_exec', name: 'Lucy Liu', role: 'Marketing', imageUrl: '/images/team/lucy.jpg', linkedInUrl: 'https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info' },
+  { id: 'jaidanM', name: 'Jaidan', role: 'Marketing Assistant', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'graceM', name: 'Grace', role: 'Marketing Assistant', imageUrl: '/images/team/grace.jpg' },
 ];
 
 // --- SOCIALS/EVENTS TEAM ---
 const socialsTeamMembers: Member[] = [
-  { id: 'graceE', name: 'Grace', role: 'Event Officer', imageUrl: '/images/team/grace.jpg' },
-  { id: 'charlieJ', name: 'Charlie Jiang', role: 'Event Officer', imageUrl: '/images/team/charlie.JPG', linkedInUrl: 'http://www.linkedin.com/in/charlie-jiang-0065a6239' },
-  { id: 'devonD', name: 'Devon D', role: 'Events Administrator', imageUrl: '/images/team/devon.jpg' },
+  { id: 'jaxC_exec', name: 'Jax Carrick', role: 'Social VP', imageUrl: '/images/team/jax.jpg', linkedInUrl: 'http://linkedin.com/in/jax-carrick-267351371' },
+  { id: 'anishaE', name: 'Anisha', role: 'Events Coordinator', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'devanE', name: 'Devan', role: 'Events Coordinator', imageUrl: '/images/team/devon.jpg' },
+  { id: 'charlieI', name: 'Charlie Jiang', role: 'Intersociety Representative', imageUrl: '/images/team/charlie.JPG', linkedInUrl: 'http://www.linkedin.com/in/charlie-jiang-0065a6239' },
 ];
 
 // --- CAREERS/INDUSTRY TEAM ---
 const careersTeamMembers: Member[] = [
-  { id: 'jaymeC', name: 'Jayme Cheong', role: 'Industry Liaison', imageUrl: '/images/team/jayme.jpg',linkedInUrl:"https://www.linkedin.com/in/jayme-cheong-63332a2b2/" },
-  { id: 'gabrielleS', name: 'Gabrielle Shoebridge', role: 'Industry Events Officer', imageUrl: '/images/team/gabrielle.jpg',linkedInUrl:"https://www.linkedin.com/in/gabrielle-shoebridge-087479281/" },
+  { id: 'amelieVB', name: 'Amelie von Bibra', role: 'Industry VP', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'gabbyS', name: 'Gabby', role: 'Sponsorship Director', imageUrl: '/images/team/gabrielle.jpg', linkedInUrl: 'https://www.linkedin.com/in/gabrielle-shoebridge-087479281/' },
+  { id: 'jaymeS', name: 'Jayme Cheong', role: 'Sponsorship Director', imageUrl: '/images/team/jayme.jpg', linkedInUrl: 'https://www.linkedin.com/in/jayme-cheong-63332a2b2/' },
+  { id: 'jasmineI', name: 'Jasmine', role: 'Industry Events Coordinator', imageUrl: '/images/team/no_profile_img.jpg' },
 ];
 
 // --- Admin TEAM ---
 const AdminMembers: Member[] = [
+  { id: 'annabelleS_exec', name: 'Annabelle Scarlett', role: 'Arc Delegate', imageUrl: '/images/team/annabelle.jpg', linkedInUrl: 'https://www.linkedin.com/in/annabelle-scarlett-6b7a03372' },
+  { id: 'felicityP_exec', name: 'Felicity Pham', role: 'Welfare Officer', imageUrl: '/images/team/felicity.jpg', linkedInUrl: 'https://www.linkedin.com/in/felicity-pham-aa293b365/' },
 ];
 
 
