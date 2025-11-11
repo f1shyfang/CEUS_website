@@ -39,7 +39,7 @@ const itMembers: Member[] = [
 // --- MARKETING TEAM ---
 const marketingTeamMembers: Member[] = [
   { id: 'lucyL_exec', name: 'Lucy Liu', role: 'Marketing', imageUrl: '/images/team/lucy.jpg', linkedInUrl: 'https://www.linkedin.com/in/lucy-liu-5777a9354?trk=contact-info' },
-  { id: 'jaidanM', name: 'Jaidan', role: 'Marketing Assistant', imageUrl: '/images/team/no_profile_img.jpg' },
+  { id: 'jaidanM', name: 'Jaidan', role: 'Marketing Assistant', imageUrl: '/images/team/no_profile_img.jpg', linkedInUrl: 'https://www.linkedin.com/in/jaidan-hassan-16348627a/' },
   { id: 'graceM', name: 'Grace', role: 'Marketing Assistant', imageUrl: '/images/team/grace.jpg' },
 ];
 
