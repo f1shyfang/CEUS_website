@@ -2,6 +2,8 @@
 // src/pages/ContactPage.tsx
 import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { submitContactForm } from '../lib/supabase';
+
 
 const ContactPage: React.FC = () => {
   // State to manage form inputs
@@ -11,6 +13,10 @@ const ContactPage: React.FC = () => {
     subject: '',
     message: '',
   });
+
+  // State to manage form submission status
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   // Handler for input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,21 +28,51 @@ const ContactPage: React.FC = () => {
   };
 
   // Handler for form submission
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // --- FORM SUBMISSION LOGIC ---
-    // In a real application, you would send this data to a backend API.
-    // For this example, we'll just log it to the console and show an alert.
-    console.log('Form data submitted:', formData);
-    alert('Thank you for your message! We will get back to you shortly.');
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-    // Reset the form after submission
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-    });
+    try {
+      // Submit form data to Supabase
+      const result = await submitContactForm({
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      console.log('Form submitted successfully:', result);
+      setSubmitStatus('success');
+      
+      // Reset the form after successful submission
+      setFormData({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+      });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 5000);
+
+    } catch (error) {
+      console.error('❌ Failed to submit form:', error);
+      console.error('Error details:', {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        error: error
+      });
+      setSubmitStatus('error');
+      
+      // Clear error message after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -95,6 +131,10 @@ const ContactPage: React.FC = () => {
           {/* Column 2: Contact Form */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Send us a Message</h2>
+            
+
+
+            
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Name Input */}
               <div>
@@ -160,11 +200,31 @@ const ContactPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-md hover:bg-blue-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  disabled={isSubmitting}
+                  className={`w-full font-bold py-3 px-6 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                    isSubmitting
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
               </div>
+
+              {/* Status Messages */}
+              {submitStatus === 'success' && (
+                <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+                  <p className="font-semibold">✓ Message sent successfully!</p>
+                  <p className="text-sm">Thank you for contacting us. We'll get back to you shortly.</p>
+                </div>
+              )}
+              
+              {submitStatus === 'error' && (
+                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+                  <p className="font-semibold">✗ Failed to send message</p>
+                  <p className="text-sm">Please try again or email us directly at ceus@unsw.edu.au</p>
+                </div>
+              )}
             </form>
           </div>
         </div>
