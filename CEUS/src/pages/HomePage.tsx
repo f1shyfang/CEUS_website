@@ -8,16 +8,13 @@ import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CS
 import Link from 'next/link'; // Import Link for navigation
 import Image from 'next/image'; // Import Next.js Image component
 //import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
+import { fetchEvents, fetchSponsors } from '../lib/supabase';
+import { Event, Sponsor } from '../types';
 
 // Import images used on the homepage
 // Images are now served from public folder
 //import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
 //import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
-
-// Import sponsor data
-import { allSponsors } from '../data/sponsorData';
-// Import event data
-import { allEventsData } from '../data/eventData';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {
@@ -32,6 +29,10 @@ const formatEventDate = (dateString: string): string => {
 };
 
 const HomePage: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   // --- GSAP Animation Refs ---
   const heroTitleRef = useRef<HTMLDivElement>(null); // Ref for the main title div
@@ -68,13 +69,42 @@ const HomePage: React.FC = () => {
     }
   }, []); // Empty dependency array runs this effect only once on mount
 
+  useEffect(() => {
+    let isMounted = true;
+    const loadHomepageData = async () => {
+      try {
+        setIsLoading(true);
+        const [fetchedEvents, fetchedSponsors] = await Promise.all([
+          fetchEvents(),
+          fetchSponsors(),
+        ]);
+        if (!isMounted) return;
+        setEvents(fetchedEvents);
+        setSponsors(fetchedSponsors);
+        setLoadError(null);
+      } catch (err) {
+        console.error('Failed to load homepage data', err);
+        if (isMounted) {
+          setLoadError('Unable to load latest events and sponsors right now.');
+        }
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    loadHomepageData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
 
   // --- Date Filtering for Upcoming Events ---
   const now = new Date();
   const twoWeeksFromNow = new Date();
   twoWeeksFromNow.setDate(now.getDate() + 14); // Set the date to 14 days from now
 
-  const upcomingEventsNextTwoWeeks = allEventsData.filter(event => {
+  const upcomingEventsNextTwoWeeks = events.filter(event => {
     const eventDate = new Date(event.date);
     // Filter events that are between today and two weeks from now
     return eventDate >= now && eventDate <= twoWeeksFromNow;
@@ -84,13 +114,13 @@ const HomePage: React.FC = () => {
   // --- Carousel Settings ---
   const sponsorSettings = {
     dots: true,
-    infinite: allSponsors.length > 3,
+    infinite: sponsors.length > 3,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4500,
     pauseOnHover: true,
-    centerMode: allSponsors.length < 3,
+    centerMode: sponsors.length < 3,
     centerPadding: "40px",
     responsive: [
       {
@@ -192,6 +222,11 @@ const HomePage: React.FC = () => {
   // --- Component Return (JSX) ---
   return (
     <> 
+      {loadError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 text-center">
+          {loadError}
+        </div>
+      )}
       {/* --- Group Photo / Hero Section --- */}
       <section className="GroupPhoto relative w-full h-[75vh] max-h-[600px] overflow-hidden"> 
         <div className="GroupImg absolute inset-0"> 
@@ -237,7 +272,9 @@ const HomePage: React.FC = () => {
       <section className="events-section container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Happening Soon</h2>
         {/* Check if there are any events in the next two weeks */}
-        {upcomingEventsNextTwoWeeks.length > 0 ? (
+        {isLoading ? (
+          <p className="text-center text-gray-600 text-lg">Loading events...</p>
+        ) : upcomingEventsNextTwoWeeks.length > 0 ? (
           <Slider {...eventSettings}>
             {/* Map over the filtered list of events */}
             {upcomingEventsNextTwoWeeks.map(event => (
@@ -273,19 +310,27 @@ const HomePage: React.FC = () => {
       {/* --- Sponsors Section --- */}
       <section className="sponsors-section container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Our Sponsors</h2>
-        <Slider {...sponsorSettings}>
-          {allSponsors.map(sponsor => (
-            <div key={sponsor.name} className="px-4">
-              <Image 
-                src={sponsor.logoUrl} 
-                alt={sponsor.name} 
-                width={140}
-                height={140}
-                className="mx-auto max-h-[140px] object-contain"
-              />
-            </div>
-          ))}
-        </Slider>
+        {isLoading ? (
+          <p className="text-center text-gray-600 text-lg">Loading sponsors...</p>
+        ) : sponsors.length > 0 ? (
+          <Slider {...sponsorSettings}>
+            {sponsors.map(sponsor => (
+              <div key={sponsor.name} className="px-4">
+                <Image 
+                  src={sponsor.logoUrl} 
+                  alt={sponsor.name} 
+                  width={140}
+                  height={140}
+                  className="mx-auto max-h-[140px] object-contain"
+                />
+              </div>
+            ))}
+          </Slider>
+        ) : (
+          <p className="text-center text-gray-600 text-lg">
+            No sponsors to display right now.
+          </p>
+        )}
       </section>
 
       {/* --- Video Section --- */}

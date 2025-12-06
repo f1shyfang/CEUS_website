@@ -3,8 +3,8 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import EventCard from '../components/EventCard';
 import EventFilterButton from '../components/EventFilterButton';
-import { allEventsData } from '../data/eventData';
 import { Event as EventType } from '../types';
+import { fetchEvents } from '../lib/supabase';
 import { FaCalendarAlt, FaFilter, FaClock, FaHistory } from 'react-icons/fa';
 
 const EVENT_FILTERS = ['Industry', 'Social', 'Academic'] as const;
@@ -24,36 +24,59 @@ const matchesFilter = (eventCategory: EventType['category'], activeFilter: Filte
 };
 
 const EventsPage: React.FC = () => {
+  const [events, setEvents] = useState<EventType[]>([]);
   const [upcomingFilter, setUpcomingFilter] = useState<FilterType>(null);
   const [pastFilter, setPastFilter] = useState<FilterType>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<'upcoming' | 'past'>('upcoming');
   
   const upcomingSectionRef = useRef<HTMLDivElement>(null);
   const pastSectionRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    let isMounted = true;
+    const loadEvents = async () => {
+      try {
+        setIsLoading(true);
+        const fetched = await fetchEvents();
+        if (isMounted) {
+          setEvents(fetched);
+          setLoadError(null);
+        }
+      } catch (err) {
+        console.error('Failed to fetch events', err);
+        if (isMounted) {
+          setLoadError('Unable to load events right now. Please try again soon.');
+          setEvents([]);
+        }
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    loadEvents();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Memoize `now` to prevent re-calculating on every render
   const now = useMemo(() => new Date(), []);
 
   const upcomingEvents = useMemo(() => {
-    return allEventsData
+    return events
       .filter(event => new Date(event.date) >= now)
       .filter(event => matchesFilter(event.category, upcomingFilter))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [now, upcomingFilter]);
+  }, [events, now, upcomingFilter]);
 
   const pastEvents = useMemo(() => {
-    return allEventsData
+    return events
       .filter(event => new Date(event.date) < now)
       .filter(event => matchesFilter(event.category, pastFilter))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [now, pastFilter]);
-
-  // Simulate loading for better UX
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 500);
-    return () => clearTimeout(timer);
-  }, []);
+  }, [events, now, pastFilter]);
 
   // Smooth scroll to section
   const scrollToSection = (section: 'upcoming' | 'past') => {
@@ -68,7 +91,7 @@ const EventsPage: React.FC = () => {
   ) => (
     <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
       {EVENT_FILTERS.map(category => {
-        const hasEventsInThisCategory = allEventsData.some(event => matchesFilter(event.category, category));
+        const hasEventsInThisCategory = events.some(event => matchesFilter(event.category, category));
         if (!hasEventsInThisCategory) return null;
 
         return (
@@ -86,6 +109,22 @@ const EventsPage: React.FC = () => {
   );
 
   const renderEventGrid = (events: EventType[], sectionType: 'upcoming' | 'past') => {
+    if (loadError) {
+      return (
+        <div className="text-center py-16 px-6 bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="mx-auto w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4">
+            <FaCalendarAlt className="w-8 h-8 text-red-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Unable to load {sectionType === 'upcoming' ? 'upcoming' : 'past'} events
+          </h3>
+          <p className="text-gray-600 max-w-md mx-auto">
+            {loadError}
+          </p>
+        </div>
+      );
+    }
+
     if (isLoading) {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">

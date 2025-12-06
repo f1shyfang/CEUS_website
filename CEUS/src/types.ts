@@ -37,7 +37,15 @@ export interface Event {
 
 
 
-export type SponsorTier = 'Major' | 'Supporting' | 'Other'; // Or Gold, Silver etc.
+// Expand tiers so the sponsors page can mirror CSESoc-style groupings.
+export type SponsorTier =
+  | 'Diamond'
+  | 'Gold'
+  | 'Silver'
+  | 'Community'
+  | 'Major'
+  | 'Supporting'
+  | 'Other';
 
 export interface Sponsor {
   id: string; // Unique identifier (e.g., 'kpmg', 'atlassian')
@@ -46,4 +54,5 @@ export interface Sponsor {
   websiteUrl: string; // Link to the sponsor's website
   description: string; // Text to display in the modal popup
   tier: SponsorTier;
+  featured?: boolean; // Marks the sponsor for the spotlight section
 }
