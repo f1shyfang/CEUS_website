@@ -7,16 +7,17 @@ import FilterButton from '../components/FilterButton';
 import { fetchTeamCategories } from '../lib/supabase';
 import { TeamCategory } from '../types';
 
+const CATEGORY_ORDER = [
+  'Executives',
+  'Year Representatives',
+  'Admin',
+  'Careers',
+  'Socials',
+  'Marketing',
+  'Information Technology',
+];
+
 const TeamPage: React.FC = () => {
-  const CATEGORY_ORDER = [
-    'Executives',
-    'Year Representatives',
-    'Admin',
-    'Careers',
-    'Socials',
-    'Marketing',
-    'Information Technology',
-  ];
 
   const [teamCategories, setTeamCategories] = useState<TeamCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');

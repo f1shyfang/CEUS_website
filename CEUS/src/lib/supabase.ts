@@ -42,7 +42,7 @@ type TeamMemberRow = {
 
 export async function fetchEvents(): Promise<Event[]> {
   const { data, error } = await supabase
-    .from<EventRow>('events')
+    .from('events')
     .select('id, title, date, image_url, facebook_event_link, description, category')
     .order('date', { ascending: true });
 
@@ -51,7 +51,7 @@ export async function fetchEvents(): Promise<Event[]> {
     throw error;
   }
 
-  return (data ?? []).map((row) => ({
+  return (data as EventRow[] | null ?? []).map((row) => ({
     id: row.id,
     title: row.title,
     date: row.date,
@@ -64,7 +64,7 @@ export async function fetchEvents(): Promise<Event[]> {
 
 export async function fetchSponsors(): Promise<Sponsor[]> {
   const { data, error } = await supabase
-    .from<SponsorRow>('sponsors')
+    .from('sponsors')
     .select('id, name, logo_url, website_url, description, tier, featured');
 
   if (error) {
@@ -72,7 +72,7 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
     throw error;
   }
 
-  return (data ?? []).map((row) => ({
+  return (data as SponsorRow[] | null ?? []).map((row) => ({
     id: row.id,
     name: row.name,
     logoUrl: row.logo_url || '',
@@ -85,7 +85,7 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
 
 export async function fetchTeamCategories(): Promise<TeamCategory[]> {
   const { data, error } = await supabase
-    .from<TeamMemberRow>('team_members')
+    .from('team_members')
     .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
     .order('category', { ascending: true })
     .order('sort_order', { ascending: true });
@@ -96,7 +96,7 @@ export async function fetchTeamCategories(): Promise<TeamCategory[]> {
   }
 
   const grouped: Record<string, Member[]> = {};
-  (data ?? []).forEach((row) => {
+  (data as TeamMemberRow[] | null ?? []).forEach((row) => {
     const member: Member = {
       id: row.id,
       name: row.name,
