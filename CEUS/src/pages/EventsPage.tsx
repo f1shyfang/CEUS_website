@@ -7,11 +7,25 @@ import { allEventsData } from '../data/eventData';
 import { Event as EventType } from '../types';
 import { FaCalendarAlt, FaFilter, FaClock, FaHistory } from 'react-icons/fa';
 
-const EVENT_CATEGORIES: EventType['category'][] = ['Flagship', 'Careers', 'Social', 'Academic', 'Welfare', 'Recruitment', 'Collaboration', 'Other'];
+const EVENT_FILTERS = ['Industry', 'Social', 'Academic'] as const;
+type FilterType = (typeof EVENT_FILTERS)[number] | null;
+
+const CATEGORY_MAPPING: Record<Exclude<FilterType, null>, EventType['category'][]> = {
+  // Map Industry filter to career/networking style categories present in data
+  Industry: ['Careers', 'Collaboration', 'Recruitment'],
+  Social: ['Social', 'Welfare'],
+  Academic: ['Academic'],
+};
+
+const matchesFilter = (eventCategory: EventType['category'], activeFilter: FilterType) => {
+  if (!activeFilter) return true;
+  const mapped = CATEGORY_MAPPING[activeFilter] ?? [];
+  return mapped.includes(eventCategory);
+};
 
 const EventsPage: React.FC = () => {
-  const [upcomingFilter, setUpcomingFilter] = useState<EventType['category'] | 'All'>('All');
-  const [pastFilter, setPastFilter] = useState<EventType['category'] | 'All'>('All');
+  const [upcomingFilter, setUpcomingFilter] = useState<FilterType>(null);
+  const [pastFilter, setPastFilter] = useState<FilterType>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<'upcoming' | 'past'>('upcoming');
   
@@ -24,14 +38,14 @@ const EventsPage: React.FC = () => {
   const upcomingEvents = useMemo(() => {
     return allEventsData
       .filter(event => new Date(event.date) >= now)
-      .filter(event => upcomingFilter === 'All' || event.category === upcomingFilter)
+      .filter(event => matchesFilter(event.category, upcomingFilter))
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [now, upcomingFilter]);
 
   const pastEvents = useMemo(() => {
     return allEventsData
       .filter(event => new Date(event.date) < now)
-      .filter(event => pastFilter === 'All' || event.category === pastFilter)
+      .filter(event => matchesFilter(event.category, pastFilter))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [now, pastFilter]);
 
@@ -49,17 +63,12 @@ const EventsPage: React.FC = () => {
   };
 
   const renderFilterButtons = (
-    currentFilter: EventType['category'] | 'All',
-    setFilter: React.Dispatch<React.SetStateAction<EventType['category'] | 'All'>>
+    currentFilter: FilterType,
+    setFilter: React.Dispatch<React.SetStateAction<FilterType>>
   ) => (
     <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
-      <EventFilterButton
-        label="All"
-        isActive={currentFilter === 'All'}
-        onClick={() => setFilter('All')}
-      />
-      {EVENT_CATEGORIES.map(category => {
-        const hasEventsInThisCategory = allEventsData.some(event => event.category === category);
+      {EVENT_FILTERS.map(category => {
+        const hasEventsInThisCategory = allEventsData.some(event => matchesFilter(event.category, category));
         if (!hasEventsInThisCategory) return null;
 
         return (
@@ -67,7 +76,9 @@ const EventsPage: React.FC = () => {
             key={category}
             label={category}
             isActive={currentFilter === category}
-            onClick={() => setFilter(category)}
+            onClick={() =>
+              setFilter(prev => (prev === category ? null : category))
+            }
           />
         );
       })}
@@ -120,7 +131,10 @@ const EventsPage: React.FC = () => {
             className="transform transition-all duration-500 ease-out"
             style={{
               animationDelay: `${index * 50}ms`,
-              animation: 'fadeInUp 0.6s ease-out forwards'
+              animationName: 'fadeInUp',
+              animationDuration: '0.6s',
+              animationTimingFunction: 'ease-out',
+              animationFillMode: 'forwards',
             }}
           >
             <EventCard event={event} />
