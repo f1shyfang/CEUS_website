@@ -1,20 +1,21 @@
 'use client'
 // src/pages/HomePage.tsx
-import React, { useEffect, useRef, useState } from 'react'; // Import useEffect, useRef, and useState
-import gsap from 'gsap'; // Import gsap
-import Slider from 'react-slick'; // Import Slider from react-slick
-import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
-import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
-import Link from 'next/link'; // Import Link for navigation
-import Image from 'next/image'; // Import Next.js Image component
-//import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
+import React, { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import Image from 'next/image';
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
 import { Event, Sponsor } from '../types';
 
-// Import images used on the homepage
-// Images are now served from public folder
-//import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
-//import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
+// Dynamic imports for heavy libraries - only loaded when needed
+const Slider = dynamic(() => import('react-slick'), {
+  ssr: false,
+  loading: () => <div className="h-64 flex items-center justify-center">Loading...</div>
+});
+
+// Import slick-carousel CSS
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {
@@ -41,32 +42,38 @@ const HomePage: React.FC = () => {
 
   // --- GSAP Animation Effect ---
   useEffect(() => {
-    // Ensure both refs are connected before animating
-    if (heroTitleRef.current && heroSubtitleRef.current) {
+    let tl: gsap.core.Timeline | null = null;
+    
+    // Dynamically import GSAP and run animation
+    const runAnimation = async () => {
+      if (!heroTitleRef.current || !heroSubtitleRef.current) return;
+      
+      const gsapModule = await import('gsap');
+      const gsap = gsapModule.default;
       
       // Create a GSAP timeline for sequenced animations
-      // Defaults apply to all tweens in the timeline unless overridden
-      const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
+      tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
 
       // Animate title: fade in and slide up slightly from its initial position
       tl.fromTo(heroTitleRef.current, 
-        { opacity: 0, y: 20 }, // Start state (opacity 0, slightly lower)
-        { opacity: 1, y: 0, delay: 0.3 } // End state (opacity 1, original y, delayed)
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, delay: 0.3 }
       ); 
       
-      // Animate subtitle: fade in and slide up, starting slightly after the title animation begins
+      // Animate subtitle: fade in and slide up
       tl.fromTo(heroSubtitleRef.current, 
-        { opacity: 0, y: 20 }, // Start state
-        { opacity: 1, y: 0 }, // End state
-        "-=0.6" // Start 0.6s before the previous tween *ends* (overlaps slightly)
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0 },
+        "-=0.6"
       ); 
+    };
+    
+    runAnimation();
 
-      // Cleanup function to kill timeline if component unmounts
-      // Good practice, especially for more complex animations or components
-      return () => {
-        tl.kill(); 
-      };
-    }
+    // Cleanup function to kill timeline if component unmounts
+    return () => {
+      tl?.kill();
+    };
   }, []); // Empty dependency array runs this effect only once on mount
 
   useEffect(() => {
@@ -179,8 +186,8 @@ const HomePage: React.FC = () => {
   };
 
 
-  // --- EventCard Component ---
-  const EventCard: React.FC<{ event: any }> = ({ event }) => {
+  // --- HomeEventCard Component (simplified for carousel display) ---
+  const HomeEventCard: React.FC<{ event: Event }> = ({ event }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -235,6 +242,7 @@ const HomePage: React.FC = () => {
             src="/images/assets/Ceus_ball_group_edited.jpg" 
             alt="CEUS Ball Group Photo" 
             fill
+            priority
             className="object-cover object-center" 
           />
           <div className="ImgOverlay absolute inset-0 bg-black/40 z-10"></div>
@@ -278,7 +286,7 @@ const HomePage: React.FC = () => {
           <Slider {...eventSettings}>
             {/* Map over the filtered list of events */}
             {upcomingEventsNextTwoWeeks.map(event => (
-              <EventCard key={event.id} event={event} />
+              <HomeEventCard key={event.id} event={event} />
             ))}
           </Slider>
         ) : (

@@ -12,6 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         '/private/',
       ],
     },
-    sitemap: 'https://ceus.unsw.edu.au/sitemap.xml',
+    sitemap: 'https://www.ceusunsw.com/sitemap.xml',
   }
 }
