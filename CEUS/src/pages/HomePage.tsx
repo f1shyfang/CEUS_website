@@ -7,6 +7,7 @@ import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
 import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
 import Link from 'next/link'; // Import Link for navigation
 import Image from 'next/image'; // Import Next.js Image component
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Import arrow icons
 //import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
 import { Event, Sponsor } from '../types';
@@ -111,9 +112,41 @@ const HomePage: React.FC = () => {
   });
 
 
+  // --- Custom Arrow Components ---
+  const PrevArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', zIndex: 1 }}
+        onClick={onClick}
+        aria-label="Previous sponsors"
+      >
+        <FaChevronLeft className="text-blue-600 text-2xl" />
+      </div>
+    );
+  };
+
+  const NextArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: 'block', zIndex: 1 }}
+        onClick={onClick}
+        aria-label="Next sponsors"
+      >
+        <FaChevronRight className="text-blue-600 text-2xl" />
+      </div>
+    );
+  };
+
   // --- Carousel Settings ---
   const sponsorSettings = {
     dots: true,
+    arrows: true,
+    prevArrow: <PrevArrow />,
+    nextArrow: <NextArrow />,
     infinite: sponsors.length > 3,
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -128,6 +161,7 @@ const HomePage: React.FC = () => {
         settings: {
           slidesToShow: 4,
           centerMode: false,
+          arrows: true,
         }
       },
       {
@@ -135,6 +169,7 @@ const HomePage: React.FC = () => {
         settings: {
           slidesToShow: 3,
           centerMode: false,
+          arrows: true,
         }
       },
       {
@@ -142,6 +177,7 @@ const HomePage: React.FC = () => {
         settings: {
           slidesToShow: 2,
           centerMode: false,
+          arrows: true,
         }
       }
     ]
@@ -313,19 +349,21 @@ const HomePage: React.FC = () => {
         {isLoading ? (
           <p className="text-center text-gray-600 text-lg">Loading sponsors...</p>
         ) : sponsors.length > 0 ? (
-          <Slider {...sponsorSettings}>
-            {sponsors.map(sponsor => (
-              <div key={sponsor.name} className="px-4">
-                <Image 
-                  src={sponsor.logoUrl} 
-                  alt={sponsor.name} 
-                  width={140}
-                  height={140}
-                  className="mx-auto max-h-[140px] object-contain"
-                />
-              </div>
-            ))}
-          </Slider>
+          <div className="relative">
+            <Slider {...sponsorSettings}>
+              {sponsors.map(sponsor => (
+                <div key={sponsor.name} className="px-4">
+                  <Image 
+                    src={sponsor.logoUrl} 
+                    alt={sponsor.name} 
+                    width={140}
+                    height={140}
+                    className="mx-auto max-h-[140px] object-contain"
+                  />
+                </div>
+              ))}
+            </Slider>
+          </div>
         ) : (
           <p className="text-center text-gray-600 text-lg">
             No sponsors to display right now.
@@ -333,18 +371,98 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
+      {/* --- Custom Arrow Styles --- */}
+      <style jsx>{`
+        .sponsors-section :global(.slick-prev),
+        .sponsors-section :global(.slick-next) {
+          width: 40px;
+          height: 40px;
+          background: white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.3s ease;
+        }
+
+        .sponsors-section :global(.slick-prev:hover),
+        .sponsors-section :global(.slick-next:hover) {
+          background: #f3f4f6;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          transform: scale(1.1);
+        }
+
+        .sponsors-section :global(.slick-prev) {
+          left: -50px;
+        }
+
+        .sponsors-section :global(.slick-next) {
+          right: -50px;
+        }
+
+        .sponsors-section :global(.slick-prev:before),
+        .sponsors-section :global(.slick-next:before) {
+          display: none;
+        }
+
+        @media (max-width: 1024px) {
+          .sponsors-section :global(.slick-prev) {
+            left: -30px;
+          }
+
+          .sponsors-section :global(.slick-next) {
+            right: -30px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .sponsors-section :global(.slick-prev) {
+            left: -20px;
+          }
+
+          .sponsors-section :global(.slick-next) {
+            right: -20px;
+          }
+
+          .sponsors-section :global(.slick-prev),
+          .sponsors-section :global(.slick-next) {
+            width: 35px;
+            height: 35px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .sponsors-section :global(.slick-prev) {
+            left: -15px;
+          }
+
+          .sponsors-section :global(.slick-next) {
+            right: -15px;
+          }
+
+          .sponsors-section :global(.slick-prev),
+          .sponsors-section :global(.slick-next) {
+            width: 30px;
+            height: 30px;
+          }
+        }
+      `}</style>
+
       {/* --- Video Section --- */}
-      <section className="videocontainer relative h-[600px] bg-black/10 p-4 md:p-6"> 
-        <div className="ytvideo relative w-full h-full"> 
-          <iframe 
-            className="iframeyt absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[80%]" 
-            src="https://www.youtube.com/embed/x3DD5gMo3fA" 
-            title="YouTube video player" 
-            frameBorder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerPolicy="strict-origin-when-cross-origin" 
-            allowFullScreen>
-          </iframe>
+      <section className="videocontainer relative bg-black/10 py-8 md:py-12 lg:py-16 px-4 md:px-6"> 
+        <div className="container mx-auto max-w-6xl">
+          <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl">
+            <iframe 
+              className="absolute inset-0 w-full h-full" 
+              src="https://www.youtube.com/embed/x3DD5gMo3fA" 
+              title="YouTube video player" 
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              referrerPolicy="strict-origin-when-cross-origin" 
+              allowFullScreen>
+            </iframe>
+          </div>
         </div>
       </section>
 
