@@ -15,7 +15,7 @@ import { Event, Sponsor } from '../types';
 // Import images used on the homepage
 // Images are now served from public folder
 //import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
-//import introImage2 from '../assets/images/Exec ceus fsa.jpeg';       
+//import introImage2 from '../assets/images/Exec ceus fsa.jpeg';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {
