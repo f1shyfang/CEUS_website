@@ -53,4 +53,4 @@ const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
   }
 };
 
-export default MemberCard;
+export default React.memo(MemberCard);

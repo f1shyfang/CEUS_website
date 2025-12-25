@@ -100,4 +100,4 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   );
 };
 
-export default EventCard;
+export default React.memo(EventCard);

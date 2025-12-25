@@ -1,21 +1,16 @@
 'use client'
 // src/pages/HomePage.tsx
-import React, { useEffect, useRef, useState } from 'react'; // Import useEffect, useRef, and useState
-import gsap from 'gsap'; // Import gsap
-import Slider from 'react-slick'; // Import Slider from react-slick
-import 'slick-carousel/slick/slick.css'; // Import slick-carousel CSS
-import 'slick-carousel/slick/slick-theme.css'; // Import slick-carousel theme CSS
-import Link from 'next/link'; // Import Link for navigation
-import Image from 'next/image'; // Import Next.js Image component
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'; // Import arrow icons
-//import ThreeDModels from '../components/ThreeDModels'; // Import 3D models component
+import React, { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import Link from 'next/link';
+import Image from 'next/image';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import LazyYouTube from '../components/LazyYouTube';
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
 import { Event, Sponsor } from '../types';
-
-// Import images used on the homepage
-// Images are now served from public folder
-//import introImage1 from '../assets/images/Ceus-Cruise.jpeg';       
-//import introImage2 from '../assets/images/Exec ceus fsa.jpeg';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {
@@ -453,15 +448,10 @@ const HomePage: React.FC = () => {
       <section className="videocontainer relative bg-black/10 py-8 md:py-12 lg:py-16 px-4 md:px-6"> 
         <div className="container mx-auto max-w-6xl">
           <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-2xl">
-            <iframe 
-              className="absolute inset-0 w-full h-full" 
-              src="https://www.youtube.com/embed/x3DD5gMo3fA" 
-              title="YouTube video player" 
-              frameBorder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-              referrerPolicy="strict-origin-when-cross-origin" 
-              allowFullScreen>
-            </iframe>
+            <LazyYouTube 
+              videoId="x3DD5gMo3fA" 
+              title="CEUS UNSW Video"
+            />
           </div>
         </div>
       </section>
