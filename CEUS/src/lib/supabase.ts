@@ -182,3 +182,84 @@ export async function updateSubmissionStatus(id: string, status: 'new' | 'read' 
   return data;
 }
 
+// ============================================
+// Supabase Storage Helpers
+// ============================================
+
+// Storage bucket names
+export const STORAGE_BUCKETS = {
+  EVENTS: 'events',
+  SPONSORS: 'sponsors',
+  TEAM: 'team',
+  ASSETS: 'assets',
+} as const;
+
+type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS];
+
+/**
+ * Get the public URL for a file in Supabase Storage
+ */
+export function getStorageUrl(bucket: BucketName, path: string): string {
+  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+  return data.publicUrl;
+}
+
+/**
+ * Upload a file to Supabase Storage
+ */
+export async function uploadFile(
+  bucket: BucketName,
+  path: string,
+  file: File,
+  options?: { upsert?: boolean }
+) {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(path, file, {
+      cacheControl: '3600',
+      upsert: options?.upsert ?? false,
+    });
+
+  if (error) {
+    console.error(`Error uploading to ${bucket}:`, error);
+    throw error;
+  }
+
+  return {
+    path: data.path,
+    url: getStorageUrl(bucket, data.path),
+  };
+}
+
+/**
+ * Delete a file from Supabase Storage
+ */
+export async function deleteFile(bucket: BucketName, path: string) {
+  const { error } = await supabase.storage.from(bucket).remove([path]);
+
+  if (error) {
+    console.error(`Error deleting from ${bucket}:`, error);
+    throw error;
+  }
+
+  return true;
+}
+
+/**
+ * List files in a Supabase Storage bucket
+ */
+export async function listFiles(bucket: BucketName, folder?: string) {
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .list(folder || '', {
+      limit: 100,
+      sortBy: { column: 'name', order: 'asc' },
+    });
+
+  if (error) {
+    console.error(`Error listing files in ${bucket}:`, error);
+    throw error;
+  }
+
+  return data;
+}
