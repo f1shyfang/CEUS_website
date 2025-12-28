@@ -9,6 +9,62 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 // Create a single supabase client for interacting with your database
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// ============================================
+// Authentication Helpers
+// ============================================
+
+export async function signIn(email: string, password: string) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error('Error signing in:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error('Error signing out:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+export async function getSession() {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error('Error getting session:', error);
+    throw error;
+  }
+
+  return data.session;
+}
+
+export async function getUser() {
+  const { data, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error('Error getting user:', error);
+    return null;
+  }
+
+  return data.user;
+}
+
+// Subscribe to auth state changes
+export function onAuthStateChange(callback: (event: string, session: unknown) => void) {
+  return supabase.auth.onAuthStateChange(callback);
+}
+
 type EventRow = {
   id: string;
   title: string;
@@ -180,6 +236,267 @@ export async function updateSubmissionStatus(id: string, status: 'new' | 'read' 
   }
 
   return data;
+}
+
+// Function to delete a contact submission
+export async function deleteContactSubmission(id: string) {
+  const { error } = await supabase
+    .from('contact_submissions')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting contact submission:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
+// Events CRUD Operations
+// ============================================
+
+export interface EventInput {
+  title: string;
+  date: string;
+  description: string;
+  category: Event['category'];
+  imageUrl?: string;
+  facebookEventLink?: string;
+}
+
+export async function createEvent(event: EventInput) {
+  const { data, error } = await supabase
+    .from('events')
+    .insert([
+      {
+        title: event.title,
+        date: event.date,
+        image_url: event.imageUrl || null,
+        facebook_event_link: event.facebookEventLink || null,
+        description: event.description,
+        category: event.category,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error('Error creating event:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function updateEvent(id: string, event: Partial<EventInput>) {
+  const updateData: Record<string, unknown> = {};
+  if (event.title !== undefined) updateData.title = event.title;
+  if (event.date !== undefined) updateData.date = event.date;
+  if (event.imageUrl !== undefined) updateData.image_url = event.imageUrl;
+  if (event.facebookEventLink !== undefined) updateData.facebook_event_link = event.facebookEventLink;
+  if (event.description !== undefined) updateData.description = event.description;
+  if (event.category !== undefined) updateData.category = event.category;
+
+  const { data, error } = await supabase
+    .from('events')
+    .update(updateData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating event:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function deleteEvent(id: string) {
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting event:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
+// Sponsors CRUD Operations
+// ============================================
+
+export interface SponsorInput {
+  name: string;
+  description: string;
+  tier: Sponsor['tier'];
+  logoUrl?: string;
+  websiteUrl?: string;
+  featured?: boolean;
+}
+
+export async function createSponsor(sponsor: SponsorInput) {
+  const { data, error } = await supabase
+    .from('sponsors')
+    .insert([
+      {
+        name: sponsor.name,
+        logo_url: sponsor.logoUrl || null,
+        website_url: sponsor.websiteUrl || null,
+        description: sponsor.description,
+        tier: sponsor.tier,
+        featured: sponsor.featured || false,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error('Error creating sponsor:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function updateSponsor(id: string, sponsor: Partial<SponsorInput>) {
+  const updateData: Record<string, unknown> = {};
+  if (sponsor.name !== undefined) updateData.name = sponsor.name;
+  if (sponsor.logoUrl !== undefined) updateData.logo_url = sponsor.logoUrl;
+  if (sponsor.websiteUrl !== undefined) updateData.website_url = sponsor.websiteUrl;
+  if (sponsor.description !== undefined) updateData.description = sponsor.description;
+  if (sponsor.tier !== undefined) updateData.tier = sponsor.tier;
+  if (sponsor.featured !== undefined) updateData.featured = sponsor.featured;
+
+  const { data, error } = await supabase
+    .from('sponsors')
+    .update(updateData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating sponsor:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function deleteSponsor(id: string) {
+  const { error } = await supabase
+    .from('sponsors')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting sponsor:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
+// Team Members CRUD Operations
+// ============================================
+
+export interface TeamMemberInput {
+  name: string;
+  role: string;
+  imageUrl?: string;
+  email?: string;
+  linkedInUrl?: string;
+  category: string;
+  sortOrder: number;
+}
+
+export async function fetchAllTeamMembers(): Promise<(Member & { category: string; sortOrder: number })[]> {
+  const { data, error } = await supabase
+    .from('team_members')
+    .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
+    .order('category', { ascending: true })
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching team members:', error);
+    throw error;
+  }
+
+  return (data as TeamMemberRow[] | null ?? []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    role: row.role,
+    imageUrl: row.image_url || undefined,
+    email: row.email || undefined,
+    linkedInUrl: row.linkedin_url || undefined,
+    category: row.category,
+    sortOrder: row.sort_order,
+  }));
+}
+
+export async function createTeamMember(member: TeamMemberInput) {
+  const { data, error } = await supabase
+    .from('team_members')
+    .insert([
+      {
+        name: member.name,
+        role: member.role,
+        image_url: member.imageUrl || null,
+        email: member.email || null,
+        linkedin_url: member.linkedInUrl || null,
+        category: member.category,
+        sort_order: member.sortOrder,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error('Error creating team member:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function updateTeamMember(id: string, member: Partial<TeamMemberInput>) {
+  const updateData: Record<string, unknown> = {};
+  if (member.name !== undefined) updateData.name = member.name;
+  if (member.role !== undefined) updateData.role = member.role;
+  if (member.imageUrl !== undefined) updateData.image_url = member.imageUrl;
+  if (member.email !== undefined) updateData.email = member.email;
+  if (member.linkedInUrl !== undefined) updateData.linkedin_url = member.linkedInUrl;
+  if (member.category !== undefined) updateData.category = member.category;
+  if (member.sortOrder !== undefined) updateData.sort_order = member.sortOrder;
+
+  const { data, error } = await supabase
+    .from('team_members')
+    .update(updateData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating team member:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function deleteTeamMember(id: string) {
+  const { error } = await supabase
+    .from('team_members')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting team member:', error);
+    throw error;
+  }
+
+  return true;
 }
 
 // ============================================

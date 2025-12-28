@@ -9,24 +9,27 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@supabase/supabase-js": "^2.86.0",
     "date-fns": "^4.1.0",
     "gsap": "^3.12.7",
     "next": "^16.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-hook-form": "^7.69.0",
     "react-icons": "^5.5.0",
     "react-slick": "^0.30.3",
     "sharp": "^0.34.3",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/react-slick": "^0.23.13",
     "autoprefixer": "^10.4.21",
-    "@eslint/eslintrc": "^3.2.0",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.1.0",
     "postcss": "^8.5.3",
