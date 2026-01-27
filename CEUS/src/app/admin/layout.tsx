@@ -3,17 +3,20 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { signOut, getUser } from '@/lib/supabase';
+import { AdminErrorBoundary } from '@/components/admin';
+import { signOut, getUser, getUserRole, isAdminUser } from '@/lib/supabase';
 import {
   FiHome,
   FiCalendar,
   FiUsers,
   FiAward,
   FiMail,
+  FiActivity,
   FiLogOut,
   FiMenu,
   FiX,
   FiLoader,
+  FiAlertCircle,
 } from 'react-icons/fi';
 
 const navItems = [
@@ -22,6 +25,7 @@ const navItems = [
   { href: '/admin/sponsors', label: 'Sponsors', icon: FiAward },
   { href: '/admin/team', label: 'Team', icon: FiUsers },
   { href: '/admin/contacts', label: 'Contacts', icon: FiMail },
+  { href: '/admin/audit', label: 'Audit Logs', icon: FiActivity },
 ];
 
 export default function AdminLayout({
@@ -32,13 +36,17 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<{ email?: string } | null>(null);
+  const [user, setUser] = useState<Awaited<ReturnType<typeof getUser>>>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(true);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await getUser();
       setUser(currentUser);
+      setIsAuthorized(isAdminUser(currentUser));
+      setIsAuthLoading(false);
     };
     fetchUser();
   }, []);
@@ -58,8 +66,63 @@ export default function AdminLayout({
   };
 
   // Don't show layout on login page
-  if (pathname === '/admin/login') {
+  if (pathname === '/admin/login' || pathname === '/admin/unauthorized') {
     return <>{children}</>;
+  }
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <FiLoader className="w-8 h-8 text-indigo-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+        <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full text-center space-y-4">
+          <FiAlertCircle className="w-8 h-8 text-red-400 mx-auto" />
+          <h1 className="text-xl font-semibold text-white">Session expired</h1>
+          <p className="text-gray-400">Please sign in again to access the admin panel.</p>
+          <button
+            onClick={() => router.replace('/admin/login')}
+            className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+          >
+            Go to Login
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    const role = getUserRole(user) || 'unknown';
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+        <div className="bg-gray-800 rounded-lg p-8 max-w-md w-full text-center space-y-4">
+          <FiAlertCircle className="w-8 h-8 text-yellow-400 mx-auto" />
+          <h1 className="text-xl font-semibold text-white">Access restricted</h1>
+          <p className="text-gray-400">
+            Your account does not have admin access. Current role: {role}.
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleLogout}
+              className="w-full px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+            >
+              Sign out
+            </button>
+            <a
+              href="/"
+              className="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+            >
+              Return to website
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -154,7 +217,9 @@ export default function AdminLayout({
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-8">{children}</main>
+        <main className="p-4 lg:p-8">
+          <AdminErrorBoundary>{children}</AdminErrorBoundary>
+        </main>
       </div>
     </div>
   );

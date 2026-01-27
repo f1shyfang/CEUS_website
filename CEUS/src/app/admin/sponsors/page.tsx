@@ -238,6 +238,7 @@ export default function AdminSponsorsPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingSponsor ? 'Edit Sponsor' : 'Add Sponsor'}
         isSubmitting={isSubmitting}
+        isLoading={isLoading}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField label="Company Name" error={errors.name?.message} required>

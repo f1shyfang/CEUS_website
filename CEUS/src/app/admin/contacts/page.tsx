@@ -194,6 +194,7 @@ export default function AdminContactsPage() {
         isOpen={isViewModalOpen}
         onClose={() => setIsViewModalOpen(false)}
         title="Contact Submission"
+        isLoading={isLoading || !viewingContact}
       >
         {viewingContact && (
           <div className="space-y-6">

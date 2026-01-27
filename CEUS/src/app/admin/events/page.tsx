@@ -233,6 +233,7 @@ export default function AdminEventsPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingEvent ? 'Edit Event' : 'Create Event'}
         isSubmitting={isSubmitting}
+        isLoading={isLoading}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <FormField label="Title" error={errors.title?.message} required>

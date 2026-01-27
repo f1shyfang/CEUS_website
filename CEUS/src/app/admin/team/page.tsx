@@ -253,6 +253,7 @@ export default function AdminTeamPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingMember ? 'Edit Team Member' : 'Add Team Member'}
         isSubmitting={isSubmitting}
+        isLoading={isLoading}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

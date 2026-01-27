@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { isAdminUser } from './lib/supabase';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -29,21 +30,55 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
+    let response = NextResponse.next();
+
     // Verify the session
-    const { data: { user }, error } = await supabase.auth.getUser(accessToken);
+    let {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(accessToken);
+
+    if (error || !user) {
+      const refreshResult = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      user = refreshResult.data.user;
+      error = refreshResult.error;
+
+      if (!error && refreshResult.data.session) {
+        const session = refreshResult.data.session;
+        response.cookies.set('sb-access-token', session.access_token, {
+          path: '/',
+          maxAge: session.expires_in,
+        });
+        response.cookies.set('sb-refresh-token', session.refresh_token, {
+          path: '/',
+          maxAge: session.expires_in,
+        });
+      }
+    }
 
     if (error || !user) {
       // Invalid session, redirect to login
       const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('redirect', pathname);
-      const response = NextResponse.redirect(loginUrl);
-      
+      const redirectResponse = NextResponse.redirect(loginUrl);
+
       // Clear invalid cookies
-      response.cookies.delete('sb-access-token');
-      response.cookies.delete('sb-refresh-token');
-      
-      return response;
+      redirectResponse.cookies.delete('sb-access-token');
+      redirectResponse.cookies.delete('sb-refresh-token');
+
+      return redirectResponse;
     }
+
+    if (!isAdminUser(user) && pathname !== '/admin/unauthorized') {
+      const unauthorizedUrl = new URL('/admin/unauthorized', request.url);
+      return NextResponse.redirect(unauthorizedUrl);
+    }
+
+    return response;
   }
 
   return NextResponse.next();

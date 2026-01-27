@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight } from 'react-icons/fi';
+import { FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight, FiActivity } from 'react-icons/fi';
 import { StatCard } from '@/components/admin';
 import {
   fetchEvents,
   fetchSponsors,
   fetchTeamCategories,
   getContactSubmissions,
+  fetchAdminAuditLogs,
+  AdminAuditLog,
 } from '@/lib/supabase';
 
 interface DashboardStats {
@@ -17,6 +19,7 @@ interface DashboardStats {
   teamMembers: number;
   contacts: number;
   newContacts: number;
+  auditEntries: number;
 }
 
 export default function AdminDashboardPage() {
@@ -26,17 +29,20 @@ export default function AdminDashboardPage() {
     teamMembers: 0,
     contacts: 0,
     newContacts: 0,
+    auditEntries: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [recentAudit, setRecentAudit] = useState<AdminAuditLog[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [events, sponsors, teamCategories, contacts] = await Promise.all([
+        const [events, sponsors, teamCategories, contacts, auditLogs] = await Promise.all([
           fetchEvents(),
           fetchSponsors(),
           fetchTeamCategories(),
           getContactSubmissions(),
+          fetchAdminAuditLogs(6),
         ]);
 
         const teamMemberCount = teamCategories.reduce(
@@ -54,7 +60,9 @@ export default function AdminDashboardPage() {
           teamMembers: teamMemberCount,
           contacts: (contacts || []).length,
           newContacts: newContactCount,
+          auditEntries: auditLogs.length,
         });
+        setRecentAudit(auditLogs);
       } catch (error) {
         console.error('Error fetching stats:', error);
       } finally {
@@ -70,6 +78,7 @@ export default function AdminDashboardPage() {
     { href: '/admin/sponsors', label: 'Manage Sponsors', icon: FiAward },
     { href: '/admin/team', label: 'Manage Team', icon: FiUsers },
     { href: '/admin/contacts', label: 'View Contacts', icon: FiMail },
+    { href: '/admin/audit', label: 'View Audit Logs', icon: FiActivity },
   ];
 
   return (
@@ -116,6 +125,13 @@ export default function AdminDashboardPage() {
           color={stats.newContacts > 0 ? 'red' : 'blue'}
           isLoading={isLoading}
         />
+        <StatCard
+          title="Recent Admin Actions"
+          value={isLoading ? '...' : stats.auditEntries}
+          icon={<FiArrowRight className="w-6 h-6" />}
+          color="indigo"
+          isLoading={isLoading}
+        />
       </div>
 
       {/* Quick Links */}
@@ -139,6 +155,34 @@ export default function AdminDashboardPage() {
             );
           })}
         </div>
+      </div>
+
+      {/* Recent audit activity */}
+      <div className="bg-gray-800 rounded-lg p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">Recent Admin Activity</h2>
+        {isLoading ? (
+          <p className="text-gray-400">Loading activity...</p>
+        ) : recentAudit.length === 0 ? (
+          <p className="text-gray-400">No admin activity yet.</p>
+        ) : (
+          <ul className="space-y-3 text-sm text-gray-300">
+            {recentAudit.map((log) => (
+              <li key={log.id} className="flex items-center justify-between gap-4">
+                <div className="flex flex-col">
+                  <span className="text-white font-medium">
+                    {log.action} {log.entity}
+                  </span>
+                  <span className="text-gray-400">
+                    {log.actorEmail || 'Unknown'} {log.entityId ? `• ${log.entityId}` : ''}
+                  </span>
+                </div>
+                <span className="text-gray-500">
+                  {log.createdAt ? format(new Date(log.createdAt), 'MMM d, h:mm a') : '-'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Info */}

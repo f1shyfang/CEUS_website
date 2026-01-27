@@ -8,6 +8,7 @@ interface FormModalProps {
   title: string;
   children: React.ReactNode;
   isSubmitting?: boolean;
+  isLoading?: boolean;
 }
 
 export default function FormModal({
@@ -16,6 +17,7 @@ export default function FormModal({
   title,
   children,
   isSubmitting = false,
+  isLoading = false,
 }: FormModalProps) {
   if (!isOpen) return null;
 
@@ -43,7 +45,7 @@ export default function FormModal({
 
         {/* Content */}
         <div className="p-6">
-          {children}
+          {isLoading ? <FormSkeleton /> : children}
         </div>
       </div>
     </div>
@@ -166,6 +168,26 @@ export function FormActions({ onCancel, isSubmitting = false, submitLabel = 'Sav
           submitLabel
         )}
       </button>
+    </div>
+  );
+}
+
+export function FormSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      <div className="space-y-2">
+        <div className="h-4 w-24 bg-gray-700 rounded" />
+        <div className="h-10 bg-gray-700 rounded" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 w-32 bg-gray-700 rounded" />
+        <div className="h-10 bg-gray-700 rounded" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 w-28 bg-gray-700 rounded" />
+        <div className="h-24 bg-gray-700 rounded" />
+      </div>
+      <div className="h-10 bg-gray-700 rounded" />
     </div>
   );
 }

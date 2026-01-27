@@ -60,6 +60,54 @@ export async function getUser() {
   return data.user;
 }
 
+type AuthUser = {
+  id?: string;
+  email?: string;
+  // Supabase's `UserAppMetadata` type doesn't include custom claims like `role`,
+  // so we treat it as a generic record and read `role` safely.
+  app_metadata?: Record<string, unknown>;
+};
+
+const ADMIN_ROLES = ['admin', 'super_admin'];
+
+export function getUserRole(user: AuthUser | null): string | null {
+  if (!user) return null;
+  const role = user.app_metadata?.role;
+  return typeof role === 'string' ? role : null;
+}
+
+export function isAdminUser(user: AuthUser | null): boolean {
+  const role = getUserRole(user);
+  return role ? ADMIN_ROLES.includes(role) : false;
+}
+
+export async function logAdminAction(
+  action: string,
+  entity: string,
+  entityId?: string | number,
+  metadata?: Record<string, unknown>
+) {
+  try {
+    const user = await getUser();
+    const { error } = await supabase.from('admin_audit_logs').insert([
+      {
+        action,
+        entity,
+        entity_id: entityId ? String(entityId) : null,
+        actor_id: user?.id || null,
+        actor_email: user?.email || null,
+        metadata: metadata || null,
+      },
+    ]);
+
+    if (error) {
+      console.error('Error logging admin action:', error);
+    }
+  } catch (error) {
+    console.error('Error logging admin action:', error);
+  }
+}
+
 // Subscribe to auth state changes
 export function onAuthStateChange(callback: (event: string, session: unknown) => void) {
   return supabase.auth.onAuthStateChange(callback);
@@ -184,6 +232,17 @@ export interface ContactSubmission {
   status?: 'new' | 'read' | 'replied';
 }
 
+export interface AdminAuditLog {
+  id: string;
+  action: string;
+  entity: string;
+  entityId?: string | null;
+  actorId?: string | null;
+  actorEmail?: string | null;
+  metadata?: Record<string, unknown> | null;
+  createdAt?: string | null;
+}
+
 // Function to submit contact form data
 export async function submitContactForm(data: Omit<ContactSubmission, 'id' | 'created_at' | 'status'>) {
   const { data: result, error } = await supabase
@@ -235,6 +294,7 @@ export async function updateSubmissionStatus(id: string, status: 'new' | 'read' 
     throw error;
   }
 
+  void logAdminAction('update_status', 'contact_submission', id, { status });
   return data;
 }
 
@@ -250,7 +310,43 @@ export async function deleteContactSubmission(id: string) {
     throw error;
   }
 
+  void logAdminAction('delete', 'contact_submission', id);
   return true;
+}
+
+type AdminAuditLogRow = {
+  id: string;
+  action: string;
+  entity: string;
+  entity_id: string | null;
+  actor_id: string | null;
+  actor_email: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string | null;
+};
+
+export async function fetchAdminAuditLogs(limit = 25): Promise<AdminAuditLog[]> {
+  const { data, error } = await supabase
+    .from('admin_audit_logs')
+    .select('id, action, entity, entity_id, actor_id, actor_email, metadata, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching admin audit logs:', error);
+    throw error;
+  }
+
+  return (data as AdminAuditLogRow[] | null ?? []).map((row) => ({
+    id: row.id,
+    action: row.action,
+    entity: row.entity,
+    entityId: row.entity_id,
+    actorId: row.actor_id,
+    actorEmail: row.actor_email,
+    metadata: row.metadata ?? null,
+    createdAt: row.created_at,
+  }));
 }
 
 // ============================================
@@ -286,7 +382,9 @@ export async function createEvent(event: EventInput) {
     throw error;
   }
 
-  return data[0];
+  const createdEvent = data[0];
+  void logAdminAction('create', 'event', createdEvent?.id, { title: event.title });
+  return createdEvent;
 }
 
 export async function updateEvent(id: string, event: Partial<EventInput>) {
@@ -309,6 +407,7 @@ export async function updateEvent(id: string, event: Partial<EventInput>) {
     throw error;
   }
 
+  void logAdminAction('update', 'event', id, { fields: Object.keys(updateData) });
   return data[0];
 }
 
@@ -323,6 +422,7 @@ export async function deleteEvent(id: string) {
     throw error;
   }
 
+  void logAdminAction('delete', 'event', id);
   return true;
 }
 
@@ -359,7 +459,9 @@ export async function createSponsor(sponsor: SponsorInput) {
     throw error;
   }
 
-  return data[0];
+  const createdSponsor = data[0];
+  void logAdminAction('create', 'sponsor', createdSponsor?.id, { name: sponsor.name });
+  return createdSponsor;
 }
 
 export async function updateSponsor(id: string, sponsor: Partial<SponsorInput>) {
@@ -382,6 +484,7 @@ export async function updateSponsor(id: string, sponsor: Partial<SponsorInput>) 
     throw error;
   }
 
+  void logAdminAction('update', 'sponsor', id, { fields: Object.keys(updateData) });
   return data[0];
 }
 
@@ -396,6 +499,7 @@ export async function deleteSponsor(id: string) {
     throw error;
   }
 
+  void logAdminAction('delete', 'sponsor', id);
   return true;
 }
 
@@ -458,7 +562,9 @@ export async function createTeamMember(member: TeamMemberInput) {
     throw error;
   }
 
-  return data[0];
+  const createdMember = data[0];
+  void logAdminAction('create', 'team_member', createdMember?.id, { name: member.name });
+  return createdMember;
 }
 
 export async function updateTeamMember(id: string, member: Partial<TeamMemberInput>) {
@@ -482,6 +588,7 @@ export async function updateTeamMember(id: string, member: Partial<TeamMemberInp
     throw error;
   }
 
+  void logAdminAction('update', 'team_member', id, { fields: Object.keys(updateData) });
   return data[0];
 }
 
@@ -496,6 +603,7 @@ export async function deleteTeamMember(id: string) {
     throw error;
   }
 
+  void logAdminAction('delete', 'team_member', id);
   return true;
 }
 
