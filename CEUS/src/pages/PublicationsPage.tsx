@@ -49,14 +49,14 @@ const PublicationsPage: React.FC = () => {
           <div className="stuhand mt-2">
             {/* NOTE: PDF paths MUST be relative to the public folder */}
             <object
-              data='/Student Handbook 2023.pdf' // Path from public folder
+              data='/Student Handbook 2026.pdf' // Path from public folder
               type="application/pdf"
               width="500"
               height="678"
               aria-label="Student Handbook PDF Embed" // Accessibility
             >
               <iframe
-                src='/Student Handbook 2023.pdf' // Path from public folder
+                src='/Student Handbook 2026.pdf' // Path from public folder
                 width="500"
                 height="678"
                 title="Student Handbook PDF Viewer" // Accessibility
