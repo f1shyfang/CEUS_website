@@ -6,6 +6,11 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'localhost',
       },
+      {
+        protocol: 'https',
+        hostname: 'encrypted-tbn0.gstatic.com',
+        pathname: '/**',
+      },
     ],
     unoptimized: true, // Allow unoptimized images for static export
   },

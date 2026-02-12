@@ -18,6 +18,7 @@ export const SPONSOR_TIERS = [
   'Diamond',
   'Gold',
   'Silver',
+  'Bronze',
   'Community',
   'Major',
   'Supporting',

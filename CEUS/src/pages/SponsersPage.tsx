@@ -52,7 +52,7 @@ const SponsorsPage: React.FC = () => {
 
   // Tiered layout inspired by CSESoc (Diamond/Gold/Silver/Community)
   const tierOrder: SponsorTier[] = useMemo(
-    () => ['Diamond', 'Gold', 'Silver', 'Community'],
+    () => ['Diamond', 'Gold', 'Silver', 'Bronze', 'Community'],
     []
   );
 
@@ -60,6 +60,7 @@ const SponsorsPage: React.FC = () => {
     Diamond: { title: 'Diamond Sponsor', accent: 'from-sky-500 to-blue-600', pill: 'bg-sky-500', bg: 'bg-sky-50' },
     Gold: { title: 'Gold Sponsors', accent: 'from-amber-500 to-yellow-500', pill: 'bg-amber-500', bg: 'bg-amber-50' },
     Silver: { title: 'Silver Sponsors', accent: 'from-slate-500 to-gray-500', pill: 'bg-slate-500', bg: 'bg-slate-50' },
+    Bronze: { title: 'Bronze Sponsors', accent: 'from-amber-700 to-amber-800', pill: 'bg-amber-700', bg: 'bg-amber-100' },
     Community: { title: 'Community Partners', accent: 'from-emerald-500 to-green-500', pill: 'bg-emerald-500', bg: 'bg-emerald-50' },
     Major: { title: 'Major Sponsors', accent: 'from-blue-600 to-indigo-600', pill: 'bg-blue-600', bg: 'bg-blue-50' },
     Supporting: { title: 'Supporting Sponsors', accent: 'from-green-600 to-emerald-600', pill: 'bg-green-600', bg: 'bg-green-50' },
@@ -175,15 +176,17 @@ const SponsorsPage: React.FC = () => {
                     {featuredSponsor.description || 'Our principal sponsor providing exceptional support to CEUS and our student community.'}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a
-                      href={featuredSponsor.websiteUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition-all duration-300"
-                    >
-                      Visit Website
-                      <FaExternalLinkAlt className="ml-2" />
-                    </a>
+                    {featuredSponsor.websiteUrl && featuredSponsor.websiteUrl !== '#' && (
+                      <a
+                        href={featuredSponsor.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-700 transition-all duration-300"
+                      >
+                        Visit Website
+                        <FaExternalLinkAlt className="ml-2" />
+                      </a>
+                    )}
                     <button
                       onClick={() => handleLogoClick(featuredSponsor)}
                       className="inline-flex items-center border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300"
@@ -194,13 +197,17 @@ const SponsorsPage: React.FC = () => {
                 </div>
                 <div className="flex justify-center">
                   <div className="relative w-64 h-32 bg-white rounded-2xl shadow-lg flex items-center justify-center p-6 hover:shadow-xl transition-all duration-300">
-                    <Image
-                      src={featuredSponsor.logoUrl}
-                      alt={`${featuredSponsor.name} logo`}
-                      width={200}
-                      height={100}
-                      className="max-w-full max-h-full object-contain"
-                    />
+                    {featuredSponsor.logoUrl ? (
+                      <Image
+                        src={featuredSponsor.logoUrl}
+                        alt={`${featuredSponsor.name} logo`}
+                        width={200}
+                        height={100}
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-gray-700 font-bold text-xl text-center px-4">{featuredSponsor.name}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -238,15 +245,17 @@ const SponsorsPage: React.FC = () => {
                             {sponsor.description}
                           </p>
                           <div className="flex justify-center gap-3 mt-4">
-                            <a
-                              href={sponsor.websiteUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800"
-                            >
-                              Website
-                              <FaExternalLinkAlt className="ml-1 h-3 w-3" />
-                            </a>
+                            {sponsor.websiteUrl && sponsor.websiteUrl !== '#' && (
+                              <a
+                                href={sponsor.websiteUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800"
+                              >
+                                Website
+                                <FaExternalLinkAlt className="ml-1 h-3 w-3" />
+                              </a>
+                            )}
                             <button
                               onClick={() => handleLogoClick(sponsor)}
                               className="text-sm font-semibold text-gray-700 hover:text-blue-600"

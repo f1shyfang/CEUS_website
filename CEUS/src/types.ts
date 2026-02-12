@@ -42,6 +42,7 @@ export type SponsorTier =
   | 'Diamond'
   | 'Gold'
   | 'Silver'
+  | 'Bronze'
   | 'Community'
   | 'Major'
   | 'Supporting'
