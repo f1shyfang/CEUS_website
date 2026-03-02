@@ -113,7 +113,7 @@ const HomePage: React.FC = () => {
     return (
       <div
         className={className}
-        style={{ ...style, display: 'block', zIndex: 1 }}
+        style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}
         onClick={onClick}
         aria-label="Previous sponsors"
       >
@@ -127,7 +127,7 @@ const HomePage: React.FC = () => {
     return (
       <div
         className={className}
-        style={{ ...style, display: 'block', zIndex: 1 }}
+        style={{ ...style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }}
         onClick={onClick}
         aria-label="Next sponsors"
       >
