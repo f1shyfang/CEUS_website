@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { FiUpload, FiX, FiLoader, FiImage } from 'react-icons/fi';
+import { FiX, FiLoader, FiImage } from 'react-icons/fi';
 import { uploadFile, STORAGE_BUCKETS } from '@/lib/supabase';
 
 type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS];
@@ -73,6 +73,8 @@ export default function ImageUpload({
     <div className={className}>
       {preview ? (
         <div className="relative">
+          {/* Preview URL can be a dynamic external source. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={preview}
             alt="Preview"

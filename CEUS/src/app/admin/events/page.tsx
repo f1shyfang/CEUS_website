@@ -149,6 +149,8 @@ export default function AdminEventsPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.imageUrl && (
+            // Using native img here because event URLs may be external and dynamic.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.imageUrl}
               alt={row.title}

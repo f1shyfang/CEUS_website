@@ -10,7 +10,6 @@ import SponsorModal from '../components/SponsorModal';
 
 const SponsorsPage: React.FC = () => {
   const [sponsors, setSponsors] = useState<SponsorType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorType | null>(null);
@@ -21,7 +20,6 @@ const SponsorsPage: React.FC = () => {
     let isMounted = true;
     const loadSponsors = async () => {
       try {
-        setIsLoading(true);
         const fetched = await fetchSponsors();
         if (isMounted) {
           setSponsors(fetched);
@@ -33,8 +31,6 @@ const SponsorsPage: React.FC = () => {
           setLoadError('Unable to load sponsors at the moment.');
           setSponsors([]);
         }
-      } finally {
-        if (isMounted) setIsLoading(false);
       }
     };
 
@@ -130,7 +126,7 @@ const SponsorsPage: React.FC = () => {
               Our Sponsors
             </h1>
             <p className="text-xl lg:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed">
-              We're grateful for the continued support of our sponsors who make our events and initiatives possible. 
+              We&apos;re grateful for the continued support of our sponsors who make our events and initiatives possible. 
               Their contributions help us create valuable opportunities for Chemical Engineering students at UNSW.
             </p>
           </div>

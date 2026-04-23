@@ -2,11 +2,16 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/schemas';
 import { signIn, getSession } from '@/lib/supabase';
 import { FiMail, FiLock, FiAlertCircle, FiLoader } from 'react-icons/fi';
+
+function setAuthCookie(name: string, value: string) {
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+}
 
 function LoginForm() {
   const router = useRouter();
@@ -49,8 +54,8 @@ function LoginForm() {
       
       if (session) {
         // Set cookies for middleware
-        document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-        document.cookie = `sb-refresh-token=${session.refresh_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+        setAuthCookie('sb-access-token', session.access_token);
+        setAuthCookie('sb-refresh-token', session.refresh_token);
         
         router.replace(redirectTo);
       }
@@ -157,9 +162,9 @@ function LoginForm() {
 
         {/* Back to Website */}
         <p className="text-center mt-6">
-          <a href="/" className="text-indigo-400 hover:text-indigo-300 text-sm transition">
+          <Link href="/" className="text-indigo-400 hover:text-indigo-300 text-sm transition">
             ← Back to website
-          </a>
+          </Link>
         </p>
       </div>
     </div>

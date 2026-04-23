@@ -151,6 +151,8 @@ export default function AdminSponsorsPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.logoUrl && (
+            // Using native img here because sponsor logos can be arbitrary external URLs.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.logoUrl}
               alt={row.name}

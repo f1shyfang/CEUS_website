@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import Slider from 'react-slick';
+import type { CustomArrowProps, Settings } from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Link from 'next/link';
@@ -108,7 +109,7 @@ const HomePage: React.FC = () => {
 
 
   // --- Custom Arrow Components ---
-  const PrevArrow = (props: any) => {
+  const PrevArrow = (props: CustomArrowProps) => {
     const { className, style, onClick } = props;
     return (
       <div
@@ -122,7 +123,7 @@ const HomePage: React.FC = () => {
     );
   };
 
-  const NextArrow = (props: any) => {
+  const NextArrow = (props: CustomArrowProps) => {
     const { className, style, onClick } = props;
     return (
       <div
@@ -137,7 +138,7 @@ const HomePage: React.FC = () => {
   };
 
   // --- Carousel Settings ---
-  const sponsorSettings = {
+  const sponsorSettings: Settings = {
     dots: true,
     arrows: true,
     prevArrow: <PrevArrow />,
@@ -178,7 +179,7 @@ const HomePage: React.FC = () => {
     ]
   };
 
-  const eventSettings = {
+  const eventSettings: Settings = {
     dots: true,
     // Set infinite to false if there are fewer events than slides to show to prevent cloning issues
     infinite: upcomingEventsNextTwoWeeks.length > 3,
@@ -211,7 +212,7 @@ const HomePage: React.FC = () => {
 
 
   // --- EventCard Component ---
-  const EventCard: React.FC<{ event: any }> = ({ event }) => {
+  const EventCard: React.FC<{ event: Event }> = ({ event }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     return (

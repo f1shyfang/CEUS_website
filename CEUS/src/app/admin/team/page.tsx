@@ -154,6 +154,8 @@ export default function AdminTeamPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.imageUrl ? (
+            // Using native img here because member photos may come from dynamic external sources.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.imageUrl}
               alt={row.name}

@@ -118,7 +118,7 @@ const TeamPage: React.FC = () => {
           </div>
         ) : !loadError && !isLoading ? (
           <p className="text-center text-gray-600 text-xl">
-            No members found for "{selectedCategory}".
+            No members found for &quot;{selectedCategory}&quot;.
           </p>
         ) : null}
       </div>
