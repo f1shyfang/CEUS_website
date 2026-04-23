@@ -6,7 +6,6 @@ const bucket = 'public-images';
 const projectRoot = process.cwd();
 const imagesRoot = path.join(projectRoot, 'public', 'images');
 const allowedExtensions = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg']);
-const uploadMode = process.env.UPLOAD_MODE === 'split' ? 'split' : 'single';
 
 const categoryDirs = ['assets', 'events', 'sponsors', 'team'];
 
@@ -44,24 +43,6 @@ function toStoragePath(localFilePath, category) {
   return `${category}/${relativeInCategory}`;
 }
 
-function toTarget(localFilePath, category) {
-  if (uploadMode === 'split') {
-    const relativePath = path
-      .relative(path.join(imagesRoot, category), localFilePath)
-      .split(path.sep)
-      .join('/');
-    return {
-      bucket: category,
-      storagePath: relativePath,
-    };
-  }
-
-  return {
-    bucket,
-    storagePath: toStoragePath(localFilePath, category),
-  };
-}
-
 function isImageFile(filePath) {
   const ext = path.extname(filePath).toLowerCase();
   return allowedExtensions.has(ext);
@@ -69,12 +50,7 @@ function isImageFile(filePath) {
 
 async function run() {
   const usingServiceRole = Boolean(serviceRoleKey);
-  console.log(`Starting upload test in ${uploadMode} mode`);
-  console.log(
-    uploadMode === 'single'
-      ? `Target bucket: "${bucket}" with category folders`
-      : 'Target buckets: assets, events, sponsors, team'
-  );
+  console.log(`Starting upload test to bucket "${bucket}" with category folders`);
   console.log(`Auth mode: ${usingServiceRole ? 'service-role' : 'anon-key'}`);
 
   const results = {
@@ -102,29 +78,28 @@ async function run() {
         continue;
       }
 
-      const target = toTarget(filePath, category);
+      const storagePath = toStoragePath(filePath, category);
 
       try {
         const fileBuffer = await readFile(filePath);
         const { error } = await supabase.storage
-          .from(target.bucket)
-          .upload(target.storagePath, fileBuffer, {
+          .from(bucket)
+          .upload(storagePath, fileBuffer, {
             cacheControl: '3600',
             upsert: true,
           });
 
         if (error) {
           results.failed += 1;
-          console.error(`FAILED: ${target.bucket}/${target.storagePath} -> ${error.message}`);
+          console.error(`FAILED: ${bucket}/${storagePath} -> ${error.message}`);
           continue;
         }
 
         results.uploaded += 1;
-        console.log(`UPLOADED: ${target.bucket}/${target.storagePath}`);
-      } catch (error) {
+        console.log(`UPLOADED: ${bucket}/${storagePath}`);
+      } catch {
         results.failed += 1;
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`FAILED: ${target.bucket}/${target.storagePath} -> ${message}`);
+        console.error(`FAILED: ${bucket}/${storagePath} -> Unknown error`);
       }
     }
   }

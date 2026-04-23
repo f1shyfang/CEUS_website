@@ -65,3 +65,5 @@ Admin event, sponsor, and team forms upload images to one public Supabase Storag
   - `events/`
   - `sponsors/`
   - `team/`
+
+See [docs/public-images.md](docs/public-images.md) for the full bucket layout and re-upload workflow.
