@@ -1,4 +1,22 @@
 /** @type {import('next').NextConfig} */
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+
+let supabaseRemotePattern = []
+if (supabaseUrl) {
+  try {
+    const parsed = new URL(supabaseUrl)
+    supabaseRemotePattern = [
+      {
+        protocol: parsed.protocol.replace(':', ''),
+        hostname: parsed.hostname,
+        pathname: '/storage/v1/object/public/**',
+      },
+    ]
+  } catch {
+    supabaseRemotePattern = []
+  }
+}
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -11,6 +29,7 @@ const nextConfig = {
         hostname: 'encrypted-tbn0.gstatic.com',
         pathname: '/**',
       },
+      ...supabaseRemotePattern,
     ],
     unoptimized: true, // Allow unoptimized images for static export
   },

@@ -22,6 +22,7 @@ import {
   updateEvent,
   deleteEvent,
   STORAGE_BUCKETS,
+  STORAGE_FOLDERS,
 } from '@/lib/supabase';
 import { eventSchema, EventFormData, EVENT_CATEGORIES } from '@/lib/schemas';
 import { Event } from '@/types';
@@ -274,7 +275,8 @@ export default function AdminEventsPage() {
 
           <FormField label="Event Image" error={errors.imageUrl?.message}>
             <ImageUpload
-              bucket={STORAGE_BUCKETS.EVENTS}
+              bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
+              folder={STORAGE_FOLDERS.EVENTS}
               currentUrl={imageUrl}
               onUpload={(url) => setValue('imageUrl', url)}
               onRemove={() => setValue('imageUrl', '')}

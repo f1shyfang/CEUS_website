@@ -4,6 +4,7 @@ import Script from 'next/script'
 import '../index.css'
 import Header from '../layouts/Header'
 import Footer from '../layouts/Footer'
+import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
     siteName: 'CEUS - Chemical Engineering Undergraduate Society',
     images: [
       {
-        url: '/images/assets/ceuslogo_noback_noname.png',
+        url: STORAGE_IMAGE_URLS.logo,
         width: 1200,
         height: 630,
         alt: 'CEUS Logo',
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'CEUS - Chemical Engineering Undergraduate Society | UNSW',
     description: 'The Chemical Engineering Undergraduate Society (CEUS) at UNSW. Join our community of chemical engineering students for events, networking, and professional development opportunities.',
-    images: ['/images/assets/ceuslogo_noback_noname.png'],
+    images: [STORAGE_IMAGE_URLS.logo],
     creator: '@CEUS_UNSW',
   },
   robots: {
@@ -103,7 +104,7 @@ export default function RootLayout({
               "@type": "Organization",
               "name": "CEUS - Chemical Engineering Undergraduate Society",
               "url": "https://www.ceusunsw.com",
-              "logo": "https://www.ceusunsw.com/images/assets/ceuslogo_noback_noname.png",
+              "logo": STORAGE_IMAGE_URLS.logo,
               "description": "The Chemical Engineering Undergraduate Society (CEUS) at UNSW. Join our community of chemical engineering students for events, networking, and professional development opportunities.",
               "address": {
                 "@type": "PostalAddress",

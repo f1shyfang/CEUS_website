@@ -21,6 +21,7 @@ import {
   updateTeamMember,
   deleteTeamMember,
   STORAGE_BUCKETS,
+  STORAGE_FOLDERS,
 } from '@/lib/supabase';
 import { teamMemberSchema, TeamMemberFormData, TEAM_CATEGORIES } from '@/lib/schemas';
 import { Member } from '@/types';
@@ -300,7 +301,8 @@ export default function AdminTeamPage() {
 
           <FormField label="Profile Photo" error={errors.imageUrl?.message}>
             <ImageUpload
-              bucket={STORAGE_BUCKETS.TEAM}
+              bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
+              folder={STORAGE_FOLDERS.TEAM}
               currentUrl={imageUrl}
               onUpload={(url) => setValue('imageUrl', url)}
               onRemove={() => setValue('imageUrl', '')}

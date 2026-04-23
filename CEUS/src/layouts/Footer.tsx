@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-// Social media icons are now served from public folder
+import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 const Footer: React.FC = () => {
   return (
@@ -16,16 +16,16 @@ const Footer: React.FC = () => {
         <div className="SocialLinkFoot flex items-center space-x-12"> 
           <a href="https://www.facebook.com/ceus.unsw" target="_blank" rel="noopener noreferrer"> 
              {/* height: 30px -> h-7 (28px) or h-8 (32px). Let's use h-7. w-auto */}
-            <Image src="/images/assets/facebook_icon.svg" alt="Facebook" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" /> 
+            <Image src={STORAGE_IMAGE_URLS.iconFacebook} alt="Facebook" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" /> 
           </a>
           <a href="https://www.instagram.com/ceus.unsw/" target="_blank" rel="noopener noreferrer">
-            <Image src="/images/assets/instagram_icon.svg" alt="Instagram" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
+            <Image src={STORAGE_IMAGE_URLS.iconInstagram} alt="Instagram" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
           </a>
           <a href="https://www.linkedin.com/company/ceusunsw/" target="_blank" rel="noopener noreferrer">
-            <Image src="/images/assets/linkedin_icon.svg" alt="LinkedIn" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
+            <Image src={STORAGE_IMAGE_URLS.iconLinkedIn} alt="LinkedIn" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
           </a>
           <a href="https://www.arc.unsw.edu.au/get-involved/opportunity?name=Chemical%20Engineering%20Undergraduate%20Society" target="_blank" rel="noopener noreferrer">
-            <Image src="/images/assets/Arc_icon.png" alt="Arc UNSW" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
+            <Image src={STORAGE_IMAGE_URLS.iconArc} alt="Arc UNSW" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
           </a>
         </div>
       </div>

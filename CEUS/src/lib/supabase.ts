@@ -1,6 +1,7 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 import { Event, Sponsor, TeamCategory, Member } from '../types';
+import { STORAGE_IMAGE_URLS } from './storagePublicUrls';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -111,7 +112,7 @@ export async function fetchEvents(): Promise<Event[]> {
     id: row.id,
     title: row.title,
     date: row.date,
-    imageUrl: row.image_url || '/images/events/default-event-placeholder.png',
+    imageUrl: row.image_url || STORAGE_IMAGE_URLS.defaultEvent,
     facebookEventLink: row.facebook_event_link || '#',
     description: row.description || '',
     category: row.category,
@@ -505,6 +506,14 @@ export async function deleteTeamMember(id: string) {
 
 // Storage bucket names
 export const STORAGE_BUCKETS = {
+  PUBLIC_IMAGES: 'public-images',
+  EVENTS: 'events',
+  SPONSORS: 'sponsors',
+  TEAM: 'team',
+  ASSETS: 'assets',
+} as const;
+
+export const STORAGE_FOLDERS = {
   EVENTS: 'events',
   SPONSORS: 'sponsors',
   TEAM: 'team',
