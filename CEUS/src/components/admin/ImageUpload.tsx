@@ -8,6 +8,7 @@ type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS];
 
 interface ImageUploadProps {
   bucket: BucketName;
+  folder?: string;
   currentUrl?: string;
   onUpload: (url: string) => void;
   onRemove?: () => void;
@@ -16,6 +17,7 @@ interface ImageUploadProps {
 
 export default function ImageUpload({
   bucket,
+  folder,
   currentUrl,
   onUpload,
   onRemove,
@@ -49,8 +51,9 @@ export default function ImageUpload({
       // Create a unique filename
       const ext = file.name.split('.').pop();
       const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      const uploadPath = folder ? `${folder}/${filename}` : filename;
 
-      const result = await uploadFile(bucket, filename, file, { upsert: true });
+      const result = await uploadFile(bucket, uploadPath, file, { upsert: true });
       
       setPreview(result.url);
       onUpload(result.url);

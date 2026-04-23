@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Event } from '../types';
 import { format, isValid } from 'date-fns';
 import { FaCalendarAlt, FaExternalLinkAlt } from 'react-icons/fa';
+import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 interface EventCardProps {
   event: Event;
@@ -37,12 +38,12 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
       {/* Image Container */}
       <div className="relative w-full h-56 overflow-hidden">
         <Image
-          src={event.imageUrl || '/images/events/default-event-placeholder.png'}
+          src={event.imageUrl || STORAGE_IMAGE_URLS.defaultEvent}
           alt={event.title}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-110"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/images/events/default-event-placeholder.png';
+            (e.target as HTMLImageElement).src = STORAGE_IMAGE_URLS.defaultEvent;
           }}
         />
         

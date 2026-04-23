@@ -51,7 +51,7 @@ export type SponsorTier =
 export interface Sponsor {
   id: string; // Unique identifier (e.g., 'kpmg', 'atlassian')
   name: string; // Company name (e.g., "KPMG Australia")
-  logoUrl: string; // Path to the logo image (e.g., '/images/sponsors/kpmg.png')
+  logoUrl: string; // Public image URL (Supabase storage or external URL)
   websiteUrl: string; // Link to the sponsor's website
   description: string; // Text to display in the modal popup
   tier: SponsorTier;

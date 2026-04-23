@@ -7,6 +7,7 @@ import { Sponsor as SponsorType, SponsorTier } from '../types';
 import { fetchSponsors } from '../lib/supabase';
 import SponsorLogo from '../components/SponsorLogo';
 import SponsorModal from '../components/SponsorModal';
+import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 const SponsorsPage: React.FC = () => {
   const [sponsors, setSponsors] = useState<SponsorType[]>([]);
@@ -116,7 +117,10 @@ const SponsorsPage: React.FC = () => {
       {/* Hero Section */}
       <section ref={heroRef} className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white py-20 lg:py-32">
         <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="absolute inset-0 bg-[url('/images/assets/Ceus_ball_group_edited.jpg')] bg-cover bg-center opacity-10"></div>
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{ backgroundImage: `url('${STORAGE_IMAGE_URLS.hero}')` }}
+        ></div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-6">
