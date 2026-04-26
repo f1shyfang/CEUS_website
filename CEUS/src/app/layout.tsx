@@ -4,7 +4,6 @@ import Script from 'next/script'
 import '../index.css'
 import Header from '../layouts/Header'
 import Footer from '../layouts/Footer'
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls'
 
 const SUPABASE_PUBLIC_BASE = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
 const SEO_LOGO_URL = `${SUPABASE_PUBLIC_BASE}/storage/v1/object/public/assets/assets/ceuslogo_noback_noname.png`;

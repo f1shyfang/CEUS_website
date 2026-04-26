@@ -13,7 +13,6 @@ import LazyYouTube from '../components/LazyYouTube';
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
 import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import { Event, Sponsor } from '../types';
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {

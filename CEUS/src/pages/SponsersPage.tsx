@@ -8,7 +8,6 @@ import { fetchSponsors } from '../lib/supabase';
 import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import SponsorLogo from '../components/SponsorLogo';
 import SponsorModal from '../components/SponsorModal';
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 const SponsorsPage: React.FC = () => {
   const [sponsors, setSponsors] = useState<SponsorType[]>([]);

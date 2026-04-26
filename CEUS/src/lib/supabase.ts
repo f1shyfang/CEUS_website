@@ -1,7 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 import { Event, Sponsor, TeamCategory, Member } from '../types';
-import { STORAGE_IMAGE_URLS } from './storagePublicUrls';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
