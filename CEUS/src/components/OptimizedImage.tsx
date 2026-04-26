@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls'
 
 interface OptimizedImageProps {
   src: string
@@ -57,7 +58,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       onError={(e) => {
         // Fallback to a default image if loading fails
         const target = e.target as HTMLImageElement
-        target.src = '/images/assets/ceuslogo_noback_noname.png'
+        target.src = STATIC_ASSET_URLS.logo
       }}
     />
   )

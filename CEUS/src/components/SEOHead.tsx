@@ -1,5 +1,8 @@
 import React from 'react'
 
+const SUPABASE_PUBLIC_BASE = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '')
+const SEO_LOGO_URL = `${SUPABASE_PUBLIC_BASE}/storage/v1/object/public/assets/assets/ceuslogo_noback_noname.png`
+
 interface SEOHeadProps {
   title?: string
   description?: string
@@ -35,7 +38,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
 }) => {
   const fullTitle = title ? `${title} | CEUS - Chemical Engineering Undergraduate Society` : 'CEUS - Chemical Engineering Undergraduate Society'
   const fullDescription = description || 'The Chemical Engineering Undergraduate Society (CEUS) at UNSW. Join our community of chemical engineering students for events, networking, and professional development opportunities.'
-  const fullImage = image || 'https://www.ceusunsw.com/images/assets/ceuslogo_noback_noname.png'
+  const fullImage = image || SEO_LOGO_URL
   const fullUrl = url || 'https://www.ceusunsw.com'
   const canonicalUrl = canonical || fullUrl
 
@@ -45,7 +48,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     "@type": "Organization",
     "name": "CEUS - Chemical Engineering Undergraduate Society",
     "url": "https://www.ceusunsw.com",
-    "logo": "https://www.ceusunsw.com/images/assets/ceuslogo_noback_noname.png",
+    "logo": SEO_LOGO_URL,
     "description": fullDescription,
     "address": {
       "@type": "PostalAddress",

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from './Navbar';
+import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 
 const Header: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const Header: React.FC = () => {
         <Link href="/">
           <Image
             id="logoimg"
-            src="/images/assets/ceuslogo_noback_noname.png"
+            src={STATIC_ASSET_URLS.logo}
             alt="CEUS Logo"
             width={96}
             height={96}

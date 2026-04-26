@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import LazyYouTube from '../components/LazyYouTube';
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
+import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import { Event, Sponsor } from '../types';
 
 // Helper function to format date
@@ -263,7 +264,7 @@ const HomePage: React.FC = () => {
         <div className="GroupImg absolute inset-0"> 
           <Image 
             draggable={false} 
-            src="/images/assets/Ceus_ball_group_edited.jpg" 
+            src={STATIC_ASSET_URLS.heroBackground}
             alt="CEUS Ball Group Photo" 
             fill
             className="object-cover object-center" 
