@@ -22,6 +22,7 @@ import {
   updateEvent,
   deleteEvent,
   STORAGE_BUCKETS,
+  STORAGE_FOLDERS,
 } from '@/lib/supabase';
 import { eventSchema, EventFormData, EVENT_CATEGORIES } from '@/lib/schemas';
 import { Event } from '@/types';
@@ -149,6 +150,8 @@ export default function AdminEventsPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.imageUrl && (
+            // Using native img here because event URLs may be external and dynamic.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.imageUrl}
               alt={row.title}
@@ -272,7 +275,8 @@ export default function AdminEventsPage() {
 
           <FormField label="Event Image" error={errors.imageUrl?.message}>
             <ImageUpload
-              bucket={STORAGE_BUCKETS.EVENTS}
+              bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
+              folder={STORAGE_FOLDERS.EVENTS}
               currentUrl={imageUrl}
               onUpload={(url) => setValue('imageUrl', url)}
               onRemove={() => setValue('imageUrl', '')}

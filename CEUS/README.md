@@ -52,3 +52,18 @@ export default tseslint.config({
   },
 })
 ```
+
+## Supabase public image uploads
+
+Admin event, sponsor, and team forms upload images to one public Supabase Storage bucket named `public-images`.
+
+1. Ensure these env vars are set:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+2. In Supabase SQL editor, run [scripts/migrations/create_public_images_bucket.sql](scripts/migrations/create_public_images_bucket.sql).
+3. Uploaded files are organized by folder in the bucket:
+  - `events/`
+  - `sponsors/`
+  - `team/`
+
+See [docs/public-images.md](docs/public-images.md) for the full bucket layout and re-upload workflow.

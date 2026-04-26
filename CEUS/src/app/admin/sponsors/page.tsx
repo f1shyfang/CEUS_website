@@ -23,6 +23,7 @@ import {
   updateSponsor,
   deleteSponsor,
   STORAGE_BUCKETS,
+  STORAGE_FOLDERS,
 } from '@/lib/supabase';
 import { sponsorSchema, SponsorFormData, SPONSOR_TIERS } from '@/lib/schemas';
 import { Sponsor } from '@/types';
@@ -151,6 +152,8 @@ export default function AdminSponsorsPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.logoUrl && (
+            // Using native img here because sponsor logos can be arbitrary external URLs.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.logoUrl}
               alt={row.name}
@@ -269,7 +272,8 @@ export default function AdminSponsorsPage() {
 
           <FormField label="Logo" error={errors.logoUrl?.message}>
             <ImageUpload
-              bucket={STORAGE_BUCKETS.SPONSORS}
+              bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
+              folder={STORAGE_FOLDERS.SPONSORS}
               currentUrl={logoUrl}
               onUpload={(url) => setValue('logoUrl', url)}
               onRemove={() => setValue('logoUrl', '')}

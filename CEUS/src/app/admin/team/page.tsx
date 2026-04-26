@@ -21,6 +21,7 @@ import {
   updateTeamMember,
   deleteTeamMember,
   STORAGE_BUCKETS,
+  STORAGE_FOLDERS,
 } from '@/lib/supabase';
 import { teamMemberSchema, TeamMemberFormData, TEAM_CATEGORIES } from '@/lib/schemas';
 import { Member } from '@/types';
@@ -154,6 +155,8 @@ export default function AdminTeamPage() {
       render: (_, row) => (
         <div className="flex items-center gap-3">
           {row.imageUrl ? (
+            // Using native img here because member photos may come from dynamic external sources.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.imageUrl}
               alt={row.name}
@@ -298,7 +301,8 @@ export default function AdminTeamPage() {
 
           <FormField label="Profile Photo" error={errors.imageUrl?.message}>
             <ImageUpload
-              bucket={STORAGE_BUCKETS.TEAM}
+              bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
+              folder={STORAGE_FOLDERS.TEAM}
               currentUrl={imageUrl}
               onUpload={(url) => setValue('imageUrl', url)}
               onRemove={() => setValue('imageUrl', '')}

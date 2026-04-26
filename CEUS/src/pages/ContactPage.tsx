@@ -1,7 +1,7 @@
 'use client'
 // src/pages/ContactPage.tsx
 import React, { useState } from 'react';
-import { FaMapMarkerAlt, FaPhone, FaEnvelope } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
 import { submitContactForm } from '../lib/supabase';
 
 
@@ -82,7 +82,7 @@ const ContactPage: React.FC = () => {
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-800">Get in Touch</h1>
           <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
-            We'd love to hear from you! Whether you have a question about our events, merch, or anything else, our team is ready to answer all your questions.
+            We&apos;d love to hear from you! Whether you have a question about our events, merch, or anything else, our team is ready to answer all your questions.
           </p>
         </div>
 
@@ -215,7 +215,7 @@ const ContactPage: React.FC = () => {
               {submitStatus === 'success' && (
                 <div className="p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
                   <p className="font-semibold">✓ Message sent successfully!</p>
-                  <p className="text-sm">Thank you for contacting us. We'll get back to you shortly.</p>
+                  <p className="text-sm">Thank you for contacting us. We&apos;ll get back to you shortly.</p>
                 </div>
               )}
               

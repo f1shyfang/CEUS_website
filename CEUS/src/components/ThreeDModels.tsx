@@ -1,25 +1,8 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // Simple fallback component that shows a placeholder
 export default function ThreeDModels() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) {
-    return (
-      <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">🧪</div>
-          <div className="text-lg text-gray-600">Loading 3D Models...</div>
-        </div>
-      </div>
-    );
-  }
-
   // For now, show a simple placeholder while we resolve the React compatibility issues
   return (
     <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
