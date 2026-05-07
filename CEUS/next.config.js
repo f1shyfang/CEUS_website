@@ -26,6 +26,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'ddbdosutmmbyavtxqlks.supabase.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'encrypted-tbn0.gstatic.com',
         pathname: '/**',
       },
@@ -47,6 +52,33 @@ const nextConfig = {
       type: 'asset/resource',
     });
     return config;
+  },
+  async rewrites() {
+    const supabaseBase = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
+
+    if (!supabaseBase) {
+      return [];
+    }
+
+    // Backward-compatibility layer for legacy local image paths.
+    return [
+      {
+        source: '/images/assets/:path*',
+        destination: `${supabaseBase}/storage/v1/object/public/assets/assets/:path*`,
+      },
+      {
+        source: '/images/events/:path*',
+        destination: `${supabaseBase}/storage/v1/object/public/events/events/:path*`,
+      },
+      {
+        source: '/images/sponsors/:path*',
+        destination: `${supabaseBase}/storage/v1/object/public/sponsors/sponsors/:path*`,
+      },
+      {
+        source: '/images/team/:path*',
+        destination: `${supabaseBase}/storage/v1/object/public/team/team/:path*`,
+      },
+    ];
   },
 }
 

@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Member } from '../types';
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
+import { FALLBACK_IMAGE_URLS } from '../lib/storagePublicUrls';
 
 interface MemberCardProps {
   member: Member;
@@ -13,12 +13,12 @@ const MemberCard: React.FC<MemberCardProps> = ({ member }) => {
   const cardContent = (
     <>
       <Image
-        src={member.imageUrl || STORAGE_IMAGE_URLS.defaultTeam}
+        src={member.imageUrl || FALLBACK_IMAGE_URLS.team}
         alt={member.name}
         width={112}
         height={112}
         className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover mb-4 border-2 border-gray-200"
-        onError={(e) => { (e.target as HTMLImageElement).src = STORAGE_IMAGE_URLS.defaultTeam; }}
+        onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMAGE_URLS.team; }}
       />
       <h3 className="text-lg font-semibold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors duration-200">
         {member.name}

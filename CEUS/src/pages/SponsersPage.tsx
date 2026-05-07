@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { FaHandshake, FaStar, FaExternalLinkAlt } from 'react-icons/fa';
 import { Sponsor as SponsorType, SponsorTier } from '../types';
 import { fetchSponsors } from '../lib/supabase';
+import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import SponsorLogo from '../components/SponsorLogo';
 import SponsorModal from '../components/SponsorModal';
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 const SponsorsPage: React.FC = () => {
   const [sponsors, setSponsors] = useState<SponsorType[]>([]);
@@ -119,7 +119,7 @@ const SponsorsPage: React.FC = () => {
         <div className="absolute inset-0 bg-black opacity-20"></div>
         <div
           className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: `url('${STORAGE_IMAGE_URLS.hero}')` }}
+          style={{ backgroundImage: `url(${STATIC_ASSET_URLS.heroBackground})` }}
         ></div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="mb-8">

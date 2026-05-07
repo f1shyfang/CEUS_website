@@ -1,7 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 import { Event, Sponsor, TeamCategory, Member } from '../types';
-import { STORAGE_IMAGE_URLS } from './storagePublicUrls';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -112,7 +111,11 @@ export async function fetchEvents(): Promise<Event[]> {
     id: row.id,
     title: row.title,
     date: row.date,
-    imageUrl: row.image_url || STORAGE_IMAGE_URLS.defaultEvent,
+    imageUrl: getImageUrl(
+      row.image_url,
+      getStorageUrl(STORAGE_BUCKETS.EVENTS, 'events/default-event-placeholder.png'),
+      STORAGE_BUCKETS.EVENTS
+    ),
     facebookEventLink: row.facebook_event_link || '#',
     description: row.description || '',
     category: row.category,
@@ -132,7 +135,7 @@ export async function fetchSponsors(): Promise<Sponsor[]> {
   return (data as SponsorRow[] | null ?? []).map((row) => ({
     id: row.id,
     name: row.name,
-    logoUrl: row.logo_url || '',
+    logoUrl: getImageUrl(row.logo_url, '', STORAGE_BUCKETS.SPONSORS),
     websiteUrl: row.website_url || '#',
     description: row.description || '',
     tier: row.tier,
@@ -158,7 +161,11 @@ export async function fetchTeamCategories(): Promise<TeamCategory[]> {
       id: row.id,
       name: row.name,
       role: row.role,
-      imageUrl: row.image_url || undefined,
+      imageUrl: getImageUrl(
+        row.image_url,
+        getStorageUrl(STORAGE_BUCKETS.TEAM, 'team/no_profile_img.jpg'),
+        STORAGE_BUCKETS.TEAM
+      ),
       email: row.email || undefined,
       linkedInUrl: row.linkedin_url || undefined,
     };
@@ -528,6 +535,59 @@ type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS];
 export function getStorageUrl(bucket: BucketName, path: string): string {
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
+}
+
+/**
+ * Convert a relative image path (e.g., "events/filename.png") to a full Supabase URL
+ * Falls back to default placeholder if path is not available
+ */
+export function getImageUrl(
+  imagePath: string | null | undefined,
+  defaultFallback: string,
+  preferredBucket?: BucketName
+): string {
+  if (!imagePath) {
+    return defaultFallback;
+  }
+
+  // Keep absolute URLs untouched (external CDN, etc.)
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+
+  let normalizedPath = imagePath.trim();
+  normalizedPath = normalizedPath.replace(/^\/+/, '');
+
+  // Support legacy formats like /images/events/foo.png and images/events/foo.png
+  if (normalizedPath.startsWith('images/')) {
+    normalizedPath = normalizedPath.slice('images/'.length);
+  }
+
+  const parts = normalizedPath.split('/');
+  if (parts.length < 2) {
+    if (preferredBucket) {
+      try {
+        return getStorageUrl(preferredBucket, normalizedPath);
+      } catch (err) {
+        console.warn(`Failed to generate Supabase URL for ${imagePath}:`, err);
+      }
+    }
+    return defaultFallback;
+  }
+
+  const bucket = parts[0] as BucketName;
+  const isValidBucket = Object.values(STORAGE_BUCKETS).includes(bucket);
+
+  if (!isValidBucket) {
+    return defaultFallback;
+  }
+
+  try {
+    return getStorageUrl(bucket, normalizedPath);
+  } catch (err) {
+    console.warn(`Failed to generate Supabase URL for ${imagePath}:`, err);
+    return defaultFallback;
+  }
 }
 
 /**

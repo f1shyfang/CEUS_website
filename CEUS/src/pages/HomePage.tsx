@@ -11,8 +11,8 @@ import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import LazyYouTube from '../components/LazyYouTube';
 import { fetchEvents, fetchSponsors } from '../lib/supabase';
+import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import { Event, Sponsor } from '../types';
-import { STORAGE_IMAGE_URLS } from '@/lib/storagePublicUrls';
 
 // Helper function to format date
 const formatEventDate = (dateString: string): string => {
@@ -265,7 +265,7 @@ const HomePage: React.FC = () => {
         <div className="GroupImg absolute inset-0"> 
           <Image 
             draggable={false} 
-            src={STORAGE_IMAGE_URLS.hero}
+            src={STATIC_ASSET_URLS.heroBackground}
             alt="CEUS Ball Group Photo" 
             fill
             className="object-cover object-center" 
