@@ -7,17 +7,17 @@ export function getPublicStorageUrl(bucket: string, objectPath: string): string 
 
 // NOTE: During migration objects were uploaded under nested paths like assets/assets/* and team/team/*.
 export const STATIC_ASSET_URLS = {
-  logo: getPublicStorageUrl('assets', 'assets/ceuslogo_noback_noname.png'),
-  heroBackground: getPublicStorageUrl('assets', 'assets/Ceus_ball_group_edited.jpg'),
-  facebookIcon: getPublicStorageUrl('assets', 'assets/facebook_icon.svg'),
-  instagramIcon: getPublicStorageUrl('assets', 'assets/instagram_icon.svg'),
-  linkedinIcon: getPublicStorageUrl('assets', 'assets/linkedin_icon.svg'),
-  arcIcon: getPublicStorageUrl('assets', 'assets/Arc_icon.png'),
+  logo: getPublicStorageUrl('public-images', 'assets/ceuslogo_noback_noname.png'),
+  heroBackground: getPublicStorageUrl('public-images', 'assets/Ceus_ball_group_edited.jpg'),
+  facebookIcon: getPublicStorageUrl('public-images', 'assets/facebook_icon.svg'),
+  instagramIcon: getPublicStorageUrl('public-images', 'assets/instagram_icon.svg'),
+  linkedinIcon: getPublicStorageUrl('public-images', 'assets/linkedin_icon.svg'),
+  arcIcon: getPublicStorageUrl('public-images', 'assets/Arc_icon.png'),
 };
 
 export const FALLBACK_IMAGE_URLS = {
-  event: getPublicStorageUrl('events', 'events/default-event-placeholder.png'),
-  team: getPublicStorageUrl('team', 'team/no_profile_img.jpg'),
+  event: getPublicStorageUrl('public-images', 'events/default-event-placeholder.png'),
+  team: getPublicStorageUrl('public-images', 'team/no_profile_img.jpg'),
 };
 
 export const STORAGE_IMAGE_URLS = {

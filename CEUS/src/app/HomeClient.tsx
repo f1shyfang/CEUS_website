@@ -19,6 +19,18 @@ interface HomeClientProps {
   sponsors: Sponsor[];
 }
 
+const PrevArrow = (props: CustomArrowProps) => (
+  <div className={props.className} style={{ ...props.style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }} onClick={props.onClick} aria-label="Previous">
+    <FaChevronLeft className="text-blue-600 text-2xl" />
+  </div>
+);
+
+const NextArrow = (props: CustomArrowProps) => (
+  <div className={props.className} style={{ ...props.style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }} onClick={props.onClick} aria-label="Next">
+    <FaChevronRight className="text-blue-600 text-2xl" />
+  </div>
+);
+
 const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
   const heroTitleRef = useRef<HTMLDivElement>(null);
   const heroSubtitleRef = useRef<HTMLDivElement>(null);
@@ -47,18 +59,6 @@ const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
     const eventDate = new Date(event.date);
     return eventDate >= now && eventDate <= twoWeeksFromNow;
   });
-
-  const PrevArrow = (props: CustomArrowProps) => (
-    <div className={props.className} style={{ ...props.style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }} onClick={props.onClick} aria-label="Previous">
-      <FaChevronLeft className="text-blue-600 text-2xl" />
-    </div>
-  );
-
-  const NextArrow = (props: CustomArrowProps) => (
-    <div className={props.className} style={{ ...props.style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }} onClick={props.onClick} aria-label="Next">
-      <FaChevronRight className="text-blue-600 text-2xl" />
-    </div>
-  );
 
   const sponsorSettings: Settings = {
     dots: true,

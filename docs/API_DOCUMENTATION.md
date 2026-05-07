@@ -126,18 +126,27 @@ export async function getUser()
 
 ## Storage Helpers
 
-Managed via Supabase Storage buckets.
+Managed via Supabase Storage buckets. All site images have been consolidated into a single public bucket.
 
 ### Buckets
-- `public-images`: Main bucket for all site images.
-  - Folders: `events/`, `sponsors/`, `team/`, `assets/`
+- `public-images`: Main bucket for all site images (events, sponsors, team, assets).
 
 ### Helpers
 ```typescript
+// Storage bucket names (all point to 'public-images')
+export const STORAGE_BUCKETS = {
+  PUBLIC_IMAGES: 'public-images',
+  EVENTS: 'public-images',
+  SPONSORS: 'public-images',
+  TEAM: 'public-images',
+  ASSETS: 'public-images',
+} as const;
+
 // Get a public URL for a file in a bucket
 export function getStorageUrl(bucket: string, path: string): string
 
 // Smart helper to resolve image paths (handles relative and absolute URLs)
+// Automatically handles legacy paths and maps them to 'public-images'
 export function getImageUrl(imagePath: string | null, defaultFallback: string, preferredBucket?: string): string
 
 // Upload a file to storage

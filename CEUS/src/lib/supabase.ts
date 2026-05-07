@@ -514,10 +514,10 @@ export async function deleteTeamMember(id: string) {
 // Storage bucket names
 export const STORAGE_BUCKETS = {
   PUBLIC_IMAGES: 'public-images',
-  EVENTS: 'events',
-  SPONSORS: 'sponsors',
-  TEAM: 'team',
-  ASSETS: 'assets',
+  EVENTS: 'public-images',
+  SPONSORS: 'public-images',
+  TEAM: 'public-images',
+  ASSETS: 'public-images',
 } as const;
 
 export const STORAGE_FOLDERS = {

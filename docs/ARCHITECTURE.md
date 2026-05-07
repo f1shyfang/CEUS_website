@@ -42,15 +42,14 @@ The CEUS website is built as a modern web application using Next.js 16 with the 
 - **PostCSS 8.5.3**: CSS processing.
 - **GSAP 3.12.7**: Animation library.
 
-### 3D Graphics
-- **Three.js 0.160.1**: 3D graphics library.
-- **React Three Fiber 8.18.0**: React renderer for Three.js.
-- **React Three Drei 9.122.0**: Helpers for React Three Fiber.
+### 3D Graphics (Temporarily Disabled)
+- **Note**: 3D models are currently replaced with a lightweight placeholder to optimize bundle size and ensure compatibility with React 19.
 
 ### Additional Libraries
 - **React Hook Form & Zod**: Form management and validation.
 - **React Icons 5.5.0**: Icon library.
 - **date-fns 4.1.0**: Date manipulation.
+- **React Slick 0.30.3**: Carousel component for events and sponsors.
 
 ## Project Structure
 

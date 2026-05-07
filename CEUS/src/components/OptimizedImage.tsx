@@ -67,7 +67,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   if (fill) {
     return (
       <div className={cn("relative w-full h-full overflow-hidden", containerClassName)}>
-        <Image {...imageProps} fill />
+        <Image {...imageProps} alt={seoAlt} fill />
       </div>
     )
   }
@@ -75,6 +75,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   return (
     <Image 
       {...imageProps} 
+      alt={seoAlt}
       width={width} 
       height={height} 
     />

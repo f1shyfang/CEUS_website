@@ -65,12 +65,17 @@ Vercel should auto-detect Next.js, but verify these settings:
 **Build Command**: `npm run build`
 **Output Directory**: `.next`
 **Install Command**: `npm install`
-**Node.js Version**: 18.x or later
+**Node.js Version**: 20.x or later
 
 #### 4. Environment Variables
 Add these environment variables in Vercel dashboard:
 
 ```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Other Settings
 NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
 NEXT_PUBLIC_GA_ID=your-google-analytics-id
 ```
@@ -110,7 +115,7 @@ Create `netlify.toml` in the CEUS directory:
   publish = ".next"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20"
 
 [[redirects]]
   from = "/*"
@@ -131,6 +136,11 @@ Create `netlify.toml` in the CEUS directory:
 #### 3. Environment Variables
 Add environment variables in Netlify dashboard:
 ```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Other Settings
 NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app
 NEXT_PUBLIC_GA_ID=your-google-analytics-id
 ```
@@ -206,6 +216,8 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+      - NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
     restart: unless-stopped
 ```
 
@@ -304,19 +316,15 @@ sudo systemctl reload nginx
 
 ### Required Environment Variables
 ```env
+# Supabase Configuration (required)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
 # Site URL (required)
 NEXT_PUBLIC_SITE_URL=https://your-domain.com
 
 # Google Analytics (optional)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-
-# Contact Form (optional)
-CONTACT_FORM_ENDPOINT=https://formspree.io/f/your-form-id
-
-# Social Media (optional)
-NEXT_PUBLIC_FACEBOOK_URL=https://facebook.com/ceus
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/ceus
-NEXT_PUBLIC_LINKEDIN_URL=https://linkedin.com/company/ceus
 ```
 
 ### Environment-Specific Configurations
