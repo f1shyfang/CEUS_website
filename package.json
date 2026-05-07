@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "dev": "npm run dev --prefix CEUS",
+    "build": "npm run build --prefix CEUS",
+    "start": "npm run start --prefix CEUS",
+    "lint": "npm run lint --prefix CEUS",
+    "tsc": "npm run tsc --prefix CEUS"
+  },
   "dependencies": {
     "eslint-config-next": "^16.0.7",
     "next": "^16.0.7"
