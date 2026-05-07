@@ -1,69 +1,51 @@
-# React + TypeScript + Vite
+# CEUS Next.js Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the main Next.js application for the CEUS website.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-## Expanding the ESLint configuration
+2. **Set up Environment Variables**
+   Create a `.env.local` file with your Supabase credentials:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+3. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+4. **Build for Production**
+   ```bash
+   npm run build
+   ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Documentation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+For comprehensive documentation on the project architecture, features, and contribution guidelines, please refer to the **[root README](../README.md)** and the **[docs/](../docs/)** directory.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Supabase Integration
 
-## Supabase public image uploads
+This project uses Supabase for database, authentication, and storage.
 
-Admin event, sponsor, and team forms upload images to one public Supabase Storage bucket named `public-images`.
+### Storage Setup
+Site images are stored in a public bucket named `public-images`.
 
-1. Ensure these env vars are set:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-2. In Supabase SQL editor, run [scripts/migrations/create_public_images_bucket.sql](scripts/migrations/create_public_images_bucket.sql).
-3. Uploaded files are organized by folder in the bucket:
-  - `events/`
-  - `sponsors/`
-  - `team/`
+1. Run the migration: `scripts/migrations/create_public_images_bucket.sql`.
+2. Sync local images (optional):
+   ```bash
+   set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
+   ```
 
-See [docs/public-images.md](docs/public-images.md) for the full bucket layout and re-upload workflow.
+### Admin Access
+The admin panel is located at `/admin`. Authentication is handled via Supabase Auth.
+
+---
+
+**[Go to Root Documentation](../README.md)**

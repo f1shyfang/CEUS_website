@@ -1,15 +1,18 @@
-import { Metadata } from 'next'
-import TeamPage from '../../pages/TeamPage'
+// src/app/team/page.tsx
+import React from 'react';
+import { fetchTeamCategories } from '../../lib/supabase';
+import TeamClient from './TeamClient';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Our Team',
-  description: 'Meet the dedicated executive team behind CEUS UNSW - the Chemical Engineering Undergraduate Society at UNSW Sydney.',
-  openGraph: {
-    title: 'Our Team | CEUS UNSW',
-    description: 'Meet the dedicated executive team behind CEUS UNSW.',
-  },
-}
+  description: 'Meet the dedicated students who run the Chemical Engineering Undergraduate Society at UNSW.',
+};
 
-export default function Team() {
-  return <TeamPage />
+export const revalidate = 3600;
+
+export default async function TeamPage() {
+  const categories = await fetchTeamCategories();
+
+  return <TeamClient categories={categories} />;
 }

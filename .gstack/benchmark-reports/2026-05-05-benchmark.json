@@ -1,0 +1,43 @@
+{
+  "mode": "quick",
+  "url": "https://www.ceusunsw.com/",
+  "timestamp": "2026-05-04T16:28:27Z",
+  "branch": "main",
+  "environment": "gstack browse headless (local run)",
+  "browse_perf": {
+    "ttfb_ms": 6,
+    "download_ms": 14,
+    "dom_parse_ms": 4,
+    "dom_ready_ms": 25,
+    "load_ms": 47,
+    "total_ms": 47
+  },
+  "navigation_timing": {
+    "ttfb_ms": 6.8,
+    "fcp_ms": 48,
+    "lcp_ms": null,
+    "dom_interactive_ms": 26.3,
+    "dom_complete_ms": 44.6,
+    "full_load_ms": 44.6,
+    "delivery_type": "cache",
+    "next_hop_protocol": "h2",
+    "encoded_body_size": 6762,
+    "decoded_body_size": 28990
+  },
+  "network": {
+    "total_requests": 37,
+    "total_transfer_bytes": 3300,
+    "by_type": {
+      "script": 13,
+      "fetch": 11,
+      "img": 7,
+      "link": 5,
+      "css": 1
+    }
+  },
+  "notes": [
+    "Quick benchmark: no baseline comparison.",
+    "largest-contentful-paint Performance API entries were empty after load + networkidle in headless; real-user LCP should be measured with Lighthouse or field data.",
+    "Many resource transferSize values were 0 in this session (cached or headless); total_transfer is a lower bound."
+  ]
+}

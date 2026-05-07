@@ -1,15 +1,13 @@
-import { Metadata } from 'next'
-import ContactPage from '../../pages/ContactPage'
+// src/app/contact/page.tsx
+import React from 'react';
+import ContactClient from './ContactClient';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
-  description: 'Get in touch with CEUS UNSW. Reach out for sponsorship inquiries, event collaborations, or general questions about the Chemical Engineering Undergraduate Society.',
-  openGraph: {
-    title: 'Contact Us | CEUS UNSW',
-    description: 'Get in touch with CEUS UNSW for sponsorship inquiries, collaborations, or questions.',
-  },
-}
+  description: 'Get in touch with the Chemical Engineering Undergraduate Society at UNSW. We are here to answer your questions.',
+};
 
-export default function Contact() {
-  return <ContactPage />
+export default function ContactPage() {
+  return <ContactClient />;
 }

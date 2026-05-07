@@ -1,15 +1,19 @@
-import { Metadata } from 'next'
-import EventsPage from '../../pages/EventsPage'
+// src/app/events/page.tsx
+import React from 'react';
+import { fetchEvents } from '../../lib/supabase';
+import EventsClient from './EventsClient';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Events',
-  description: 'Discover upcoming and past events hosted by CEUS UNSW - networking nights, industry tours, social gatherings, and academic workshops.',
-  openGraph: {
-    title: 'Events | CEUS UNSW',
-    description: 'Discover upcoming and past events hosted by CEUS UNSW.',
-  },
-}
+  description: 'Join us for exciting events, workshops, and social gatherings organized by CEUS.',
+};
 
-export default function Events() {
-  return <EventsPage />
+// Revalidate every hour
+export const revalidate = 3600;
+
+export default async function EventsPage() {
+  const events = await fetchEvents();
+
+  return <EventsClient events={events} />;
 }
