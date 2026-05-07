@@ -110,7 +110,7 @@ export const metadata: Metadata = {
 <!-- Proper heading hierarchy -->
 <h1>CEUS - Chemical Engineering Undergraduate Society</h1>
 <h2>Upcoming Events</h2>
-<h3>Industry Night 2026</h3>
+<h3>Industry Night 2024</h3>
 ```
 
 ### Internal Linking Strategy
@@ -147,9 +147,9 @@ export const metadata: Metadata = {
 ```json
 {
   "@type": "Event",
-  "name": "Industry Night 2026",
+  "name": "Industry Night 2024",
   "description": "Connect with industry professionals",
-  "startDate": "2026-03-15T18:00:00",
+  "startDate": "2024-03-15T18:00:00",
   "location": {
     "@type": "Place",
     "name": "UNSW Main Campus"

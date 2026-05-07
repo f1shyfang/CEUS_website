@@ -15,15 +15,15 @@ Thank you for your interest in contributing to the CEUS website! This document p
 ## Getting Started
 
 ### Prerequisites
-- Node.js 20+ 
-- npm
+- Node.js 18+ 
+- npm, yarn, or pnpm
 - Git
 - Basic knowledge of React, TypeScript, and Next.js
 
 ### First Time Setup
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables in `.env.local` (see [DEPLOYMENT.md](DEPLOYMENT.md))
+1. Fork the repository
+2. Clone your fork locally
+3. Install dependencies: `npm install`
 4. Start development server: `npm run dev`
 5. Make your changes
 6. Test thoroughly
@@ -34,9 +34,8 @@ Thank you for your interest in contributing to the CEUS website! This document p
 ### Environment Setup
 Create a `.env.local` file in the CEUS directory:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_GA_ID=your-google-analytics-id
 ```
 
 ### Available Scripts
@@ -200,21 +199,59 @@ export const useEventData = () => {
 
 ## Data Management
 
-### Managing Site Content
-Most site content (Events, Sponsors, Team Members) is no longer managed through static code files. Instead, it is stored in **Supabase** and managed via the **Admin Dashboard**.
+### Adding New Events
+1. Open `src/data/eventData.ts`
+2. Add new event object following the existing structure
+3. Ensure all required fields are populated
+4. Use proper date formatting
 
-1. **Access the Dashboard**: Navigate to `/admin` on your local or production site.
-2. **Log In**: Use your society executive credentials.
-3. **Manage Data**: Use the provided forms to Add, Edit, or Delete records.
-4. **Image Uploads**: Images uploaded via the dashboard are automatically saved to Supabase Storage and served via the site.
+```typescript
+{
+  id: 'unique-event-id',
+  title: 'Event Title',
+  date: new Date('2024-01-15T18:00:00'),
+  location: 'UNSW Campus',
+  description: 'Event description...',
+  image: '/images/events/event-image.jpg',
+  category: 'social',
+  registrationLink: 'https://example.com/register'
+}
+```
 
-### Seed Scripts & Migrations
-For bulk updates or initial setup, refer to the scripts in `CEUS/scripts/`:
-- **Migrations**: SQL files in `scripts/migrations/` for database schema changes.
-- **Seeds**: `.mjs` or `.sql` scripts for bulk data insertion (e.g., `seed-sponsors-2026.mjs`).
+### Adding Team Members
+1. Open `src/data/teamData.ts`
+2. Add new member object
+3. Ensure profile image exists in `public/images/team/`
+4. Use consistent formatting
 
-### Static Fallback Data
-The files in `src/data/` (e.g., `eventData.ts`, `sponsorData.ts`) are now primarily used as **static fallbacks** or for development testing when a database connection is unavailable. Modifying these files will NOT update the live site.
+```typescript
+{
+  id: 'member-id',
+  name: 'Full Name',
+  position: 'Position Title',
+  image: '/images/team/member-photo.jpg',
+  email: 'member@unsw.edu.au',
+  linkedin: 'https://linkedin.com/in/member',
+  bio: 'Member bio...'
+}
+```
+
+### Adding Sponsors
+1. Open `src/data/sponsorData.ts`
+2. Add sponsor object
+3. Ensure logo image exists in `public/images/sponsors/`
+4. Include all required information
+
+```typescript
+{
+  id: 'sponsor-id',
+  name: 'Sponsor Name',
+  logo: '/images/sponsors/sponsor-logo.png',
+  website: 'https://sponsor-website.com',
+  description: 'Sponsor description...',
+  tier: 'gold'
+}
+```
 
 ## Testing Guidelines
 
@@ -291,9 +328,10 @@ Brief description of changes
 4. Add page metadata
 
 ### Updating Content
-1. For simple content updates (text, dates, images), use the **Admin Dashboard**.
-2. For database schema changes, create a new SQL migration in `scripts/migrations/`.
-3. For bulk updates, create or update a script in `scripts/`.
+1. Locate appropriate data file in `src/data/`
+2. Update content following existing structure
+3. Test changes locally
+4. Submit PR with content update
 
 ### Styling Changes
 1. Use Tailwind utility classes

@@ -1,6 +1,6 @@
 'use client'
 // src/app/sponsors/SponsorsClient.tsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FaHandshake, FaStar, FaExternalLinkAlt } from 'react-icons/fa';
 import { Sponsor as SponsorType, SponsorTier } from '../../types';

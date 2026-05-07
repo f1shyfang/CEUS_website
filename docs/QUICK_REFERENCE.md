@@ -54,7 +54,6 @@ To set up the `public-images` bucket:
    # From CEUS/ directory
    set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
    ```
-3. For detailed instructions on image management, see [CEUS/docs/public-images.md](../CEUS/docs/public-images.md).
 
 ### Seeding Data
 Seed scripts are available in `CEUS/scripts/`:

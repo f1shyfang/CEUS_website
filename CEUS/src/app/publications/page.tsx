@@ -53,7 +53,7 @@ export default function PublicationsPage() {
               >
                 <div className="p-8 text-center bg-red-50 text-red-700 rounded-lg">
                   <p className="font-bold">PDF Support Missing</p>
-                  <p className="text-sm mt-2">Your browser doesn&apos;t support embedded PDFs. Please use the alternate link above.</p>
+                  <p className="text-sm mt-2">Your browser doesn't support embedded PDFs. Please use the alternate link above.</p>
                 </div>
               </iframe>
             </object>
@@ -90,7 +90,7 @@ export default function PublicationsPage() {
               >
                 <div className="p-8 text-center bg-red-50 text-red-700 rounded-lg">
                   <p className="font-bold">PDF Support Missing</p>
-                  <p className="text-sm mt-2">Your browser doesn&apos;t support embedded PDFs. Please use the alternate link above.</p>
+                  <p className="text-sm mt-2">Your browser doesn't support embedded PDFs. Please use the alternate link above.</p>
                 </div>
               </iframe>
             </object>

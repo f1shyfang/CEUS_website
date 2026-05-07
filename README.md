@@ -159,9 +159,9 @@ The application manages three main collections:
 ## 3D Features
 
 ### Three.js Integration
-- **Status**: 3D features are currently **temporarily disabled** and replaced with a lightweight placeholder to optimize bundle size and ensure React 19 compatibility.
-- **Original Implementation**: React Three Fiber renderer with laboratory equipment models.
-- **Lazy Loading**: Models are lazy-loaded to minimize initial load impact.
+- **React Three Fiber**: React renderer for Three.js
+- **3D Models**: Laboratory equipment (burettes, flasks) located in `public/`
+- **Performance Optimized**: Models are lazy-loaded and optimized for web
 
 ## Admin Dashboard
 
@@ -173,10 +173,18 @@ The admin panel provides a streamlined workflow for the society executives to ke
 
 ## How to Contribute
 
-We welcome contributions from the CEUS community! For detailed instructions on how to set up the project and our coding standards, please see **[CONTRIBUTING.md](docs/CONTRIBUTING.md)**.
+We welcome contributions from the CEUS community!
 
-### Content Updates
-If you are looking to update site content (Events, Team, Sponsors), please use the **Admin Dashboard** instead of manual code edits.
+1. **Fork the Repository**
+2. **Create a Feature Branch** (`git checkout -b feature/YourFeatureName`)
+3. **Commit Your Changes** (`git commit -m 'feat: add new feature'`)
+4. **Push and Create Pull Request**
+
+### Contribution Guidelines
+
+- **TypeScript**: Add proper types for all new code
+- **Styling**: Use Tailwind CSS and follow the existing design system
+- **Validation**: Ensure all forms use Zod for validation
 
 ## Deployment
 
