@@ -563,8 +563,27 @@ export function getImageUrl(
     normalizedPath = normalizedPath.slice('images/'.length);
   }
 
+  // Check if the normalized path looks like a relative path (e.g., "events/file.png", "team/file.jpg")
+  // If so, use the preferred bucket (all actual files are in 'public-images' bucket)
+  if (preferredBucket) {
+    const validBuckets = Object.values(STORAGE_BUCKETS) as string[];
+    if (normalizedPath.includes('/') || !validBuckets.includes(normalizedPath)) {
+      try {
+        return getStorageUrl(preferredBucket, normalizedPath);
+      } catch (err) {
+        console.warn(`Failed to generate Supabase URL for ${imagePath}:`, err);
+        return defaultFallback;
+      }
+    }
+  }
+
+  // For absolute bucket references or files without folders
   const parts = normalizedPath.split('/');
-  if (parts.length < 2) {
+  const firstPart = parts[0] as BucketName;
+  const validBuckets = Object.values(STORAGE_BUCKETS) as string[];
+  const isValidBucket = validBuckets.includes(firstPart);
+
+  if (!isValidBucket) {
     if (preferredBucket) {
       try {
         return getStorageUrl(preferredBucket, normalizedPath);
@@ -575,15 +594,8 @@ export function getImageUrl(
     return defaultFallback;
   }
 
-  const bucket = parts[0] as BucketName;
-  const isValidBucket = Object.values(STORAGE_BUCKETS).includes(bucket);
-
-  if (!isValidBucket) {
-    return defaultFallback;
-  }
-
   try {
-    return getStorageUrl(bucket, normalizedPath);
+    return getStorageUrl(firstPart, normalizedPath);
   } catch (err) {
     console.warn(`Failed to generate Supabase URL for ${imagePath}:`, err);
     return defaultFallback;
