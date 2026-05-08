@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 
-let supabaseRemotePattern = []
+let supabaseRemotePatterns = []
 if (supabaseUrl) {
   try {
     const parsed = new URL(supabaseUrl)
-    supabaseRemotePattern = [
+    supabaseRemotePatterns = [
       {
         protocol: parsed.protocol.replace(':', ''),
         hostname: parsed.hostname,
@@ -13,7 +13,7 @@ if (supabaseUrl) {
       },
     ]
   } catch {
-    supabaseRemotePattern = []
+    supabaseRemotePatterns = []
   }
 }
 
@@ -34,7 +34,7 @@ const nextConfig = {
         hostname: 'encrypted-tbn0.gstatic.com',
         pathname: '/**',
       },
-      ...supabaseRemotePattern,
+      ...supabaseRemotePatterns,
     ],
     unoptimized: true, // Allow unoptimized images for static export
   },
@@ -64,19 +64,19 @@ const nextConfig = {
     return [
       {
         source: '/images/assets/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/assets/assets/:path*`,
+        destination: `${supabaseBase}/storage/v1/object/public/public-images/assets/:path*`,
       },
       {
         source: '/images/events/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/events/events/:path*`,
+        destination: `${supabaseBase}/storage/v1/object/public/events/:path*`,
       },
       {
         source: '/images/sponsors/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/sponsors/sponsors/:path*`,
+        destination: `${supabaseBase}/storage/v1/object/public/sponsors/:path*`,
       },
       {
         source: '/images/team/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/team/team/:path*`,
+        destination: `${supabaseBase}/storage/v1/object/public/team/:path*`,
       },
     ];
   },
