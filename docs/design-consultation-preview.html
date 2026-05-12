@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CEUS Design Consultation Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #0a4d9b;
+        --primary-deep: #07356c;
+        --primary-bright: #2a74d7;
+        --bg: #f7faff;
+        --surface: #ffffff;
+        --text: #0f1f33;
+        --muted: #4b607a;
+        --line: #d7e3f4;
+        --success: #0b8f5a;
+        --warning: #b7791f;
+        --error: #c53030;
+      }
+      [data-theme="dark"] {
+        --primary: #2a74d7;
+        --primary-deep: #123763;
+        --primary-bright: #4f95f3;
+        --bg: #071321;
+        --surface: #0e1c2f;
+        --text: #e7effa;
+        --muted: #9db1cb;
+        --line: #1f3654;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Instrument Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        padding: 48px;
+        display: grid;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .hero h1 {
+        margin: 0;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        line-height: 1.02;
+      }
+      .hero p {
+        margin: 0;
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 700px;
+      }
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .cta {
+        border: 0;
+        border-radius: 12px;
+        font-weight: 700;
+        padding: 12px 18px;
+        cursor: pointer;
+      }
+      .cta.primary {
+        background: var(--primary);
+        color: white;
+      }
+      .cta.secondary {
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+      .liquid {
+        position: absolute;
+        inset: -80px -120px auto auto;
+        width: 420px;
+        height: 260px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, var(--primary-bright), var(--primary));
+        filter: blur(16px);
+        opacity: 0.22;
+        pointer-events: none;
+        transform: translate(var(--mx, 0px), var(--my, 0px));
+      }
+      .pipes {
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 90px;
+        opacity: 0.8;
+      }
+      .pipes path {
+        stroke: var(--primary);
+        stroke-width: 3;
+        fill: none;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+      .event-list {
+        display: grid;
+        gap: 10px;
+      }
+      .event {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+      .badge {
+        background: color-mix(in srgb, var(--primary) 14%, white);
+        color: var(--primary-deep);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 700;
+      }
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+      .sw {
+        border-radius: 12px;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .sw b {
+        display: block;
+        height: 58px;
+      }
+      .sw p {
+        margin: 0;
+        padding: 8px;
+        font-size: 0.8rem;
+      }
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .hero {
+          padding: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body data-theme="light">
+    <div class="wrap">
+      <div class="top">
+        <strong>CEUS - Blue Process Lab Preview</strong>
+        <button class="btn" id="toggleTheme">Toggle Light / Dark</button>
+      </div>
+
+      <section class="hero" id="hero">
+        <div class="liquid" id="liquid"></div>
+        <h1>A nicer landing page that pulls students into events</h1>
+        <p>
+          Fluid interaction and process-inspired structure guide attention to upcoming CEUS events while keeping the site clean, readable, and sponsor-safe.
+        </p>
+        <div class="cta-row">
+          <button class="cta primary">See Upcoming Events</button>
+          <button class="cta secondary">Join CEUS</button>
+        </div>
+        <svg class="pipes" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M0 68 C220 68, 220 24, 420 24 C620 24, 620 70, 860 70 C980 70, 1060 38, 1200 38" />
+          <path d="M120 88 C280 88, 320 54, 470 54 C610 54, 680 84, 840 84 C980 84, 1070 64, 1200 64" opacity="0.45" />
+        </svg>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h3 style="margin-top: 0">Upcoming Events Mockup</h3>
+          <div class="event-list">
+            <div class="event">
+              <div class="badge mono">MAY 12</div>
+              <div>
+                <strong>Process Plant Site Tour</strong>
+                <div style="color: var(--muted)">3:00 PM - Industry Tour</div>
+              </div>
+              <button class="btn">RSVP</button>
+            </div>
+            <div class="event">
+              <div class="badge mono">MAY 19</div>
+              <div>
+                <strong>CEUS Careers Night</strong>
+                <div style="color: var(--muted)">6:30 PM - Networking</div>
+              </div>
+              <button class="btn">RSVP</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3 style="margin-top: 0">Typography Roles</h3>
+          <p style="font-family: 'Plus Jakarta Sans'; font-size: 1.5rem; margin: 8px 0">Display: Plus Jakarta Sans (preview stand-in for Satoshi)</p>
+          <p>Body: Instrument Sans for all long-form and interface copy.</p>
+          <p class="mono">Data: JetBrains Mono for dates/time/location precision.</p>
+          <h4>Palette</h4>
+          <div class="swatches">
+            <div class="sw"><b style="background:#0A4D9B"></b><p>#0A4D9B</p></div>
+            <div class="sw"><b style="background:#07356C"></b><p>#07356C</p></div>
+            <div class="sw"><b style="background:#2A74D7"></b><p>#2A74D7</p></div>
+            <div class="sw"><b style="background:#F7FAFF"></b><p>#F7FAFF</p></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script>
+      const root = document.body;
+      const toggle = document.getElementById("toggleTheme");
+      const hero = document.getElementById("hero");
+      const liquid = document.getElementById("liquid");
+      let dark = false;
+
+      toggle.addEventListener("click", () => {
+        dark = !dark;
+        root.setAttribute("data-theme", dark ? "dark" : "light");
+      });
+
+      hero.addEventListener("mousemove", (e) => {
+        const r = hero.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * 0.08;
+        const y = (e.clientY - r.top - r.height / 2) * 0.06;
+        liquid.style.setProperty("--mx", `${x}px`);
+        liquid.style.setProperty("--my", `${y}px`);
+      });
+      hero.addEventListener("mouseleave", () => {
+        liquid.style.setProperty("--mx", "0px");
+        liquid.style.setProperty("--my", "0px");
+      });
+    </script>
+  </body>
+</html>
