@@ -1,6 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
-import { Event, Sponsor, TeamCategory, Member } from '../types';
+import { Event, Sponsor, TeamCategory, Member, Job } from '../types';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -94,6 +94,21 @@ type TeamMemberRow = {
   linkedin_url: string | null;
   category: string;
   sort_order: number;
+};
+
+type JobRow = {
+  id: string;
+  title: string;
+  company: string;
+  description: string;
+  application_url: string | null;
+  application_deadline: string | null;
+  location: string | null;
+  job_type: string;
+  category: string;
+  logo_url: string | null;
+  featured: boolean | null;
+  created_at: string | null;
 };
 
 export async function fetchEvents(): Promise<Event[]> {
@@ -508,6 +523,118 @@ export async function deleteTeamMember(id: string) {
 }
 
 // ============================================
+// Jobs CRUD Operations
+// ============================================
+
+export interface JobInput {
+  title: string;
+  company: string;
+  description: string;
+  applicationUrl?: string;
+  applicationDeadline?: string;
+  location?: string;
+  jobType: string;
+  category: string;
+  logoUrl?: string;
+  featured?: boolean;
+}
+
+export async function fetchJobs(): Promise<Job[]> {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select('id, title, company, description, application_url, application_deadline, location, job_type, category, logo_url, featured, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching jobs:', error);
+    throw error;
+  }
+
+  return (data as JobRow[] | null ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    company: row.company,
+    description: row.description,
+    applicationUrl: row.application_url || '',
+    applicationDeadline: row.application_deadline || undefined,
+    location: row.location || undefined,
+    jobType: row.job_type,
+    category: row.category,
+    logoUrl: getImageUrl(row.logo_url, '', STORAGE_BUCKETS.JOBS),
+    featured: Boolean(row.featured),
+    createdAt: row.created_at || undefined,
+  }));
+}
+
+export async function createJob(job: JobInput) {
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert([
+      {
+        title: job.title,
+        company: job.company,
+        description: job.description,
+        application_url: job.applicationUrl || null,
+        application_deadline: job.applicationDeadline || null,
+        location: job.location || null,
+        job_type: job.jobType,
+        category: job.category,
+        logo_url: job.logoUrl || null,
+        featured: job.featured || false,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error('Error creating job:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function updateJob(id: string, job: Partial<JobInput>) {
+  const updateData: Record<string, unknown> = {};
+  if (job.title !== undefined) updateData.title = job.title;
+  if (job.company !== undefined) updateData.company = job.company;
+  if (job.description !== undefined) updateData.description = job.description;
+  if (job.applicationUrl !== undefined) updateData.application_url = job.applicationUrl;
+  if (job.applicationDeadline !== undefined) updateData.application_deadline = job.applicationDeadline;
+  if (job.location !== undefined) updateData.location = job.location;
+  if (job.jobType !== undefined) updateData.job_type = job.jobType;
+  if (job.category !== undefined) updateData.category = job.category;
+  if (job.logoUrl !== undefined) updateData.logo_url = job.logoUrl;
+  if (job.featured !== undefined) updateData.featured = job.featured;
+
+  const { data, error } = await supabase
+    .from('jobs')
+    .update(updateData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating job:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function deleteJob(id: string) {
+  const { error } = await supabase
+    .from('jobs')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting job:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
 // Supabase Storage Helpers
 // ============================================
 
@@ -517,6 +644,7 @@ export const STORAGE_BUCKETS = {
   EVENTS: 'events',
   SPONSORS: 'sponsors',
   TEAM: 'team',
+  JOBS: 'jobs',
   ASSETS: 'assets',
 } as const;
 
@@ -524,6 +652,7 @@ export const STORAGE_FOLDERS = {
   EVENTS: 'events',
   SPONSORS: 'sponsors',
   TEAM: 'team',
+  JOBS: 'jobs',
   ASSETS: 'assets',
 } as const;
 

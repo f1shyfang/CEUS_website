@@ -37,6 +37,21 @@ export interface Event {
 
 
 
+export interface Job {
+  id: string;
+  title: string;
+  company: string;
+  description: string;
+  applicationUrl: string;
+  applicationDeadline?: string;
+  location?: string;
+  jobType: string;
+  category: string;
+  logoUrl?: string;
+  featured?: boolean;
+  createdAt?: string;
+}
+
 // Expand tiers so the sponsors page can mirror CSESoc-style groupings.
 export type SponsorTier =
   | 'Diamond'

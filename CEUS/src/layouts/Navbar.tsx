@@ -48,6 +48,7 @@ const Navbar: React.FC = () => {
         <Link href="/" className={linkClasses('/')}>Home</Link>
         <Link href="/team" className={linkClasses('/team')}>Team</Link>
         <Link href="/events" className={linkClasses('/events')}>Events</Link>
+        <Link href="/jobs" className={linkClasses('/jobs')}>Jobs</Link>
         <Link href="/publications" className={linkClasses('/publications')}>Publications</Link>
         <Link href="/sponsors" className={linkClasses('/sponsors')}>Sponsors</Link>
         <Link href="/contact" className={linkClasses('/contact')}>Contact Us</Link>
@@ -96,6 +97,9 @@ const Navbar: React.FC = () => {
               </Link>
               <Link href="/events" className={mobileLinkClasses('/events')} onClick={() => setIsMenuOpen(false)}>
                 Events
+              </Link>
+              <Link href="/jobs" className={mobileLinkClasses('/jobs')} onClick={() => setIsMenuOpen(false)}>
+                Jobs
               </Link>
               <Link href="/publications" className={mobileLinkClasses('/publications')} onClick={() => setIsMenuOpen(false)}>
                 Publications

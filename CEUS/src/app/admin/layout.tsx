@@ -9,6 +9,7 @@ import {
   FiCalendar,
   FiUsers,
   FiAward,
+  FiBriefcase,
   FiMail,
   FiLogOut,
   FiMenu,
@@ -20,6 +21,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: FiHome },
   { href: '/admin/events', label: 'Events', icon: FiCalendar },
   { href: '/admin/sponsors', label: 'Sponsors', icon: FiAward },
+  { href: '/admin/jobs', label: 'Jobs', icon: FiBriefcase },
   { href: '/admin/team', label: 'Team', icon: FiUsers },
   { href: '/admin/contacts', label: 'Contacts', icon: FiMail },
 ];

@@ -73,6 +73,45 @@ export const teamMemberSchema = z.object({
 
 export type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
 
+// Job types and categories
+export const JOB_TYPES = [
+  'Full-time',
+  'Part-time',
+  'Internship',
+  'Graduate',
+  'Contract',
+  'Casual',
+  'Other',
+] as const;
+
+export const JOB_CATEGORIES = [
+  'Structural',
+  'Geotechnical',
+  'Water',
+  'Environmental',
+  'Transport',
+  'Construction',
+  'Project Management',
+  'General',
+  'Other',
+] as const;
+
+// Job schema
+export const jobSchema = z.object({
+  title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
+  company: z.string().min(1, 'Company is required').max(200, 'Company must be less than 200 characters'),
+  description: z.string().min(1, 'Description is required'),
+  applicationUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  applicationDeadline: z.string().optional(),
+  location: z.string().optional(),
+  jobType: z.enum(JOB_TYPES),
+  category: z.enum(JOB_CATEGORIES),
+  logoUrl: z.string().optional().or(z.literal('')),
+  featured: z.boolean(),
+});
+
+export type JobFormData = z.infer<typeof jobSchema>;
+
 // Login schema
 export const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
