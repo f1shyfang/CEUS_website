@@ -3,4 +3,33 @@
 @tailwind components;
 @tailwind utilities;
 
-/* NO OTHER CSS RULES SHOULD BE IN THIS FILE */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer utilities {
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+  }
+}
+
+/* Keep this file minimal — global rules only; component styles belong in Tailwind classes or component files. */
