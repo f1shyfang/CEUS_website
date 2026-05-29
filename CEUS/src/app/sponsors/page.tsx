@@ -5,8 +5,8 @@ import SponsorsClient from './SponsorsClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Our Sponsors',
-  description: 'Meet the industry partners who support the Chemical Engineering Undergraduate Society at UNSW.',
+  title: 'Industry Partners',
+  description: 'The companies partnering with CEUS at UNSW — careers nights, technical events, and the annual Engineering Ball.',
 };
 
 export const revalidate = 3600;

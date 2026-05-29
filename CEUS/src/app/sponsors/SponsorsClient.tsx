@@ -1,10 +1,9 @@
 'use client'
 // src/app/sponsors/SponsorsClient.tsx
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { FaHandshake, FaStar, FaExternalLinkAlt } from 'react-icons/fa';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { Sponsor as SponsorType, SponsorTier } from '../../types';
-import { STATIC_ASSET_URLS } from '../../lib/storagePublicUrls';
 import SponsorLogo from '../../components/SponsorLogo';
 import SponsorModal from '../../components/SponsorModal';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -14,23 +13,25 @@ interface SponsorsClientProps {
   sponsors: SponsorType[];
 }
 
-const TIER_ORDER: SponsorTier[] = ['Diamond', 'Gold', 'Silver', 'Bronze', 'Community'];
+const TIER_ORDER: SponsorTier[] = ['Diamond', 'Major', 'Gold', 'Silver', 'Bronze', 'Supporting', 'Community', 'Other'];
 
-const TIER_STYLES: Record<SponsorTier, { title: string; accent: string; pill: string; bg: string }> = {
-  Diamond: { title: 'Diamond Sponsor', accent: 'from-sky-500 to-blue-600', pill: 'bg-sky-500', bg: 'bg-sky-50' },
-  Gold: { title: 'Gold Sponsors', accent: 'from-amber-500 to-yellow-500', pill: 'bg-amber-500', bg: 'bg-amber-50' },
-  Silver: { title: 'Silver Sponsors', accent: 'from-slate-500 to-gray-500', pill: 'bg-slate-500', bg: 'bg-slate-50' },
-  Bronze: { title: 'Bronze Sponsors', accent: 'from-amber-700 to-amber-800', pill: 'bg-amber-700', bg: 'bg-amber-100' },
-  Community: { title: 'Community Partners', accent: 'from-emerald-500 to-green-500', pill: 'bg-emerald-500', bg: 'bg-emerald-50' },
-  Major: { title: 'Major Sponsors', accent: 'from-blue-600 to-indigo-600', pill: 'bg-blue-600', bg: 'bg-blue-50' },
-  Supporting: { title: 'Supporting Sponsors', accent: 'from-green-600 to-emerald-600', pill: 'bg-green-600', bg: 'bg-green-50' },
-  Other: { title: 'Partners', accent: 'from-gray-600 to-gray-500', pill: 'bg-gray-500', bg: 'bg-gray-50' },
+const TIER_COPY: Record<SponsorTier, { title: string; note: string }> = {
+  Diamond:    { title: 'Diamond Partner',    note: 'Lead partner across our flagship calendar.' },
+  Major:      { title: 'Major Partners',     note: 'Backing our largest industry events.' },
+  Gold:       { title: 'Gold Partners',      note: 'Recruiting and engaging with our cohort each term.' },
+  Silver:     { title: 'Silver Partners',    note: 'Active across careers nights and recruitment.' },
+  Bronze:     { title: 'Bronze Partners',    note: 'Supporting our day-to-day events.' },
+  Supporting: { title: 'Supporting Partners', note: 'Helping us run student programs.' },
+  Community:  { title: 'Community Partners', note: 'Local organisations partnering on initiatives.' },
+  Other:      { title: 'Partners',           note: 'Organisations working with CEUS.' },
 };
+
+const headingBalance = { textWrap: 'balance' } as React.CSSProperties;
 
 const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSponsor, setSelectedSponsor] = useState<SponsorType | null>(null);
-  
+
   const featuredSponsor = useMemo(
     () => sponsors.find(s => s.featured) ?? sponsors.find(s => s.id === 'ansto'),
     [sponsors]
@@ -59,98 +60,202 @@ const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
     setTimeout(() => setSelectedSponsor(null), 300);
   };
 
+  const hasAnySponsors = Boolean(featuredSponsor) || tierGroups.length > 0;
+
+  // Tier-driven grid: higher tiers get fewer columns so logos read at a larger size.
+  const gridForTier = (tier: SponsorTier) => {
+    switch (tier) {
+      case 'Diamond':
+      case 'Major':
+        return 'grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8';
+      case 'Gold':
+        return 'grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6';
+      case 'Silver':
+        return 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6';
+      default:
+        return 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5';
+    }
+  };
+
+  // Tier-driven logo size: pairs with the grid density so Diamond/Major logos
+  // actually render proportionally larger, not just in fewer columns.
+  const logoSizeForTier = (tier: SponsorTier): 'sm' | 'md' | 'lg' => {
+    switch (tier) {
+      case 'Diamond':
+      case 'Major':
+        return 'lg';
+      case 'Gold':
+      case 'Silver':
+        return 'md';
+      default:
+        return 'sm';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <section className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white py-20 lg:py-32">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url(${STATIC_ASSET_URLS.heroBackground})` }}></div>
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-6">
-              <FaHandshake className="text-3xl" />
-            </div>
-            <h1 className="text-5xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">Our Sponsors</h1>
-            <p className="text-xl lg:text-2xl text-blue-100 max-w-4xl mx-auto leading-relaxed">
-              We&apos;re grateful for the continued support of our sponsors who make our events and initiatives possible. 
-              Their contributions help us create valuable opportunities for Chemical Engineering students at UNSW.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Become a Sponsor</Link>
-            <Link href="/events" className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">View Our Events</Link>
+    <div className="min-h-screen bg-white">
+      {/* Hero */}
+      <section className="container mx-auto px-4 md:px-6 pt-16 md:pt-24 pb-10 md:pb-14">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1B397E] mb-4">
+            Industry partners
+          </p>
+          <h1
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.05]"
+            style={headingBalance}
+          >
+            The companies backing CEUS
+          </h1>
+          <p className="mt-6 text-lg md:text-xl text-gray-700 leading-relaxed">
+            CEUS is the student society for chemical engineering at UNSW. Our partners run careers nights, technical workshops, and the annual Engineering Ball with us, and recruit graduates from our cohort every year.
+          </p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              Partner with CEUS
+            </Link>
+            <Link
+              href="/events"
+              className="inline-flex items-center justify-center rounded-lg border-2 border-[#1B397E] bg-transparent px-6 py-3 text-base font-semibold text-[#1B397E] transition-colors duration-200 ease-out hover:bg-[#1B397E]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              See our events
+            </Link>
           </div>
         </div>
       </section>
 
+      <div className="container mx-auto px-4 md:px-6">
+        <hr className="border-gray-200" />
+      </div>
+
+      {/* Featured / Lead partner */}
       {featuredSponsor && (
-        <section className="py-20 bg-white">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-500 rounded-full mb-6">
-                <FaStar className="text-white text-2xl" />
-              </div>
-              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">Featured Sponsor</h2>
-              <div className="w-24 h-1 bg-yellow-500 mx-auto"></div>
+        <section className="container mx-auto px-4 md:px-6 py-16 md:py-20">
+          <div className="mb-10">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1B397E] mb-2">
+              {featuredSponsor.tier} spotlight
+            </p>
+            <h2
+              className="text-3xl md:text-4xl font-bold text-gray-900"
+              style={headingBalance}
+            >
+              Lead partner: {featuredSponsor.name}
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12 items-center rounded-xl border border-gray-200 bg-white shadow-lg p-6 md:p-10">
+            <div className="lg:col-span-2 flex justify-center">
+              <button
+                type="button"
+                onClick={() => handleLogoClick(featuredSponsor)}
+                className="relative w-full max-w-sm aspect-[4/3] rounded-lg border border-gray-200 bg-white flex items-center justify-center p-8 transition-shadow duration-200 ease-out hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                aria-label={`View details for ${featuredSponsor.name}`}
+              >
+                <OptimizedImage
+                  src={featuredSponsor.logoUrl}
+                  alt={`${featuredSponsor.name} logo`}
+                  width={320}
+                  height={180}
+                  objectFit="contain"
+                />
+              </button>
             </div>
-            
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-12 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300">
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                <div className="text-center lg:text-left">
-                  <div className="inline-flex items-center px-4 py-2 rounded-full bg-white text-yellow-700 font-bold mb-4">
-                    {featuredSponsor.tier} Spotlight
-                  </div>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">{featuredSponsor.name}</h3>
-                  <p className="text-lg text-gray-700 leading-relaxed mb-6">
-                    {featuredSponsor.description || 'Our principal sponsor providing exceptional support to CEUS and our student community.'}
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    {featuredSponsor.websiteUrl && featuredSponsor.websiteUrl !== '#' && (
-                      <a href={featuredSponsor.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700 transition-all duration-300">
-                        Visit Website <FaExternalLinkAlt className="ml-2" />
-                      </a>
-                    )}
-                    <button onClick={() => handleLogoClick(featuredSponsor)} className="inline-flex items-center border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-full font-bold hover:bg-blue-600 hover:text-white transition-all duration-300">Learn More</button>
-                  </div>
-                </div>
-                <div className="flex justify-center">
-                  <div className="relative w-64 h-32 bg-white rounded-2xl shadow-lg flex items-center justify-center p-6 hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => handleLogoClick(featuredSponsor)}>
-                    <OptimizedImage src={featuredSponsor.logoUrl} alt={featuredSponsor.name} width={200} height={100} objectFit="contain" />
-                  </div>
-                </div>
+
+            <div className="lg:col-span-3">
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4" style={headingBalance}>
+                {featuredSponsor.name}
+              </h3>
+              <p className="text-base md:text-lg text-gray-700 leading-relaxed mb-6">
+                {featuredSponsor.description || 'Our lead partner, supporting CEUS events and student programs across the year.'}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {featuredSponsor.websiteUrl && featuredSponsor.websiteUrl !== '#' && (
+                  <a
+                    href={featuredSponsor.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  >
+                    Visit {featuredSponsor.name}
+                    <FaExternalLinkAlt className="ml-2 h-3 w-3" aria-hidden="true" />
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleLogoClick(featuredSponsor)}
+                  className="inline-flex items-center justify-center rounded-lg border-2 border-[#1B397E] bg-transparent px-6 py-3 text-sm font-semibold text-[#1B397E] transition-colors duration-200 ease-out hover:bg-[#1B397E]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                >
+                  More about this partnership
+                </button>
               </div>
             </div>
           </div>
         </section>
       )}
 
+      {/* Tiered partners */}
       {tierGroups.length > 0 && (
-        <section className="py-20 bg-gray-50">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
-            {tierGroups.map(({ tier, sponsors }) => {
-              const style = TIER_STYLES[tier];
+        <section className="container mx-auto px-4 md:px-6 pb-16 md:pb-24">
+          <div className="space-y-16 md:space-y-20">
+            {tierGroups.map(({ tier, sponsors: tierSponsors }) => {
+              const copy = TIER_COPY[tier];
               return (
-                <div key={tier} className="space-y-8">
-                  <div className="text-center">
-                    <div className={cn("inline-flex items-center justify-center px-4 py-2 rounded-full text-white font-bold mb-4 bg-gradient-to-r", style.accent)}>
-                      {style.title}
+                <div key={tier}>
+                  <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-baseline md:justify-between md:gap-6">
+                    <div>
+                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1B397E] mb-1">
+                        {tier}
+                      </p>
+                      <h2
+                        className="text-2xl md:text-3xl font-bold text-gray-900"
+                        style={headingBalance}
+                      >
+                        {copy.title}
+                      </h2>
                     </div>
+                    <p className="text-base text-gray-600 md:max-w-md md:text-right">
+                      {copy.note}
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {sponsors.map(sponsor => (
-                      <div key={sponsor.id} className="group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 overflow-hidden">
-                        <div className={cn(style.bg, "bg-opacity-60 flex items-center justify-center p-6")}>
-                          <SponsorLogo sponsor={sponsor} onClick={handleLogoClick} />
+                  <div className={cn(gridForTier(tier))}>
+                    {tierSponsors.map(sponsor => (
+                      <div
+                        key={sponsor.id}
+                        className="group rounded-xl border border-gray-200 bg-white shadow-lg overflow-hidden flex flex-col"
+                      >
+                        <div className="flex items-center justify-center p-6 md:p-8 bg-white">
+                          <SponsorLogo
+                            sponsor={sponsor}
+                            onClick={handleLogoClick}
+                            size={logoSizeForTier(tier)}
+                          />
                         </div>
-                        <div className="px-4 pb-4 pt-3">
-                          <h3 className="text-base font-bold text-gray-900 text-center">{sponsor.name}</h3>
-                          <div className="flex justify-center gap-3 mt-4">
+                        <div className="px-5 pb-5 pt-3 border-t border-gray-200">
+                          <h3 className="text-sm md:text-base font-semibold text-gray-900 text-center" style={headingBalance}>
+                            {sponsor.name}
+                          </h3>
+                          <div className="mt-3 flex justify-center gap-4 text-sm">
                             {sponsor.websiteUrl && sponsor.websiteUrl !== '#' && (
-                              <a href={sponsor.websiteUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-sm font-bold text-blue-600 hover:text-blue-800">
-                                Website <FaExternalLinkAlt className="ml-1 h-3 w-3" />
+                              <a
+                                href={sponsor.websiteUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center font-semibold text-[#1B397E] hover:text-[#2563EB] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                              >
+                                Website
+                                <FaExternalLinkAlt className="ml-1.5 h-3 w-3" aria-hidden="true" />
                               </a>
                             )}
-                            <button onClick={() => handleLogoClick(sponsor)} className="text-sm font-bold text-gray-700 hover:text-blue-600">Details</button>
+                            <button
+                              type="button"
+                              onClick={() => handleLogoClick(sponsor)}
+                              className="font-semibold text-gray-700 hover:text-[#2563EB] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded"
+                            >
+                              Details
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -163,12 +268,61 @@ const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
         </section>
       )}
 
-      <section className="py-20 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">Interested in Sponsoring CEUS?</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Partner with CEUS to connect with talented Chemical Engineering students at UNSW and support the next generation of engineers.</p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Get In Touch</Link>
+      {/* Empty state — invite sponsorship */}
+      {!hasAnySponsors && (
+        <section className="container mx-auto px-4 md:px-6 py-16 md:py-20">
+          <div className="mx-auto max-w-2xl rounded-xl border border-gray-200 bg-white shadow-lg px-8 py-10 md:px-12 md:py-14 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1B397E] mb-3">
+              Open for 2026
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3" style={headingBalance}>
+              Looking for industry partners for the year ahead
+            </h2>
+            <p className="text-base md:text-lg text-gray-700 mb-6">
+              If your team recruits chemical engineering students at UNSW, we&apos;d like to talk about careers nights, technical events, and the Engineering Ball.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              Get in touch
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Partnership CTA — quiet, not a billboard */}
+      <section className="border-t border-gray-200 bg-gray-50">
+        <div className="container mx-auto px-4 md:px-6 py-16 md:py-20">
+          <div className="grid gap-8 md:grid-cols-5 md:items-center">
+            <div className="md:col-span-3">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#1B397E] mb-3">
+                Become a partner
+              </p>
+              <h2
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+                style={headingBalance}
+              >
+                Partner with CEUS for 2026
+              </h2>
+              <p className="text-base md:text-lg text-gray-700 leading-relaxed">
+                We work with companies recruiting chemical, process, and materials engineering students at UNSW. Tiered packages cover branded careers events, technical workshops, and recognition across the year. Reach out and we&apos;ll share the prospectus.
+              </p>
+            </div>
+            <div className="md:col-span-2 flex flex-col gap-3 md:items-end">
+              <Link
+                href="/contact"
+                className="inline-flex w-full md:w-auto items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                Get in touch
+              </Link>
+              <Link
+                href="/events"
+                className="inline-flex w-full md:w-auto items-center justify-center rounded-lg border-2 border-[#1B397E] bg-transparent px-6 py-3 text-base font-semibold text-[#1B397E] transition-colors duration-200 ease-out hover:bg-[#1B397E]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                See what we run
+              </Link>
+            </div>
           </div>
         </div>
       </section>
