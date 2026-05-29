@@ -1,11 +1,13 @@
 'use client'
 // src/app/events/EventsClient.tsx
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import EventCard from '../../components/EventCard';
 import EventFilterButton from '../../components/EventFilterButton';
 import { Event as EventType } from '../../types';
 import { FaCalendarAlt, FaFilter, FaClock, FaHistory } from 'react-icons/fa';
 import { cn } from '../../lib/utils';
+import { CALENDAR_SUBSCRIBE_URL } from '../../lib/links';
 
 const EVENT_FILTERS = ['Industry', 'Social', 'Academic'] as const;
 type FilterType = (typeof EVENT_FILTERS)[number] | null;
@@ -30,11 +32,21 @@ const EventsClient: React.FC<EventsClientProps> = ({ events }) => {
   const [upcomingFilter, setUpcomingFilter] = useState<FilterType>(null);
   const [pastFilter, setPastFilter] = useState<FilterType>(null);
   const [activeSection, setActiveSection] = useState<'upcoming' | 'past'>('upcoming');
-  
-  const upcomingSectionRef = useRef<HTMLDivElement>(null);
-  const pastSectionRef = useRef<HTMLDivElement>(null);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  const upcomingSectionRef = useRef<HTMLElement>(null);
+  const pastSectionRef = useRef<HTMLElement>(null);
 
   const now = useMemo(() => new Date(), []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time sync of an external (matchMedia) value into state on mount; subsequent updates come from the 'change' listener below
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   const upcomingEvents = useMemo(() => {
     return events
@@ -50,62 +62,145 @@ const EventsClient: React.FC<EventsClientProps> = ({ events }) => {
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [events, now, pastFilter]);
 
+  const totalUpcoming = useMemo(
+    () => events.filter(event => new Date(event.date) >= now).length,
+    [events, now]
+  );
+  const totalPast = useMemo(
+    () => events.filter(event => new Date(event.date) < now).length,
+    [events, now]
+  );
+
   const scrollToSection = (section: 'upcoming' | 'past') => {
     setActiveSection(section);
     const targetRef = section === 'upcoming' ? upcomingSectionRef : pastSectionRef;
-    targetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    targetRef.current?.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
   };
 
-  const renderFilterButtons = (
+  const renderFilterRow = (
     currentFilter: FilterType,
-    setFilter: React.Dispatch<React.SetStateAction<FilterType>>
-  ) => (
-    <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8">
-      {EVENT_FILTERS.map(category => {
-        const hasEventsInThisCategory = events.some(event => matchesFilter(event.category, category));
-        if (!hasEventsInThisCategory) return null;
+    setFilter: React.Dispatch<React.SetStateAction<FilterType>>,
+    sectionType: 'upcoming' | 'past'
+  ) => {
+    const availableFilters = EVENT_FILTERS.filter(category =>
+      events.some(
+        event =>
+          matchesFilter(event.category, category) &&
+          (sectionType === 'upcoming'
+            ? new Date(event.date) >= now
+            : new Date(event.date) < now)
+      )
+    );
 
-        return (
-          <EventFilterButton
-            key={category}
-            label={category}
-            isActive={currentFilter === category}
-            onClick={() =>
-              setFilter(prev => (prev === category ? null : category))
-            }
-          />
-        );
-      })}
-    </div>
-  );
+    if (availableFilters.length === 0) return null;
 
-  const renderEventGrid = (events: EventType[], sectionType: 'upcoming' | 'past') => {
-    if (events.length === 0) {
+    return (
+      <div className="mb-10">
+        <div className="flex items-center gap-2 mb-3">
+          <FaFilter className="w-4 h-4 text-gray-600" aria-hidden="true" />
+          <span className="text-sm font-medium text-gray-700">Filter by category</span>
+        </div>
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          {availableFilters.map(category => (
+            <EventFilterButton
+              key={category}
+              label={category}
+              isActive={currentFilter === category}
+              onClick={() =>
+                setFilter(prev => (prev === category ? null : category))
+              }
+            />
+          ))}
+          {currentFilter && (
+            <button
+              type="button"
+              onClick={() => setFilter(null)}
+              className="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 underline-offset-4 hover:underline hover:text-[#1B397E] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 transition-colors"
+            >
+              Clear filter
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderEventGrid = (
+    eventsToRender: EventType[],
+    sectionType: 'upcoming' | 'past',
+    currentFilter: FilterType
+  ) => {
+    if (eventsToRender.length === 0) {
+      const filtered = currentFilter !== null;
+      const isUpcoming = sectionType === 'upcoming';
+
+      const heading = filtered
+        ? `No ${currentFilter} events ${isUpcoming ? 'coming up' : 'in the archive'}`
+        : isUpcoming
+          ? 'Nothing scheduled right now'
+          : 'No past events on record yet';
+
+      const body = filtered
+        ? isUpcoming
+          ? 'Try another category, or subscribe to the calendar so you catch the next one.'
+          : 'Try another category to see what the society has run before.'
+        : isUpcoming
+          ? 'The next term calendar is still being finalised. Subscribe to the calendar and you will see new events the moment they land.'
+          : 'Once events wrap up, they will appear here with photos and the run-down.';
+
       return (
-        <div className="text-center py-16 px-6 bg-white rounded-xl shadow-lg border border-gray-100">
-          <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-            <FaCalendarAlt className="w-8 h-8 text-gray-400" />
+        <div className="mx-auto max-w-xl rounded-xl border border-gray-200 bg-white px-8 py-10 md:px-12 md:py-14 text-center shadow-lg">
+          <div className="mx-auto w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mb-5">
+            <FaCalendarAlt className="w-6 h-6 text-gray-500" aria-hidden="true" />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No {sectionType === 'upcoming' ? 'Upcoming' : 'Past'} Events
+          <h3 className="text-xl font-semibold text-gray-900 mb-2" style={{ textWrap: 'balance' } as React.CSSProperties}>
+            {heading}
           </h3>
-          <p className="text-gray-600 max-w-md mx-auto">
-            {sectionType === 'upcoming' 
-              ? "Check back soon for new events, or follow us on social media for updates!"
-              : "No past events to display currently."
-            }
+          <p className="text-base text-gray-700 mb-6 max-w-md mx-auto">
+            {body}
           </p>
+          {filtered ? (
+            <button
+              type="button"
+              onClick={() =>
+                isUpcoming ? setUpcomingFilter(null) : setPastFilter(null)
+              }
+              className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              Show all {isUpcoming ? 'upcoming' : 'past'} events
+            </button>
+          ) : isUpcoming ? (
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a
+                href={CALENDAR_SUBSCRIBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 ease-out hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                Subscribe to calendar
+              </a>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center rounded-lg border-2 border-[#1B397E] bg-transparent px-6 py-3 text-sm font-semibold text-[#1B397E] transition-colors duration-200 ease-out hover:bg-[#1B397E]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                Get in touch
+              </Link>
+            </div>
+          ) : null}
         </div>
       );
     }
 
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-        {events.map((event, index) => (
-          <div 
-            key={`${sectionType}-${event.id}`} 
-            className="animate-fade-in-up"
-            style={{ animationDelay: `${index * 50}ms` }}
+        {eventsToRender.map((event, index) => (
+          <div
+            key={`${sectionType}-${event.id}`}
+            className="animate-fade-in-up motion-safe:opacity-0"
+            style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
           >
             <EventCard event={event} />
           </div>
@@ -115,92 +210,133 @@ const EventsClient: React.FC<EventsClientProps> = ({ events }) => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      <div className="relative h-[60vh] bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-72 h-72 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/2 translate-y-1/2"></div>
-        </div>
-        
-        <div className="relative z-10 h-full flex items-center justify-center text-white">
-          <div className="text-center px-4 max-w-4xl mx-auto">
-            <div className="mb-6">
-              <FaCalendarAlt className="w-16 h-16 mx-auto mb-4 text-blue-200" />
+    <div className="bg-white min-h-screen">
+      {/* Hero — brand navy cover */}
+      <section className="relative bg-[#1B397E] text-white">
+        <div className="container mx-auto px-4 md:px-6 py-20 md:py-28">
+          <div className="max-w-3xl">
+            <p className="text-sm md:text-base font-semibold tracking-[0.18em] uppercase text-blue-200 mb-4">
+              CEUS Calendar
+            </p>
+            <h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.05] tracking-tight mb-5"
+              style={{ textWrap: 'balance' } as React.CSSProperties}
+            >
+              Every event the society runs, in one place.
+            </h1>
+            <p className="text-lg md:text-xl text-blue-100 leading-relaxed max-w-2xl">
+              Industry nights with engineers working in process design, social lawn days, mid-semester study sessions, and the annual Engineering Ball. Browse what is coming up and what we have run before.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <a
+                href={CALENDAR_SUBSCRIBE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-lg bg-white px-7 py-3 text-base font-semibold text-[#1B397E] transition-colors duration-200 ease-out hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1B397E]"
+              >
+                Subscribe to calendar
+              </a>
+              <button
+                type="button"
+                onClick={() => scrollToSection('upcoming')}
+                className="inline-flex items-center justify-center rounded-lg border-2 border-white/80 bg-transparent px-7 py-3 text-base font-semibold text-white transition-colors duration-200 ease-out hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1B397E]"
+              >
+                Jump to upcoming
+              </button>
             </div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-4">Events</h1>
-            <p className="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto">Join us for exciting events, workshops, and social gatherings</p>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-20">
+      {/* Section tabs */}
+      <nav
+        aria-label="Event sections"
+        className="bg-white border-b border-gray-200 sticky top-0 z-20"
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8">
+          <div className="flex gap-8">
             <button
+              type="button"
               onClick={() => scrollToSection('upcoming')}
+              aria-current={activeSection === 'upcoming' ? 'true' : undefined}
               className={cn(
-                "flex items-center space-x-2 py-4 px-1 border-b-2 font-bold text-sm transition-colors",
-                activeSection === 'upcoming' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                'flex items-center gap-2 py-4 px-1 border-b-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-sm',
+                activeSection === 'upcoming'
+                  ? 'border-[#1B397E] text-[#1B397E]'
+                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
               )}
             >
-              <FaClock className="w-4 h-4" />
-              <span>Upcoming Events ({upcomingEvents.length})</span>
+              <FaClock className="w-4 h-4" aria-hidden="true" />
+              <span>Upcoming ({totalUpcoming})</span>
             </button>
             <button
+              type="button"
               onClick={() => scrollToSection('past')}
+              aria-current={activeSection === 'past' ? 'true' : undefined}
               className={cn(
-                "flex items-center space-x-2 py-4 px-1 border-b-2 font-bold text-sm transition-colors",
-                activeSection === 'past' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                'flex items-center gap-2 py-4 px-1 border-b-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-sm',
+                activeSection === 'past'
+                  ? 'border-[#1B397E] text-[#1B397E]'
+                  : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-300'
               )}
             >
-              <FaHistory className="w-4 h-4" />
-              <span>Past Events ({pastEvents.length})</span>
+              <FaHistory className="w-4 h-4" aria-hidden="true" />
+              <span>Past ({totalPast})</span>
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <section ref={upcomingSectionRef} className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">Upcoming Events</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto rounded-full"></div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <section
+          ref={upcomingSectionRef}
+          aria-labelledby="upcoming-heading"
+          className="mb-20 scroll-mt-20"
+        >
           <div className="mb-8">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <FaFilter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-600">Filter by category:</span>
-            </div>
-            {renderFilterButtons(upcomingFilter, setUpcomingFilter)}
+            <h2
+              id="upcoming-heading"
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
+              style={{ textWrap: 'balance' } as React.CSSProperties}
+            >
+              Upcoming events
+            </h2>
+            <p className="text-base text-gray-700">
+              {totalUpcoming === 0
+                ? 'Nothing on the calendar right now.'
+                : totalUpcoming === 1
+                  ? 'One event coming up.'
+                  : `${totalUpcoming} events coming up.`}
+            </p>
           </div>
-          {renderEventGrid(upcomingEvents, 'upcoming')}
+          {renderFilterRow(upcomingFilter, setUpcomingFilter, 'upcoming')}
+          {renderEventGrid(upcomingEvents, 'upcoming', upcomingFilter)}
         </section>
 
-        <section ref={pastSectionRef}>
-          <div className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">Past Events</h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-gray-500 to-gray-600 mx-auto rounded-full"></div>
-          </div>
+        <section
+          ref={pastSectionRef}
+          aria-labelledby="past-heading"
+          className="scroll-mt-20"
+        >
           <div className="mb-8">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <FaFilter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-600">Filter by category:</span>
-            </div>
-            {renderFilterButtons(pastFilter, setPastFilter)}
+            <h2
+              id="past-heading"
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
+              style={{ textWrap: 'balance' } as React.CSSProperties}
+            >
+              Past events
+            </h2>
+            <p className="text-base text-gray-700">
+              {totalPast === 0
+                ? 'The archive will fill up as the year goes on.'
+                : 'The archive of what we have run before.'}
+            </p>
           </div>
-          {renderEventGrid(pastEvents, 'past')}
+          {renderFilterRow(pastFilter, setPastFilter, 'past')}
+          {renderEventGrid(pastEvents, 'past', pastFilter)}
         </section>
       </div>
 
-      <style jsx global>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-up {
-          animation: fadeInUp 0.6s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 };
