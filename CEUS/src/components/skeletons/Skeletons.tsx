@@ -10,18 +10,30 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className }) => (
 );
 
 export const EventSkeleton: React.FC = () => (
-  <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-    <Skeleton className="h-56 w-full" />
-    <div className="p-6">
-      <Skeleton className="h-4 w-1/3 mb-3" />
-      <Skeleton className="h-6 w-3/4 mb-3" />
-      <div className="space-y-2 mb-4">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-      <Skeleton className="h-10 w-full rounded-lg" />
+  <div className="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+    <div className="relative h-56 w-full">
+      <Skeleton className="h-full w-full rounded-none" />
+      <Skeleton className="absolute left-4 top-4 h-6 w-20 rounded-full bg-gray-300" />
     </div>
+    <div className="flex flex-grow flex-col p-6">
+      <Skeleton className="mb-3 h-4 w-2/5" />
+      <Skeleton className="mb-2 h-5 w-3/4" />
+      <Skeleton className="mb-4 h-5 w-1/2" />
+      <div className="mb-6 flex-grow space-y-2">
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-2/3" />
+      </div>
+      <Skeleton className="h-11 w-full rounded-lg" />
+    </div>
+  </div>
+);
+
+export const EventHomeSkeleton: React.FC = () => (
+  <div className="px-4">
+    <Skeleton className="h-[260px] w-full rounded-lg" />
+    <Skeleton className="mx-auto mt-5 h-6 w-3/4" />
+    <Skeleton className="mx-auto mt-2 h-4 w-1/2" />
   </div>
 );
 

@@ -6,7 +6,8 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Events',
-  description: 'Join us for exciting events, workshops, and social gatherings organized by CEUS.',
+  description:
+    'Every event CEUS runs at UNSW: industry nights, social lawn days, study sessions, and the annual Engineering Ball. Browse upcoming and past events.',
 };
 
 // Revalidate every hour
