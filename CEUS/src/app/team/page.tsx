@@ -5,8 +5,9 @@ import TeamClient from './TeamClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Our Team',
-  description: 'Meet the dedicated students who run the Chemical Engineering Undergraduate Society at UNSW.',
+  title: 'The Team',
+  description:
+    'The 2026 CEUS committee at UNSW. Meet the executives, year reps, and portfolio teams behind every event, post, and industry night.',
 };
 
 export const revalidate = 3600;

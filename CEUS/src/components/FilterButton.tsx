@@ -1,23 +1,28 @@
-// src/components/EventFilterButton.tsx
+// src/components/FilterButton.tsx
 import React from 'react';
 
-interface EventFilterButtonProps {
+interface FilterButtonProps {
   label: string;
   isActive: boolean;
   onClick: () => void;
 }
 
-const EventFilterButton: React.FC<EventFilterButtonProps> = ({ label, isActive, onClick }) => {
+const FilterButton: React.FC<FilterButtonProps> = ({ label, isActive, onClick }) => {
   return (
     <button
+      type="button"
+      role="tab"
+      aria-selected={isActive}
+      tabIndex={isActive ? 0 : -1}
       onClick={onClick}
       className={`
-        px-4 sm:px-5 py-2 rounded-md text-sm font-medium border-2 transition-colors duration-150
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400
+        px-4 sm:px-5 py-2 rounded-md text-sm font-medium border
+        transition-colors duration-200 ease-out
+        focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         ${
           isActive
-            ? 'bg-blue-500 text-white border-blue-500'
-            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-800'
+            ? 'bg-[#1B397E] text-white border-[#1B397E] hover:bg-blue-700 hover:border-blue-700'
+            : 'bg-white text-[#1B397E] border-gray-200 hover:bg-[#1B397E]/5 hover:border-[#1B397E]'
         }
       `}
     >
@@ -26,4 +31,4 @@ const EventFilterButton: React.FC<EventFilterButtonProps> = ({ label, isActive, 
   );
 };
 
-export default EventFilterButton;
+export default FilterButton;
