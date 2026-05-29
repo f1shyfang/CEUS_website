@@ -4,116 +4,218 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Publications',
-  description: 'Access the CEUS Student and Career Handbooks - essential guides for Chemical Engineering students at UNSW.',
+  description:
+    'Read the CEUS Student Handbook and Careers Handbook: student-written guides to studying Chemical Engineering at UNSW.',
 };
 
-export default function PublicationsPage() {
+type Publication = {
+  title: string;
+  year: string;
+  description: string;
+  localPath: string;
+  driveUrl: string;
+  fileSizeLabel: string;
+};
+
+const PUBLICATIONS: Publication[] = [
+  {
+    title: 'Student Handbook',
+    year: '2026',
+    description:
+      'Written by CEUS students for CEUS students. Course sequencing notes, elective tips, study advice, and the things we wish someone had told us in first year.',
+    localPath: '/Student Handbook 2026.pdf',
+    driveUrl:
+      'https://drive.google.com/file/d/1hL5kVOKKlCutbcbejMFE8ao5ylMuqWqj/view?usp=sharing',
+    fileSizeLabel: 'PDF, 24 MB',
+  },
+  {
+    title: 'Careers Handbook',
+    year: '2023',
+    description:
+      'A walk-through of life after the degree: industries our alumni have moved into, internship timelines, resume and interview notes, and questions worth asking at networking nights.',
+    localPath: '/Careers Handbook 2023.pdf',
+    driveUrl:
+      'https://drive.google.com/file/d/1aD-fqH9IADhLh9yeuZzlnBpjwmNS0Scs/view?usp=sharing',
+    fileSizeLabel: 'PDF, 32 MB',
+  },
+];
+
+function PdfIcon({ className = 'h-4 w-4' }: { className?: string }) {
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <section className="text-center py-16 px-6 bg-white border-b border-gray-100">
-        <h1 className="text-4xl md:text-6xl font-black mb-6 text-gray-900 tracking-tight">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <path d="M9 13h6" />
+      <path d="M9 17h4" />
+    </svg>
+  );
+}
+
+function ExternalLinkIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6" />
+      <path d="M10 14 21 3" />
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </svg>
+  );
+}
+
+function PublicationCard({ publication }: { publication: Publication }) {
+  const { title, year, description, localPath, driveUrl, fileSizeLabel } =
+    publication;
+  const fullTitle = `${title} ${year}`;
+
+  return (
+    <article className="flex flex-col rounded-xl border border-gray-200 bg-white shadow-lg motion-safe:transition-shadow motion-safe:duration-300 hover:shadow-xl">
+      <div className="flex flex-col gap-3 border-b border-gray-200 p-6 sm:p-7">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+          <PdfIcon className="h-3.5 w-3.5" />
+          <span>{fileSizeLabel}</span>
+        </div>
+        <h2 className="text-2xl font-bold text-gray-900 text-balance">
+          {fullTitle}
+        </h2>
+        <p className="text-base leading-relaxed text-gray-700">{description}</p>
+        <div className="mt-2 flex flex-wrap gap-3">
+          <a
+            href={localPath}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Open the ${fullTitle} PDF in a new tab`}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#1B397E] px-5 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+          >
+            <PdfIcon />
+            Open PDF
+          </a>
+          <a
+            href={driveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`View ${fullTitle} on Google Drive in a new tab`}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-[#1B397E] bg-transparent px-5 py-2.5 text-sm font-semibold text-[#1B397E] motion-safe:transition-colors motion-safe:duration-200 hover:bg-[#1B397E]/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+          >
+            <ExternalLinkIcon />
+            View on Google Drive
+          </a>
+        </div>
+      </div>
+
+      <div className="p-4 sm:p-5">
+        <div className="aspect-[500/678] w-full overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+          <object
+            data={localPath}
+            type="application/pdf"
+            width="100%"
+            height="100%"
+            aria-label={`${fullTitle} embedded preview`}
+          >
+            <iframe
+              src={localPath}
+              width="100%"
+              height="100%"
+              title={`${fullTitle} preview`}
+              className="border-none"
+            >
+              <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+                <p className="text-base font-semibold text-gray-900">
+                  Your browser can&apos;t preview PDFs inline.
+                </p>
+                <p className="text-sm text-gray-700">
+                  Use the buttons above to open the {fullTitle} in a new tab.
+                </p>
+              </div>
+            </iframe>
+          </object>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export default function PublicationsPage() {
+  const publications = PUBLICATIONS;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white px-6 py-16 text-center">
+        <h1 className="mb-5 text-4xl font-black tracking-tight text-gray-900 text-balance md:text-6xl">
           Publications
         </h1>
-        <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-          Dive into the CEUS Student and Career Handbooks—a must for all
-          chemical engineering students! Packed with helpful tips, 
-          practical insights, and tons of valuable info, these will 
-          guide you throughout your academic and postgrad careers.
+        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-700">
+          Two student-written handbooks that cover what coursework alone
+          doesn&apos;t: how to plan your degree, where Chemical Engineering
+          graduates end up, and how CEUS members have made the jump from
+          lectures to industry.
         </p>
       </section>
 
-      <section className="container mx-auto px-6 py-16 flex flex-wrap justify-center gap-12">
-        {/* Student Handbook */}
-        <div className="flex flex-col items-center bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all duration-300 hover:scale-[1.02]">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Student Handbook</h2>
-          <div className="mb-6">
-            <a 
-              href="https://drive.google.com/file/d/1hL5kVOKKlCutbcbejMFE8ao5ylMuqWqj/view?usp=sharing" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300"
+      <section className="container mx-auto px-6 py-16">
+        {publications.length === 0 ? (
+          <div className="mx-auto max-w-2xl rounded-xl border border-gray-200 bg-white p-10 text-center shadow-lg">
+            <h2 className="mb-2 text-2xl font-bold text-gray-900">
+              Handbooks are being updated
+            </h2>
+            <p className="mb-6 text-base leading-relaxed text-gray-700">
+              The CEUS publications team is refreshing this year&apos;s
+              handbooks. New editions land here as soon as they&apos;re signed
+              off. In the meantime, reach out and we&apos;ll send you the
+              previous edition.
+            </p>
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center rounded-lg bg-[#1B397E] px-5 py-2.5 text-sm font-semibold text-white motion-safe:transition-colors motion-safe:duration-200 hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             >
-              Alternate Link
+              Contact CEUS
             </a>
           </div>
-          <div className="w-full max-w-[500px] aspect-[500/678] bg-gray-100 rounded-lg overflow-hidden shadow-inner">
-            <object
-              data='/Student Handbook 2026.pdf'
-              type="application/pdf"
-              width="100%"
-              height="100%"
-              aria-label="Student Handbook PDF Embed"
-            >
-              <iframe
-                src='/Student Handbook 2026.pdf'
-                width="100%"
-                height="100%"
-                title="Student Handbook PDF Viewer"
-                className="border-none"
-              >
-                <div className="p-8 text-center bg-red-50 text-red-700 rounded-lg">
-                  <p className="font-bold">PDF Support Missing</p>
-                  <p className="text-sm mt-2">Your browser doesn't support embedded PDFs. Please use the alternate link above.</p>
-                </div>
-              </iframe>
-            </object>
+        ) : (
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-2">
+            {publications.map((pub) => (
+              <PublicationCard key={pub.title} publication={pub} />
+            ))}
           </div>
-        </div>
+        )}
+      </section>
 
-        {/* Careers Handbook */}
-        <div className="flex flex-col items-center bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all duration-300 hover:scale-[1.02]">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800">Careers Handbook</h2>
-          <div className="mb-6">
-            <a 
-              href="https://drive.google.com/file/d/1aD-fqH9IADhLh9yeuZzlnBpjwmNS0Scs/view?usp=sharing" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300"
-            >
-              Alternate Link
-            </a>
-          </div>
-          <div className="w-full max-w-[500px] aspect-[500/678] bg-gray-100 rounded-lg overflow-hidden shadow-inner">
-            <object
-              data='/Careers Handbook 2023.pdf'
-              type="application/pdf"
-              width="100%"
-              height="100%"
-              aria-label="Careers Handbook PDF Embed"
-            >
-              <iframe
-                src='/Careers Handbook 2023.pdf'
-                width="100%"
-                height="100%"
-                title="Careers Handbook PDF Viewer"
-                className="border-none"
-              >
-                <div className="p-8 text-center bg-red-50 text-red-700 rounded-lg">
-                  <p className="font-bold">PDF Support Missing</p>
-                  <p className="text-sm mt-2">Your browser doesn't support embedded PDFs. Please use the alternate link above.</p>
-                </div>
-              </iframe>
-            </object>
+      <section className="mx-auto max-w-4xl px-6 pb-16">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8">
+          <h2 className="mb-3 text-lg font-bold text-gray-900">A note from the editors</h2>
+          <div className="space-y-3 text-sm leading-relaxed text-gray-700">
+            <p>
+              These handbooks are written by CEUS members from their own
+              experience. We check the material before publishing, but parts of
+              it are opinion, and information sourced from public websites can
+              change without notice. Term offerings and prerequisites in
+              particular shift between years.
+            </p>
+            <p>
+              The Chemical Engineering Undergraduate Society of UNSW
+              isn&apos;t responsible for decisions made on the basis of the
+              handbooks. Before locking in a degree plan, please confirm course
+              availability and prerequisites on the official UNSW Handbook.
+            </p>
           </div>
         </div>
       </section>
-
-      <div className="max-w-4xl mx-auto px-6 py-12 text-gray-500 bg-white/50 backdrop-blur-sm rounded-2xl mb-16 border border-gray-100">
-        <h3 className="text-xl font-bold mb-4 text-gray-700">Disclaimer</h3>
-        <div className="text-xs leading-relaxed italic"> 
-          <p>
-            Please note, whilst all due care has been taken in collecting this information and
-            ensuring that the material is correct at the time of publishing, it is still based primarily
-            on collective experiences and may be biased. Information obtained from public
-            websites may change without notice. Course structures for future terms may change
-            due to COVID or curriculum edits.
-            The Chemical Engineering Undergraduate Society of UNSW takes no responsibility for
-            any errors and any such reliance upon them.
-            We suggest students planning their degree double check term availabilities and
-            prerequisites on the UNSW website.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }
