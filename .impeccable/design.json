@@ -1,0 +1,350 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-29T00:00:00.000Z",
+  "title": "Design System: CEUS Website",
+  "extensions": {
+    "colorMeta": {
+      "brand-navy": {
+        "role": "primary",
+        "displayName": "Brand Navy",
+        "canonical": "oklch(33.5% 0.108 263)",
+        "tonalRamp": [
+          "#0A1530",
+          "#0F2148",
+          "#142C61",
+          "#1B397E",
+          "#2A4C9C",
+          "#4368BC",
+          "#7A95D2",
+          "#C8D3EC"
+        ]
+      },
+      "accent-blue": {
+        "role": "secondary",
+        "displayName": "Accent Blue",
+        "canonical": "oklch(54.6% 0.215 262)",
+        "tonalRamp": [
+          "#172554",
+          "#1E3A8A",
+          "#1D4ED8",
+          "#2563EB",
+          "#3B82F6",
+          "#60A5FA",
+          "#93C5FD",
+          "#EFF6FF"
+        ]
+      },
+      "accent-blue-deep": {
+        "role": "secondary",
+        "displayName": "Accent Blue Deep",
+        "canonical": "oklch(48.8% 0.232 263)",
+        "tonalRamp": [
+          "#172554",
+          "#1E3A8A",
+          "#1D4ED8",
+          "#2563EB",
+          "#3B82F6",
+          "#60A5FA",
+          "#93C5FD",
+          "#DBEAFE"
+        ]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "#FFFFFF",
+          "#FAFAFA",
+          "#F5F5F5",
+          "#E5E7EB",
+          "#D1D5DB",
+          "#9CA3AF",
+          "#6B7280",
+          "#1F2937"
+        ]
+      },
+      "surface-tint-blue": {
+        "role": "neutral",
+        "displayName": "Tinted Blue Pill",
+        "canonical": "oklch(97% 0.013 248)",
+        "tonalRamp": [
+          "#DBEAFE",
+          "#E0E7FF",
+          "#EFF6FF",
+          "#F1F5FE",
+          "#F4F7FF",
+          "#F9FAFF",
+          "#FCFDFF",
+          "#FFFFFF"
+        ]
+      },
+      "ink-strong": {
+        "role": "neutral",
+        "displayName": "Ink Strong",
+        "canonical": "oklch(28.5% 0.025 264)",
+        "tonalRamp": [
+          "#0F172A",
+          "#1F2937",
+          "#374151",
+          "#4B5563",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#F3F4F6"
+        ]
+      },
+      "ink-body": {
+        "role": "neutral",
+        "displayName": "Ink Body",
+        "canonical": "oklch(35.4% 0.024 265)",
+        "tonalRamp": [
+          "#1F2937",
+          "#374151",
+          "#4B5563",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#E5E7EB",
+          "#F9FAFB"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "oklch(42% 0.022 265)",
+        "tonalRamp": [
+          "#1F2937",
+          "#374151",
+          "#4B5563",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#E5E7EB",
+          "#F9FAFB"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "oklch(50% 0.018 265)",
+        "tonalRamp": [
+          "#374151",
+          "#4B5563",
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#E5E7EB",
+          "#F3F4F6",
+          "#F9FAFB"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(91% 0.005 265)",
+        "tonalRamp": [
+          "#6B7280",
+          "#9CA3AF",
+          "#D1D5DB",
+          "#E5E7EB",
+          "#EEEFF1",
+          "#F3F4F6",
+          "#F9FAFB",
+          "#FFFFFF"
+        ]
+      },
+      "category-flagship-bg": {
+        "role": "tertiary",
+        "displayName": "Flagship Plum",
+        "canonical": "oklch(94% 0.05 320)",
+        "tonalRamp": ["#581C87","#7E22CE","#A855F7","#C084FC","#D8B4FE","#E9D5FF","#F3E8FF","#FAF5FF"]
+      },
+      "category-careers-bg": {
+        "role": "tertiary",
+        "displayName": "Careers Blue",
+        "canonical": "oklch(93% 0.045 250)",
+        "tonalRamp": ["#1E3A8A","#1D4ED8","#2563EB","#3B82F6","#60A5FA","#93C5FD","#DBEAFE","#EFF6FF"]
+      },
+      "category-social-bg": {
+        "role": "tertiary",
+        "displayName": "Social Green",
+        "canonical": "oklch(94% 0.06 145)",
+        "tonalRamp": ["#14532D","#166534","#15803D","#16A34A","#22C55E","#86EFAC","#DCFCE7","#F0FDF4"]
+      },
+      "category-academic-bg": {
+        "role": "tertiary",
+        "displayName": "Academic Amber",
+        "canonical": "oklch(94% 0.06 75)",
+        "tonalRamp": ["#7C2D12","#9A3412","#C2410C","#EA580C","#F97316","#FB923C","#FFEDD5","#FFF7ED"]
+      },
+      "category-welfare-bg": {
+        "role": "tertiary",
+        "displayName": "Welfare Pink",
+        "canonical": "oklch(94% 0.045 0)",
+        "tonalRamp": ["#831843","#9D174D","#BE185D","#DB2777","#EC4899","#F472B6","#FCE7F3","#FDF2F8"]
+      },
+      "category-recruitment-bg": {
+        "role": "tertiary",
+        "displayName": "Recruitment Indigo",
+        "canonical": "oklch(94% 0.045 280)",
+        "tonalRamp": ["#312E81","#3730A3","#4338CA","#4F46E5","#6366F1","#818CF8","#E0E7FF","#EEF2FF"]
+      },
+      "category-collab-bg": {
+        "role": "tertiary",
+        "displayName": "Collaboration Teal",
+        "canonical": "oklch(94% 0.05 175)",
+        "tonalRamp": ["#134E4A","#115E59","#0F766E","#0D9488","#14B8A6","#5EEAD4","#CCFBF1","#F0FDFA"]
+      },
+      "category-other-bg": {
+        "role": "tertiary",
+        "displayName": "Neutral Other",
+        "canonical": "oklch(96% 0 0)",
+        "tonalRamp": ["#1F2937","#374151","#4B5563","#6B7280","#9CA3AF","#D1D5DB","#F3F4F6","#F9FAFB"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display — Tracked Hero", "purpose": "The homepage wordmark 'UNSW CEUS.' Tracked 0.1875em to give the brand bearing." },
+      "subdisplay": { "displayName": "Subdisplay — Hero Subtitle", "purpose": "The 'Chemical Engineering Undergraduate Society' line under the wordmark; light against the bold display." },
+      "headline": { "displayName": "Headline", "purpose": "Page-level h2 ('Interested in Sponsoring CEUS?', 'Meet the Team')." },
+      "title": { "displayName": "Title", "purpose": "Card titles — event names, member names, sponsor names." },
+      "body": { "displayName": "Body", "purpose": "Default paragraph copy. Capped at 65–75ch in long-form sections." },
+      "label": { "displayName": "Label", "purpose": "Category chips, metadata badges. Sentence case, not uppercase." }
+    },
+    "shadows": [
+      { "name": "header-rest", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Separates the white header from white page surfaces." },
+      { "name": "card-rest", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Default elevation for event and member cards." },
+      { "name": "card-hover", "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)", "purpose": "MemberCard hover lift." },
+      { "name": "card-hover-deep", "value": "0 25px 50px -12px rgb(0 0 0 / 0.25)", "purpose": "EventCard hover lift — the signature lift of the site." }
+    ],
+    "motion": [
+      { "name": "ease-out-standard", "value": "cubic-bezier(0.25, 1, 0.5, 1)", "purpose": "Default ease-out for state transitions (hover, focus, reveal)." },
+      { "name": "duration-fast", "value": "200ms", "purpose": "Color and opacity transitions on links, navs, chips." },
+      { "name": "duration-card-lift", "value": "300ms", "purpose": "Card hover transitions — scale, shadow, image zoom." },
+      { "name": "duration-hero", "value": "800ms", "purpose": "GSAP hero fade-rise (power2.out)." },
+      { "name": "carousel-sponsor", "value": "4500ms autoplay", "purpose": "Sponsor carousel auto-advance interval." },
+      { "name": "carousel-event", "value": "7000ms autoplay", "purpose": "Home page event carousel auto-advance interval." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The default call-to-action. Brand Navy fill, white text, shifts to Accent Blue Deep on hover.",
+      "html": "<button class=\"ds-btn-primary\">View events</button>",
+      "css": ".ds-btn-primary { background: #1B397E; color: #FFFFFF; padding: 12px 24px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: background 200ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-primary:hover { background: #1D4ED8; } .ds-btn-primary:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary action. Transparent fill, Brand Navy text, underline on hover.",
+      "html": "<button class=\"ds-btn-ghost\">Learn more</button>",
+      "css": ".ds-btn-ghost { background: transparent; color: #1B397E; padding: 12px 24px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; transition: color 200ms cubic-bezier(0.25, 1, 0.5, 1); } .ds-btn-ghost:hover { color: #1D4ED8; text-decoration: underline; text-underline-offset: 4px; } .ds-btn-ghost:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; }"
+    },
+    {
+      "name": "Category Chip — Careers",
+      "kind": "chip",
+      "refersTo": "chip-category",
+      "description": "Pill-shaped category label, overlaid on event card images. Eight categorical pairs total; Careers shown.",
+      "html": "<span class=\"ds-chip-careers\">Careers</span>",
+      "css": ".ds-chip-careers { display: inline-flex; align-items: center; background: #DBEAFE; color: #1E40AF; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 9999px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }"
+    },
+    {
+      "name": "Event Card",
+      "kind": "card",
+      "refersTo": "card-event",
+      "description": "Image-led card. The poster is the protagonist; card lifts on hover.",
+      "html": "<article class=\"ds-card-event\"><div class=\"ds-card-event__media\"><div class=\"ds-card-event__image\" role=\"img\" aria-label=\"Event poster\"></div><span class=\"ds-card-event__chip\">Careers</span></div><div class=\"ds-card-event__body\"><h3 class=\"ds-card-event__title\">Industry Night 2026</h3><p class=\"ds-card-event__meta\">Thu, 12 June · 6:00pm · Roundhouse</p></div></article>",
+      "css": ".ds-card-event { display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); transform: translateY(0); transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 300ms cubic-bezier(0.25, 1, 0.5, 1); cursor: pointer; max-width: 360px; } .ds-card-event:hover { transform: scale(1.02); box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); } .ds-card-event__media { position: relative; height: 224px; overflow: hidden; } .ds-card-event__image { position: absolute; inset: 0; background: linear-gradient(135deg, #1B397E 0%, #2563EB 100%); transition: transform 300ms ease-out; } .ds-card-event:hover .ds-card-event__image { transform: scale(1.1); } .ds-card-event__chip { position: absolute; top: 16px; left: 16px; background: #DBEAFE; color: #1E40AF; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 9999px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-card-event__body { padding: 16px; } .ds-card-event__title { font-family: Inter, system-ui, sans-serif; font-size: 1.5rem; font-weight: 600; color: #1F2937; margin: 0 0 4px 0; line-height: 1.3; } .ds-card-event__meta { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; color: #4B5563; margin: 0; }"
+    },
+    {
+      "name": "Member Card",
+      "kind": "card",
+      "refersTo": "card-member",
+      "description": "Circular portrait + name + role. Exuberant 1.25x scale on hover — the team page is the warm-hearted chapter.",
+      "html": "<a href=\"#\" class=\"ds-card-member\" aria-label=\"View member LinkedIn\"><div class=\"ds-card-member__photo\" role=\"img\" aria-label=\"Portrait\"></div><h3 class=\"ds-card-member__name\">Alex Nguyen</h3><p class=\"ds-card-member__role\">President</p></a>",
+      "css": ".ds-card-member { display: flex; flex-direction: column; align-items: center; text-align: center; background: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); text-decoration: none; color: inherit; transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow 300ms cubic-bezier(0.25, 1, 0.5, 1); max-width: 220px; } .ds-card-member:hover { transform: scale(1.25); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); z-index: 1; } .ds-card-member:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; } .ds-card-member__photo { width: 96px; height: 96px; border-radius: 9999px; background: linear-gradient(135deg, #E5E7EB 0%, #D1D5DB 100%); border: 2px solid #E5E7EB; margin-bottom: 16px; } .ds-card-member__name { font-family: Inter, system-ui, sans-serif; font-size: 1.125rem; font-weight: 600; color: #1F2937; margin: 0 0 4px 0; transition: color 200ms ease-out; } .ds-card-member:hover .ds-card-member__name { color: #2563EB; } .ds-card-member__role { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; color: #4B5563; margin: 0; padding: 0 8px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Default text field. White surface, hairline border, blue ring on focus.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field__label\">Email</span><input class=\"ds-input\" type=\"email\" placeholder=\"you@unsw.edu.au\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; max-width: 360px; } .ds-field__label { font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 600; color: #1F2937; } .ds-input { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px 16px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; color: #1F2937; transition: border-color 200ms ease-out, box-shadow 200ms ease-out; } .ds-input::placeholder { color: #6B7280; } .ds-input:focus-visible { outline: none; border-color: #2563EB; box-shadow: 0 0 0 3px rgb(37 99 235 / 0.25); }"
+    },
+    {
+      "name": "Nav Link — Active (Desktop)",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Top-nav link in its active state. No background, just brand-navy text.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav__link ds-nav__link--active\" href=\"#\">Events</a><a class=\"ds-nav__link\" href=\"#\">Team</a><a class=\"ds-nav__link\" href=\"#\">Sponsors</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 32px; align-items: center; } .ds-nav__link { font-family: Inter, system-ui, sans-serif; font-size: 1rem; font-weight: 600; color: #1F2937; text-decoration: none; padding: 8px 0; transition: color 200ms ease-out; } .ds-nav__link:hover { color: #1B397E; } .ds-nav__link--active { color: #1B397E; } .ds-nav__link:focus-visible { outline: 2px solid #2563EB; outline-offset: 4px; }"
+    },
+    {
+      "name": "Hero Section",
+      "kind": "custom",
+      "refersTo": "hero",
+      "description": "Photographic hero with scrim and tracked white display type. The cover of the yearbook.",
+      "html": "<section class=\"ds-hero\"><div class=\"ds-hero__photo\" role=\"img\" aria-label=\"CEUS event photo\"></div><div class=\"ds-hero__scrim\"></div><div class=\"ds-hero__inner\"><div class=\"ds-hero__title\">UNSW CEUS</div><div class=\"ds-hero__subtitle\">Chemical Engineering Undergraduate Society</div></div></section>",
+      "css": ".ds-hero { position: relative; width: 100%; height: 75vh; max-height: 600px; overflow: hidden; } .ds-hero__photo { position: absolute; inset: 0; background: linear-gradient(135deg, #1B397E 0%, #2563EB 60%, #1D4ED8 100%); } .ds-hero__scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.40); } .ds-hero__inner { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; max-width: 1200px; margin: 0 auto; color: #FFFFFF; } .ds-hero__title { font-family: Inter, system-ui, sans-serif; font-weight: 700; font-size: clamp(1.875rem, 4vw + 0.5rem, 3.125rem); line-height: 1.1; letter-spacing: 0.1875em; } .ds-hero__subtitle { font-family: Inter, system-ui, sans-serif; font-weight: 400; font-size: clamp(1.75rem, 3vw + 0.5rem, 2rem); line-height: 1.3; letter-spacing: 0.156em; margin-top: 8px; } @media (prefers-reduced-motion: no-preference) { .ds-hero__title, .ds-hero__subtitle { opacity: 0; transform: translateY(20px); animation: ds-hero-rise 800ms cubic-bezier(0.25, 1, 0.5, 1) forwards; } .ds-hero__title { animation-delay: 300ms; } .ds-hero__subtitle { animation-delay: 500ms; } } @keyframes ds-hero-rise { to { opacity: 1; transform: translateY(0); } }"
+    },
+    {
+      "name": "Footer",
+      "kind": "custom",
+      "refersTo": "footer",
+      "description": "Brand Navy strip at page foot. The single largest application of the brand color.",
+      "html": "<footer class=\"ds-footer\"><span class=\"ds-footer__copy\">© 2026 Chemical Engineering Undergraduate Society · UNSW Sydney</span></footer>",
+      "css": ".ds-footer { background: #1B397E; color: #FFFFFF; padding: 12px 20px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; } .ds-footer__copy { display: block; text-align: center; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Engineering Society Yearbook",
+    "overview": "The CEUS site reads like a well-kept student-society yearbook: deep university navy on the cover, real photography of real students inside, generous white margins, and chapters (events, team, sponsors) you can flip through without thinking. The brand color is institutional enough that sponsors take it seriously, the photography and student-led copy keep it warm enough that a first-year doesn't feel like they're applying to grad school. Density is generous, never cramped. Cards lift and breathe on hover; pages don't shout.\n\nWhat this system rejects: the navy-and-gold institutional university-department template (dead, dense, no sense of a person behind it); the SaaS landing-page hero-metric template (we are a community, not a product launch); the corporate-finance dark-mode + gradient orb aesthetic (this is a student society, not a fintech). It also explicitly rejects clip-art / hobby-club energy: low-effort screenshots and stock illustrations don't earn sponsors' trust.",
+    "keyCharacteristics": [
+      "One serious brand color (UNSW-adjacent navy #1B397E) doing most of the identity work",
+      "Photography-led — real CEUS events, members, and labs over stock imagery",
+      "Generous white space; white surfaces with a single tinted accent (#EFF6FF)",
+      "Card-based content surfaces that lift on hover (shadow + light scale)",
+      "Single typeface (Inter), wide weight range (400 → 700) and deliberate tracking to give the hero ceremony",
+      "Categorical color used only inside event chips; never as a page-level accent"
+    ],
+    "rules": [
+      { "name": "The Brand Navy Rule", "body": "#1B397E is the only color that signals 'CEUS.' It earns its place on the footer surface, the navbar active state, and primary buttons. It is not used on backgrounds of mid-page sections, on hero scrims, or in gradients. The accent-blue family carries interactivity; the brand navy carries identity. Don't mix the two jobs.", "section": "colors" },
+      { "name": "The Categorical Cage Rule", "body": "The eight categorical color pairs exist only inside event chips. Promoting any of them to a section background, button color, or gradient stop fractures the palette and turns the site into a club hobby page.", "section": "colors" },
+      { "name": "The Single-Family Rule", "body": "Inter is the only typeface. No serif for 'warmth,' no display font for 'personality.' Personality lives in weight (400/600/700) and in the tracked hero. Adding a second family flattens the system into Generic University Microsite.", "section": "typography" },
+      { "name": "The Tracked-Hero Rule", "body": "Display and subdisplay carry wide positive tracking (~3px / ~2.5px). Every other size uses normal tracking. Tracking is the hero's job, not a general typographic effect: applying it to body or labels turns the page into a 2012 photographer portfolio.", "section": "typography" },
+      { "name": "The Lift-on-Hover Rule", "body": "Elevation is interactive, not decorative. Cards rest flat-ish, then lift. Static elevation on a non-interactive element is forbidden — it reads as nervous design.", "section": "elevation" },
+      { "name": "The No-Glassmorphism Rule", "body": "No backdrop-filter: blur, no translucent layered panes. Sponsors and faculty read the site; glass cards feel like a startup pitch deck.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do lead with real CEUS photography. Events, members, lab moments. Photography is the warmth budget.",
+      "Do reserve Brand Navy (#1B397E) for identity moments (footer, primary button, active nav). Use Accent Blue (#2563EB) for interactive accents only.",
+      "Do keep cards flat-ish at rest and let hover do the lifting (shadow-lg → shadow-xl/2xl, gentle scale).",
+      "Do keep Inter as the only typeface. Pull personality from weight (400/600/700) and the tracked hero.",
+      "Do confine the eight categorical colors to event chips only.",
+      "Do test display headings at every breakpoint. The clamp ceilings here are deliberate; if copy overflows, rewrite the copy or lower the clamp max.",
+      "Do make every motion respect prefers-reduced-motion. The GSAP hero, slick autoplay, and 1.25x member-card scale all need the reduced-motion alternative wired explicitly."
+    ],
+    "donts": [
+      "Don't put the page into navy-and-gold institutional dress. The 'generic university department' anti-reference is the single most likely failure mode for a UNSW society site.",
+      "Don't reach for the SaaS landing-page hero-metric template ('10,000+ members served'). The community is the proof, not the metric.",
+      "Don't use clip-art, stock illustrations, or generic 'students at laptops' stock photography — the hobby-club register kills sponsor trust.",
+      "Don't introduce a second typeface for 'warmth.' Inter at the right weight is the warmth.",
+      "Don't promote any categorical event color to a page-level background, gradient stop, or section accent. They live in chips, full stop.",
+      "Don't use glassmorphism, gradient orbs, or animated mesh backgrounds. Corporate-finance / fintech aesthetic is on the no-list.",
+      "Don't use border-left: 4px solid <color> as a callout accent. Use a full border or a tinted background.",
+      "Don't use gradient text (background-clip: text). Emphasis via weight or size, not color tricks.",
+      "Don't use the eyebrow / 01·02·03 numbered-section template as default scaffolding. The site has six pages — number them only if the order carries real information.",
+      "Don't let the admin UI bleed into the public site's visual language. Admin is a small product surface inside an otherwise brand site; the public visitor should never encounter or infer it."
+    ]
+  }
+}
