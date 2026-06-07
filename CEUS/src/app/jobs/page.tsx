@@ -1,22 +1,22 @@
 import React from 'react';
-import { Job } from '../../types';
-import { fetchJobs } from '../../lib/supabase';
-import JobsClient from './JobsClient';
 import { Metadata } from 'next';
+import { fetchJobs } from '../../lib/supabase';
+import { Job } from '../../types';
+import JobsClient from './JobsClient';
 
 export const metadata: Metadata = {
-  title: 'Job Board',
-  description: 'Explore career opportunities, internships, and graduate positions curated for CEUS students.',
+  title: 'Jobs',
+  description: 'Chemical engineering internships, graduate programs, and roles for CEUS members.',
 };
 
-export const revalidate = 3600;
+export const revalidate = 600;
 
 export default async function JobsPage() {
   let jobs: Job[] = [];
   try {
     jobs = await fetchJobs();
   } catch (error) {
-    console.error('Failed to fetch jobs:', error);
+    console.error('Error loading jobs:', error);
   }
 
   return <JobsClient jobs={jobs} />;
