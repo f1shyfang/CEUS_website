@@ -1,6 +1,6 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
-import { Event, Sponsor, TeamCategory, Member } from '../types';
+import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight } from '../types';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -401,6 +401,171 @@ export async function deleteSponsor(id: string) {
 
   if (error) {
     console.error('Error deleting sponsor:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
+// Jobs CRUD Operations
+// ============================================
+
+type JobRow = {
+  id: string;
+  title: string;
+  company: { name?: string; website?: string; logo?: string } | null;
+  description: string;
+  one_liner: string | null;
+  application_url: string;
+  source_urls: string[] | null;
+  type: JobType;
+  locations: string[] | null;
+  industry_field: string;
+  working_rights: WorkingRight[] | null;
+  close_date: string | null;
+  is_sponsored: boolean | null;
+  outdated: boolean | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export interface JobInput {
+  title: string;
+  company: JobCompany;
+  description: string;
+  applicationUrl: string;
+  type: JobType;
+  locations: string[];
+  industryField: string;
+  workingRights: WorkingRight[];
+  sourceUrls?: string[];
+  oneLiner?: string;
+  closeDate?: string;
+  isSponsored?: boolean;
+  outdated?: boolean;
+}
+
+function normalizeCompany(raw: JobRow['company']): JobCompany {
+  const name = raw?.name ?? '';
+  const websiteRaw = raw?.website || undefined;
+  const logoRaw = raw?.logo || undefined;
+  return {
+    name,
+    website: websiteRaw,
+    logo: logoRaw ? getImageUrl(logoRaw, '', STORAGE_BUCKETS.PUBLIC_IMAGES) : undefined,
+  };
+}
+
+export async function fetchJobs(): Promise<Job[]> {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select(
+      'id, title, company, description, one_liner, application_url, source_urls, type, locations, industry_field, working_rights, close_date, is_sponsored, outdated, created_at, updated_at'
+    )
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching jobs:', error);
+    throw error;
+  }
+
+  return (data as JobRow[] | null ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    company: normalizeCompany(row.company),
+    description: row.description,
+    oneLiner: row.one_liner || undefined,
+    applicationUrl: row.application_url,
+    sourceUrls: row.source_urls ?? [],
+    type: row.type,
+    locations: row.locations ?? [],
+    industryField: row.industry_field,
+    workingRights: row.working_rights ?? [],
+    closeDate: row.close_date || undefined,
+    isSponsored: Boolean(row.is_sponsored),
+    outdated: Boolean(row.outdated),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }));
+}
+
+function buildCompanyPayload(company: JobCompany) {
+  return {
+    name: company.name,
+    website: company.website || undefined,
+    logo: company.logo || undefined,
+  };
+}
+
+export async function createJob(job: JobInput) {
+  const { data, error } = await supabase
+    .from('jobs')
+    .insert([
+      {
+        title: job.title,
+        company: buildCompanyPayload(job.company),
+        description: job.description,
+        one_liner: job.oneLiner || null,
+        application_url: job.applicationUrl,
+        source_urls: job.sourceUrls ?? [],
+        type: job.type,
+        locations: job.locations,
+        industry_field: job.industryField,
+        working_rights: job.workingRights,
+        close_date: job.closeDate || null,
+        is_sponsored: job.isSponsored ?? false,
+        outdated: job.outdated ?? false,
+      },
+    ])
+    .select();
+
+  if (error) {
+    console.error('Error creating job:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function updateJob(id: string, job: Partial<JobInput>) {
+  const updateData: Record<string, unknown> = {};
+  if (job.title !== undefined) updateData.title = job.title;
+  if (job.company !== undefined) updateData.company = buildCompanyPayload(job.company);
+  if (job.description !== undefined) updateData.description = job.description;
+  if (job.oneLiner !== undefined) updateData.one_liner = job.oneLiner || null;
+  if (job.applicationUrl !== undefined) updateData.application_url = job.applicationUrl;
+  if (job.sourceUrls !== undefined) updateData.source_urls = job.sourceUrls;
+  if (job.type !== undefined) updateData.type = job.type;
+  if (job.locations !== undefined) updateData.locations = job.locations;
+  if (job.industryField !== undefined) updateData.industry_field = job.industryField;
+  if (job.workingRights !== undefined) updateData.working_rights = job.workingRights;
+  if (job.closeDate !== undefined) updateData.close_date = job.closeDate || null;
+  if (job.isSponsored !== undefined) updateData.is_sponsored = job.isSponsored;
+  if (job.outdated !== undefined) updateData.outdated = job.outdated;
+
+  const { data, error } = await supabase
+    .from('jobs')
+    .update(updateData)
+    .eq('id', id)
+    .select();
+
+  if (error) {
+    console.error('Error updating job:', error);
+    throw error;
+  }
+
+  return data[0];
+}
+
+export async function deleteJob(id: string) {
+  const { error } = await supabase
+    .from('jobs')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting job:', error);
     throw error;
   }
 
