@@ -4,6 +4,7 @@ import Script from 'next/script'
 import '../index.css'
 import Header from '../layouts/Header'
 import Footer from '../layouts/Footer'
+import { TRPCReactProvider } from '../trpc/react'
 
 const SUPABASE_PUBLIC_BASE = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
 const SEO_LOGO_URL = `${SUPABASE_PUBLIC_BASE}/storage/v1/object/public/assets/assets/ceuslogo_noback_noname.png`;
@@ -150,6 +151,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={inter.className}>
+        <TRPCReactProvider>
         <div className="flex flex-col min-h-screen bg-white">
           <Header />
           <main className="flex-grow">
@@ -157,6 +159,7 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        </TRPCReactProvider>
       </body>
     </html>
   )
