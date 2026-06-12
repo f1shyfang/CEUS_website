@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { signOut, getUser } from '@/lib/supabase';
+import { signOut, getUser, onAuthStateChange } from '@/lib/supabase';
 import {
   FiHome,
   FiCalendar,
@@ -43,15 +43,24 @@ export default function AdminLayout({
       setUser(currentUser);
     };
     fetchUser();
+
+    // Keep the displayed user in sync across sign-in/sign-out, since this
+    // layout stays mounted when navigating between /admin/login and /admin.
+    const { data: authListener } = onAuthStateChange((_event, session) => {
+      const sessionUser = (session as { user?: { email?: string } } | null)?.user;
+      setUser(sessionUser ?? null);
+    });
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
   }, []);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
+      // Session cookies are cleared by the Supabase browser client.
       await signOut();
-      // Clear cookies
-      document.cookie = 'sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      document.cookie = 'sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       router.replace('/admin/login');
     } catch (error) {
       console.error('Error signing out:', error);

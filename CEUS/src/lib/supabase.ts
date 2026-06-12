@@ -1,13 +1,22 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
 import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight } from '../types';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Create a single supabase client for interacting with your database
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Single shared client. In the browser the session is stored in cookies
+// (via @supabase/ssr) so the proxy middleware sees the same, auto-refreshed
+// session as the client. On the server this module is only used for
+// anonymous public reads, so sessions are disabled there.
+export const supabase =
+  typeof window === 'undefined'
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : createBrowserClient(supabaseUrl, supabaseAnonKey);
 
 // ============================================
 // Authentication Helpers
