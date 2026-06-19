@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { createBrowserClient } from '@supabase/ssr';
 import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight } from '../types';
+import { normalizeTeamCategory, sortTeamCategories } from './schemas';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -178,10 +179,13 @@ export async function fetchTeamCategories(): Promise<TeamCategory[]> {
       email: row.email || undefined,
       linkedInUrl: row.linkedin_url || undefined,
     };
-    if (!grouped[row.category]) {
-      grouped[row.category] = [];
+    const category = normalizeTeamCategory(row.category);
+    if (!grouped[category]) {
+      grouped[category] = [];
     }
-    grouped[row.category].push(member);
+    if (!grouped[category].some((existing) => existing.id === member.id)) {
+      grouped[category].push(member);
+    }
   });
 
   return Object.entries(grouped).map(([name, members]) => ({
@@ -591,11 +595,106 @@ export interface TeamMemberInput {
   imageUrl?: string;
   email?: string;
   linkedInUrl?: string;
-  category: string;
+  categories: string[];
   sortOrder: number;
 }
 
-export async function fetchAllTeamMembers(): Promise<(Member & { category: string; sortOrder: number })[]> {
+export type GroupedTeamMember = Member & {
+  categories: string[];
+  sortOrder: number;
+};
+
+function buildTeamMemberRowPayload(id: string, member: TeamMemberInput, category: string) {
+  return {
+    id,
+    name: member.name,
+    role: member.role,
+    image_url: member.imageUrl || null,
+    email: member.email || null,
+    linkedin_url: member.linkedInUrl || null,
+    category,
+    sort_order: member.sortOrder,
+  };
+}
+
+function groupTeamMemberRows(
+  rows: TeamMemberRow[]
+): GroupedTeamMember[] {
+  const grouped = new Map<string, GroupedTeamMember>();
+
+  for (const row of rows) {
+    const category = normalizeTeamCategory(row.category);
+    const existing = grouped.get(row.id);
+
+    if (existing) {
+      if (!existing.categories.includes(category)) {
+        existing.categories.push(category);
+      }
+      continue;
+    }
+
+    grouped.set(row.id, {
+      id: row.id,
+      name: row.name,
+      role: row.role,
+      imageUrl: row.image_url || undefined,
+      email: row.email || undefined,
+      linkedInUrl: row.linkedin_url || undefined,
+      categories: [category],
+      sortOrder: row.sort_order,
+    });
+  }
+
+  return Array.from(grouped.values()).map((member) => ({
+    ...member,
+    categories: sortTeamCategories(member.categories),
+  }));
+}
+
+function buildTeamMemberId(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return `member${Date.now()}`;
+  }
+
+  const first = parts[0].replace(/[^a-zA-Z0-9]/g, '');
+  const initials = parts
+    .slice(1)
+    .map((part) => part.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(Boolean)
+    .map((part) => part.charAt(0))
+    .join('');
+
+  const raw = `${first}${initials}`;
+  const normalized = raw.charAt(0).toLowerCase() + raw.slice(1);
+  return normalized || `member${Date.now()}`;
+}
+
+async function resolveTeamMemberId(baseId: string): Promise<string> {
+  let candidate = baseId;
+  let suffix = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('id')
+      .eq('id', candidate)
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.length) {
+      return candidate;
+    }
+
+    candidate = `${baseId}${suffix}`;
+    suffix += 1;
+  }
+}
+
+export async function fetchAllTeamMembers(): Promise<GroupedTeamMember[]> {
   const { data, error } = await supabase
     .from('team_members')
     .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
@@ -607,64 +706,115 @@ export async function fetchAllTeamMembers(): Promise<(Member & { category: strin
     throw error;
   }
 
-  return (data as TeamMemberRow[] | null ?? []).map((row) => ({
-    id: row.id,
-    name: row.name,
-    role: row.role,
-    imageUrl: row.image_url || undefined,
-    email: row.email || undefined,
-    linkedInUrl: row.linkedin_url || undefined,
-    category: row.category,
-    sortOrder: row.sort_order,
-  }));
+  return groupTeamMemberRows((data as TeamMemberRow[] | null) ?? []);
 }
 
 export async function createTeamMember(member: TeamMemberInput) {
-  const { data, error } = await supabase
-    .from('team_members')
-    .insert([
-      {
-        name: member.name,
-        role: member.role,
-        image_url: member.imageUrl || null,
-        email: member.email || null,
-        linkedin_url: member.linkedInUrl || null,
-        category: member.category,
-        sort_order: member.sortOrder,
-      },
-    ])
-    .select();
+  const id = await resolveTeamMemberId(buildTeamMemberId(member.name));
+  const rows = member.categories.map((category) =>
+    buildTeamMemberRowPayload(id, member, category)
+  );
+
+  const { data, error } = await supabase.from('team_members').insert(rows).select();
 
   if (error) {
     console.error('Error creating team member:', error);
     throw error;
   }
 
-  return data[0];
+  return data;
 }
 
-export async function updateTeamMember(id: string, member: Partial<TeamMemberInput>) {
-  const updateData: Record<string, unknown> = {};
-  if (member.name !== undefined) updateData.name = member.name;
-  if (member.role !== undefined) updateData.role = member.role;
-  if (member.imageUrl !== undefined) updateData.image_url = member.imageUrl;
-  if (member.email !== undefined) updateData.email = member.email;
-  if (member.linkedInUrl !== undefined) updateData.linkedin_url = member.linkedInUrl;
-  if (member.category !== undefined) updateData.category = member.category;
-  if (member.sortOrder !== undefined) updateData.sort_order = member.sortOrder;
+export async function updateTeamMember(id: string, member: TeamMemberInput) {
+  const { error: legacyRenameError } = await supabase
+    .from('team_members')
+    .update({ category: 'Industry' })
+    .eq('id', id)
+    .eq('category', 'Careers');
+
+  if (legacyRenameError) {
+    console.error('Error renaming legacy team category:', legacyRenameError);
+    throw legacyRenameError;
+  }
+
+  const { data: existingRows, error: fetchError } = await supabase
+    .from('team_members')
+    .select('id, category')
+    .eq('id', id);
+
+  if (fetchError) {
+    console.error('Error fetching team member categories:', fetchError);
+    throw fetchError;
+  }
+
+  const sharedUpdate: Record<string, unknown> = {
+    name: member.name,
+    role: member.role,
+    image_url: member.imageUrl || null,
+    email: member.email || null,
+    linkedin_url: member.linkedInUrl || null,
+    sort_order: member.sortOrder,
+  };
+
+  const { error: updateError } = await supabase
+    .from('team_members')
+    .update(sharedUpdate)
+    .eq('id', id);
+
+  if (updateError) {
+    console.error('Error updating team member:', updateError);
+    throw updateError;
+  }
+
+  const currentCategories = new Set(
+    (existingRows ?? []).map((row) => normalizeTeamCategory(row.category))
+  );
+  const targetCategories = new Set(member.categories);
+
+  const categoriesToRemove = Array.from(currentCategories).filter(
+    (category) => !targetCategories.has(category)
+  );
+  const categoriesToAdd = member.categories.filter(
+    (category) => !currentCategories.has(category)
+  );
+
+  for (const category of categoriesToRemove) {
+    const legacyCategory = category === 'Industry' ? 'Careers' : category;
+    const { error: deleteError } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('id', id)
+      .in('category', [category, legacyCategory]);
+
+    if (deleteError) {
+      console.error('Error removing team member category:', deleteError);
+      throw deleteError;
+    }
+  }
+
+  if (categoriesToAdd.length > 0) {
+    const rows = categoriesToAdd.map((category) =>
+      buildTeamMemberRowPayload(id, member, category)
+    );
+    const { error: insertError } = await supabase.from('team_members').insert(rows);
+
+    if (insertError) {
+      console.error('Error adding team member categories:', insertError);
+      throw insertError;
+    }
+  }
 
   const { data, error } = await supabase
     .from('team_members')
-    .update(updateData)
-    .eq('id', id)
-    .select();
+    .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
+    .eq('id', id);
 
   if (error) {
-    console.error('Error updating team member:', error);
+    console.error('Error fetching updated team member:', error);
     throw error;
   }
 
-  return data[0];
+  return groupTeamMemberRows((data as TeamMemberRow[] | null) ?? [])[0];
 }
 
 export async function deleteTeamMember(id: string) {

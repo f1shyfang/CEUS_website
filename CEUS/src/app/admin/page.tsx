@@ -39,10 +39,9 @@ export default function AdminDashboardPage() {
           getContactSubmissions(),
         ]);
 
-        const teamMemberCount = teamCategories.reduce(
-          (acc, category) => acc + category.members.length,
-          0
-        );
+        const teamMemberCount = new Set(
+          teamCategories.flatMap((category) => category.members.map((member) => member.id))
+        ).size;
 
         const newContactCount = (contacts || []).filter(
           (c: { status?: string }) => c.status === 'new'

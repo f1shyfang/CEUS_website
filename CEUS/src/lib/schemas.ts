@@ -32,9 +32,29 @@ export const TEAM_CATEGORIES = [
   'Information Technology',
   'Marketing',
   'Socials',
-  'Careers',
+  'Industry',
   'Admin',
 ] as const;
+
+export type TeamCategoryName = (typeof TEAM_CATEGORIES)[number];
+
+/** Maps legacy DB values to current category names. */
+export function normalizeTeamCategory(category: string): string {
+  return category === 'Careers' ? 'Industry' : category;
+}
+
+export function sortTeamCategories(categories: string[]): string[] {
+  return [...categories].sort((a, b) => {
+    const aName = normalizeTeamCategory(a);
+    const bName = normalizeTeamCategory(b);
+    const aIndex = TEAM_CATEGORIES.indexOf(aName as TeamCategoryName);
+    const bIndex = TEAM_CATEGORIES.indexOf(bName as TeamCategoryName);
+    if (aIndex === -1 && bIndex === -1) return aName.localeCompare(bName);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+}
 
 // Event schema
 export const eventSchema = z.object({
@@ -67,7 +87,9 @@ export const teamMemberSchema = z.object({
   imageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   linkedInUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  category: z.string().min(1, 'Category is required'),
+  categories: z
+    .array(z.enum(TEAM_CATEGORIES))
+    .min(1, 'Select at least one category'),
   sortOrder: z.number().int().min(0, 'Sort order must be a positive number'),
 });
 
