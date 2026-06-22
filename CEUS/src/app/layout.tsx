@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import '../index.css'
+import AnalyticsProviders from '../components/analytics/AnalyticsProviders'
 import Header from '../layouts/Header'
 import Footer from '../layouts/Footer'
 import { TRPCReactProvider } from '../trpc/react'
@@ -155,15 +156,17 @@ export default function RootLayout({
         )}
       </head>
       <body className={inter.className}>
-        <TRPCReactProvider>
-        <div className="flex flex-col min-h-screen bg-white">
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
-        </TRPCReactProvider>
+        <AnalyticsProviders>
+          <TRPCReactProvider>
+            <div className="flex flex-col min-h-screen bg-white">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </TRPCReactProvider>
+        </AnalyticsProviders>
       </body>
     </html>
   )

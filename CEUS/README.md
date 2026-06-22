@@ -29,6 +29,9 @@ Copy `.env.example` to `.env.local` and fill in:
 - `NEXT_PUBLIC_SUPABASE_URL` — required
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — required
 - `SUPABASE_SERVICE_ROLE_KEY` — only for scripts in `scripts/`
+- `NEXT_PUBLIC_POSTHOG_KEY` — optional, enables PostHog product analytics
+- `NEXT_PUBLIC_FARO_URL` — optional, enables Grafana Faro frontend observability
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` — optional, enables Google Analytics 4
 
 ## Supabase setup
 

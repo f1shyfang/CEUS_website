@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/schemas';
 import { signIn, getSession } from '@/lib/supabase';
 import { FiMail, FiLock, FiAlertCircle, FiLoader } from 'react-icons/fi';
+import posthog from 'posthog-js';
 
 function LoginForm() {
   const router = useRouter();
@@ -49,11 +50,14 @@ function LoginForm() {
       const { session } = await signIn(data.email, data.password);
 
       if (session) {
+        posthog.identify(data.email, { email: data.email, role: 'admin' });
+        posthog.capture('admin_logged_in', { email: data.email });
         // Session cookies are managed by the Supabase browser client,
         // so the proxy middleware sees the same session.
         router.replace(redirectTo);
       }
     } catch (err) {
+      posthog.captureException(err);
       setError(err instanceof Error ? err.message : 'Invalid email or password');
     }
   };

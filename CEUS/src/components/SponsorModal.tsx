@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react';
 import { Sponsor } from '../types';
 import { gsap } from 'gsap';
+import posthog from 'posthog-js';
 
 interface SponsorModalProps {
   sponsor: Sponsor | null; // Sponsor data or null if closed
@@ -95,6 +96,7 @@ const SponsorModal: React.FC<SponsorModalProps> = ({ sponsor, isOpen, onClose })
             href={sponsor.websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => posthog.capture('sponsor_website_clicked', { sponsor_name: sponsor.name, sponsor_url: sponsor.websiteUrl })}
             className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium group transition-colors duration-150"
           >
             Visit Website

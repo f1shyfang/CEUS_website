@@ -8,6 +8,7 @@ import { cn } from '../../lib/utils';
 import JobCard from './components/JobCard';
 import JobDetails from './components/JobDetails';
 import DropdownFilter from './components/DropdownFilter';
+import posthog from 'posthog-js';
 
 interface JobsClientProps {
   jobs: Job[];
@@ -75,6 +76,13 @@ const JobsClient: React.FC<JobsClientProps> = ({ jobs }) => {
 
   const handleSelect = (job: Job) => {
     setSelectedId(job.id);
+    posthog.capture('job_viewed', {
+      job_id: job.id,
+      job_title: job.title,
+      company_name: job.company.name,
+      job_type: job.type,
+      industry_field: job.industryField,
+    });
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
       setMobileDetailsOpen(true);
     }

@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fa';
 import { cn, formatEventDate } from '../../../lib/utils';
 import CompanyLogo from './CompanyLogo';
+import posthog from 'posthog-js';
 
 interface JobDetailsProps {
   job?: Job | null;
@@ -55,6 +56,11 @@ export default function JobDetails({ job }: JobDetailsProps) {
         typeof window !== 'undefined' ? `${window.location.origin}/jobs#${job.id}` : '';
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      posthog.capture('job_link_copied', {
+        job_id: job.id,
+        job_title: job.title,
+        company_name: job.company.name,
+      });
       window.setTimeout(() => setCopied(false), 1200);
     } catch {
       /* no-op */
@@ -163,6 +169,13 @@ export default function JobDetails({ job }: JobDetailsProps) {
           href={job.applicationUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => posthog.capture('job_applied', {
+            job_id: job.id,
+            job_title: job.title,
+            company_name: job.company.name,
+            job_type: job.type,
+            industry_field: job.industryField,
+          })}
           className={cn(
             'flex-grow inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg',
             'bg-blue-600 text-white text-sm font-bold hover:bg-blue-700 transition-all'

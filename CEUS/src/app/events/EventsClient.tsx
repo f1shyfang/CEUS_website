@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaClock, FaHistory } from 'react-icons/fa';
 import { cn } from '../../lib/utils';
 import type { Event } from '@/lib/api/types';
 import useEvents from '@/lib/api/hooks/useEvents';
+import posthog from 'posthog-js';
 
 const EventsClient: React.FC = () => {
   const { allEvents, isFetching, isError } = useEvents();
@@ -23,6 +24,7 @@ const EventsClient: React.FC = () => {
 
   const scrollToSection = (section: 'upcoming' | 'past') => {
     setActiveSection(section);
+    posthog.capture('event_section_switched', { section });
     const targetRef = section === 'upcoming' ? upcomingSectionRef : pastSectionRef;
     targetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };

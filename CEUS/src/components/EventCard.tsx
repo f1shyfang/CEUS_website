@@ -6,6 +6,7 @@ import { FaCalendarAlt, FaExternalLinkAlt, FaMapMarkerAlt } from 'react-icons/fa
 import { FALLBACK_IMAGE_URLS } from '../lib/storagePublicUrls';
 import { formatEventDate, cn } from '../lib/utils';
 import OptimizedImage from './OptimizedImage';
+import posthog from 'posthog-js';
 
 /**
  * EventCard supports two data shapes, discriminated by `variant`:
@@ -115,6 +116,11 @@ const EventCard: React.FC<EventCardProps> = (props) => {
             href={event.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => posthog.capture('event_card_clicked', {
+              event_name: event.name,
+              event_upcoming: event.upcoming,
+              event_url: event.url,
+            })}
             className="mt-auto inline-flex items-center justify-center w-full px-5 py-3 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300"
           >
             <span>View Event</span>
