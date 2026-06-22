@@ -1,182 +1,220 @@
 # CEUS Website Architecture
 
-This document provides a detailed overview of the technical architecture, design patterns, and component structure of the CEUS website.
+Technical overview of the CEUS website: structure, patterns, data flow, and security.
 
 ## Table of Contents
+
 - [Overview](#overview)
 - [Technology Stack](#technology-stack)
 - [Project Structure](#project-structure)
 - [Architecture Patterns](#architecture-patterns)
-- [Component Architecture](#component-architecture)
+- [Routes and Pages](#routes-and-pages)
 - [Data Flow](#data-flow)
 - [State Management](#state-management)
 - [Admin Architecture](#admin-architecture)
+- [tRPC API](#trpc-api)
 - [Performance Considerations](#performance-considerations)
 - [Security](#security)
 - [Deployment Architecture](#deployment-architecture)
 
 ## Overview
 
-The CEUS website is built as a modern web application using Next.js 16 with the App Router and Supabase. The architecture emphasizes:
+The CEUS website is a Next.js 16 application using the App Router with Supabase as the backend. Design goals:
 
-- **Performance**: Static rendering with client-side hydration and dynamic data fetching.
-- **Maintainability**: TypeScript for type safety and clear interfaces.
-- **Scalability**: Component-based architecture with a managed backend.
-- **Dynamic Content**: Full CRUD capabilities for society executives via an admin dashboard.
+- **Performance** — Server-rendered pages with ISR where appropriate; client hydration for interactive UI
+- **Maintainability** — TypeScript throughout; shared types in `src/types.ts`
+- **Operability** — Admin dashboard so executives can update content without code changes
+- **Reliability** — Static fallback data in `src/data/` when Supabase is unavailable
 
 ## Technology Stack
 
-### Frontend Framework
-- **Next.js 16.2.4**: React framework with App Router.
-- **React 19.1.1**: UI library with concurrent features.
-- **TypeScript 5.7.2**: Type-safe JavaScript.
+### Frontend
 
-### Backend (BaaS)
-- **Supabase**: 
-  - **PostgreSQL Database**: Relational data storage for events, sponsors, and team members.
-  - **Supabase Auth**: Secure authentication for the admin panel.
-  - **Supabase Storage**: Managed file storage for images and assets.
+| Package | Role |
+|---------|------|
+| Next.js 16 | App Router, SSR/ISR, metadata |
+| React 19 | UI |
+| TypeScript 5.7 | Type safety |
+| Tailwind CSS 3.4 | Styling |
+| GSAP 3.12 | Animations |
 
-### Styling & UI
-- **Tailwind CSS 3.4.17**: Utility-first CSS framework.
-- **PostCSS 8.5.3**: CSS processing.
-- **GSAP 3.12.7**: Animation library.
+### Backend (Supabase)
 
-### 3D Graphics
-- **Three.js 0.160.1**: 3D graphics library.
-- **React Three Fiber 8.18.0**: React renderer for Three.js.
-- **React Three Drei 9.122.0**: Helpers for React Three Fiber.
+| Service | Role |
+|---------|------|
+| PostgreSQL | Events, sponsors, team, jobs, contact submissions |
+| Supabase Auth | Admin login |
+| Supabase Storage | Site images (`public-images` bucket) |
 
-### Additional Libraries
-- **React Hook Form & Zod**: Form management and validation.
-- **React Icons 5.5.0**: Icon library.
-- **date-fns 4.1.0**: Date manipulation.
+### Data layer
+
+| Package | Role |
+|---------|------|
+| `@supabase/supabase-js` | Database, auth, storage client |
+| `@supabase/ssr` | Cookie-based auth in browser + middleware |
+| tRPC + React Query | Paginated events API (`/api/trpc`) |
+
+### Forms and validation
+
+- React Hook Form + Zod (`src/lib/schemas.ts`)
 
 ## Project Structure
 
 ```
 CEUS/
-├── scripts/                    # Database migrations and seed scripts
-├── public/                     # Static assets (3D models, documents)
-├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── admin/              # Protected admin dashboard routes
-│   │   │   ├── events/         # Event management
-│   │   │   ├── sponsors/       # Sponsor management
-│   │   │   ├── team/           # Team management
-│   │   │   └── contacts/       # Contact submission management
-│   │   ├── layout.tsx          # Root layout
-│   │   └── page.tsx            # Home page
-│   ├── components/             # Reusable components
-│   │   ├── admin/              # Admin-specific UI components
-│   │   ├── EventCard.tsx       # Event display component
-│   │   ├── SponsorLogo.tsx     # Sponsor display component
-│   │   └── ThreeDModels.tsx    # 3D model wrapper
-│   ├── lib/                    # Shared logic
-│   │   └── supabase.ts         # Supabase client and data helpers
-│   ├── data/                   # Static fallback data
-│   └── types.ts                # TypeScript type definitions
+├── scripts/
+│   └── migrations/         # SQL migrations for Supabase
+├── public/                 # Static files (PDFs, legacy images)
+└── src/
+    ├── app/                # Next.js App Router
+    │   ├── admin/          # Protected admin routes
+    │   │   ├── events/
+    │   │   ├── sponsors/
+    │   │   ├── team/
+    │   │   ├── jobs/
+    │   │   └── contacts/
+    │   ├── api/trpc/       # tRPC HTTP handler
+    │   ├── events/
+    │   ├── jobs/
+    │   ├── team/
+    │   ├── sponsors/
+    │   ├── contact/
+    │   ├── publications/
+    │   ├── layout.tsx
+    │   ├── page.tsx
+    │   └── robots.ts
+    ├── components/
+    │   ├── admin/          # Admin UI (DataTable, FormModal, ImageUpload)
+    │   └── ...             # Public components
+    ├── layouts/            # Header, Footer, Navbar
+    ├── lib/
+    │   ├── supabase.ts     # Supabase client and CRUD helpers
+    │   ├── storagePublicUrls.ts  # Image URL resolution
+    │   └── schemas.ts      # Zod schemas
+    ├── server/api/         # tRPC routers
+    ├── trpc/               # tRPC client setup
+    ├── data/               # Static fallback data
+    ├── proxy.ts            # Auth middleware for /admin
+    └── types.ts
 ```
 
 ## Architecture Patterns
 
-### 1. Hybrid Rendering
-- **Static Content**: Core pages are pre-rendered for SEO and performance.
-- **Client-Side Data**: Dynamic content (events, sponsors) is fetched from Supabase on the client side to ensure real-time updates without full rebuilds.
+### Hybrid rendering
 
-### 2. Managed Backend (Supabase)
-- **Database**: Replaces static TS files with a relational database.
-- **Storage**: Centralized asset management for all site images.
-- **Auth**: Simplified user management for executive access.
+- **Server components** fetch data for pages like `/jobs` (with `revalidate` for ISR)
+- **Client components** (`*Client.tsx`) handle filtering, modals, and admin interactions
+- **Fallback data** in `src/data/` supports offline or misconfigured Supabase during development
 
-### 3. Progressive Enhancement
-- Core site functionality remains fast and accessible.
-- Interactive features (3D models, filtering) enhance the experience.
+### Supabase as source of truth
 
-## Component Architecture
+Content tables replace hand-edited TypeScript files for production. Migration scripts in `scripts/migrations/` define the schema; admin UI and `src/lib/supabase.ts` handle reads and writes.
 
-### Component Categories
+### Progressive enhancement
 
-#### 1. Public UI Components
-- **Layouts**: Header, Footer, HeroSection.
-- **Features**: EventCard, MemberCard, SponsorLogo.
-- **Interactive**: ThreeDModels, EventFilterButton.
+Core pages work without JavaScript for initial content. Interactive features (filters, modals, admin forms) enhance the experience client-side.
 
-#### 2. Admin UI Components
-- **Data Tables**: Paginated and filterable views for managing records.
-- **Forms**: Zod-validated forms for creating and editing data.
-- **Image Uploads**: Specialized components for uploading to Supabase Storage.
-- **Stats Cards**: Dashboard overview metrics.
+## Routes and Pages
+
+| Route | Type | Data source |
+|-------|------|-------------|
+| `/` | Public | Mixed (hero, featured content) |
+| `/events` | Public | Supabase `events` |
+| `/team` | Public | Supabase `team_members` |
+| `/sponsors` | Public | Supabase `sponsors` |
+| `/jobs` | Public | Supabase `jobs` |
+| `/contact` | Public | Writes to `contact_submissions` |
+| `/publications` | Public | Static |
+| `/admin/*` | Protected | Supabase (auth required) |
 
 ## Data Flow
 
-### 1. Public Data Flow
+### Public reads
 
 ```
-Supabase DB → lib/supabase.ts (Fetch) → Page Component → UI Components
+Supabase DB → lib/supabase.ts (fetch*) → Page/Client component → UI
 ```
 
-- Data is fetched via `lib/supabase.ts` helpers.
-- TypeScript interfaces ensure data consistency from DB to UI.
-- Images are served via Supabase Storage public URLs.
+Images resolve through `lib/storagePublicUrls.ts` and `getImageUrl()` in `lib/supabase.ts`, mapping paths to the `public-images` bucket.
 
-### 2. Admin Data Flow
+### Admin writes
 
 ```
-User Action → Admin Form → lib/supabase.ts (Mutation) → Supabase DB
+Admin form → lib/supabase.ts (create*/update*/delete*) → Supabase DB
+                ↓
+         uploadFile() → Supabase Storage (images)
 ```
 
-- Mutations use Supabase client with Auth protection.
-- Successful updates trigger local state refreshes or revalidations.
+### Contact form
+
+```
+ContactClient → submitContactForm() → contact_submissions table
+Admin → getContactSubmissions() / updateSubmissionStatus()
+```
 
 ## State Management
 
-### Local State
-- **React Hooks**: `useState`, `useEffect` for component-level logic.
-- **Forms**: `react-hook-form` for complex form state.
-
-### Server State
-- Managed primarily through Supabase client and direct fetches.
-- Cached at the component level where appropriate.
+- **Local state** — `useState`, `useEffect` in client components
+- **Forms** — React Hook Form in admin modals
+- **Server state** — Direct Supabase fetches; React Query via tRPC for paginated events
+- **Auth** — Supabase session in cookies (`@supabase/ssr`); `proxy.ts` guards `/admin`
 
 ## Admin Architecture
 
-The admin panel is built to be a standalone management tool within the main application:
-- **Authentication**: Route-level protection ensures only authorized users access `/admin`.
-- **Layout**: Dedicated sidebar navigation and admin-focused header.
-- **CRUD Operations**: Consistent patterns for managing all site entities.
-- **Feedback**: Immediate visual feedback for all user actions (success/error).
+- **Auth** — `/admin/login` via Supabase email/password; `proxy.ts` redirects unauthenticated users
+- **Layout** — Shared admin layout with sidebar navigation
+- **CRUD** — Consistent pattern: `DataTable` + `FormModal` + `DeleteConfirmModal` per entity
+- **Images** — `ImageUpload` component uploads to `public-images` via `uploadFile()`
+
+Admin sections: Events, Sponsors, Team, Jobs, Contacts.
+
+## tRPC API
+
+A lightweight tRPC layer exists for paginated event fetching:
+
+```
+Client → /api/trpc → server/api/routers/events → Supabase
+```
+
+Routers live in `src/server/api/`. The events router exposes `getInfinite` for cursor-based pagination. This is additive — most pages still use direct Supabase helpers.
 
 ## Performance Considerations
 
-### 1. Asset Optimization
-- **Supabase Storage**: Serves images with appropriate cache controls.
-- **Next.js Image**: Automatic optimization for public assets.
-
-### 2. Code Splitting
-- Admin dashboard code is only loaded for authenticated users.
-- 3D models and heavy libraries (GSAP) are split to minimize initial bundle size.
+- **Images** — `OptimizedImage` component + Next.js Image with Supabase remote patterns in `next.config.js`
+- **Bundle size** — Three.js removed (~950KB); 3D section shows a placeholder
+- **ISR** — `/jobs` uses `revalidate = 600` (10 minutes)
+- **Code splitting** — Admin and heavy client components loaded per route
 
 ## Security
 
-### 1. Database Security
-- **RLS (Row Level Security)**: Supabase policies restrict write access to authenticated users.
-- **Public Read**: Policies allow public read access for site content.
+### Row Level Security (RLS)
 
-### 2. Authentication
-- Secure password-based login via Supabase Auth.
-- Session-based persistence for admin access.
+Supabase policies should:
+
+- Allow **public read** on content tables (events, sponsors, team, jobs)
+- Restrict **writes** to authenticated admin users
+- Allow **contact form inserts** from anonymous users
+- Restrict **contact submission reads** to authenticated users
+
+### Authentication
+
+- Password-based login via Supabase Auth
+- Session stored in HTTP-only cookies via `@supabase/ssr`
+- `SUPABASE_SERVICE_ROLE_KEY` used only in server-side scripts — never exposed to the browser
+
+### Environment secrets
+
+| Variable | Exposure |
+|----------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Browser-safe |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser-safe (RLS enforces access) |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server/scripts only |
 
 ## Deployment Architecture
 
-### 1. Hosting
-- **Vercel**: Optimized for Next.js deployments.
-- **Global CDN**: Static assets and pre-rendered pages served from the edge.
+- **Hosting** — Vercel (recommended); set **Root Directory** to `CEUS`
+- **CDN** — Vercel edge network for static assets and pages
+- **Database** — Supabase hosted PostgreSQL
+- **Storage** — Supabase Storage with public bucket for images
 
-### 2. Environment Management
-- Environment-specific keys for Supabase URL and keys.
-- Production and preview environments for safe testing.
-
-## Conclusion
-
-The CEUS website architecture provides a robust, scalable foundation that balances the performance of a static site with the flexibility of a dynamic, managed backend.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for configuration details.

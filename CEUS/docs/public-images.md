@@ -1,6 +1,8 @@
 # Supabase Public Images
 
-CEUS now serves site images from a single public Supabase Storage bucket:
+CEUS serves site images from a single public Supabase Storage bucket.
+
+See also: [Getting Started](../../docs/GETTING_STARTED.md) · [Quick Reference](../../docs/QUICK_REFERENCE.md)
 
 - Bucket: `public-images`
 - Folders:

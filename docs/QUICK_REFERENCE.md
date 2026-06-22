@@ -1,138 +1,170 @@
 # CEUS Website Quick Reference
 
-A quick reference guide for common tasks and commands when working with the CEUS website.
+Day-to-day commands, file locations, and common tasks.
 
-## Table of Contents
-- [Quick Commands](#quick-commands)
-- [Supabase & Data](#supabase--data)
-- [File Locations](#file-locations)
-- [Common Tasks](#common-tasks)
-- [Troubleshooting](#troubleshooting)
+## Commands
 
-## Quick Commands
+Run from `CEUS/` (or use root `package.json` scripts from the repo root).
 
-### Development
 ```bash
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run linting
-npm run lint
-
-# Type checking
-npm run tsc
+npm run dev       # Development server → http://localhost:3000
+npm run build     # Production build
+npm run start     # Serve production build
+npm run lint      # ESLint
+npm run tsc       # TypeScript check
 ```
 
-### Git Workflow
+### Git workflow
+
 ```bash
-# Create feature branch
 git checkout -b feat/your-feature-name
-
-# Commit changes (Conventional Commits)
-git commit -m "feat: add new feature"
-
-# Pull latest changes
+git commit -m "feat: describe your change"
 git pull origin main
 ```
 
-## Supabase & Data
+## Environment variables
 
-### Database Migrations
-SQL migrations are located in `CEUS/scripts/migrations/`.
-1. Open the Supabase SQL Editor for your project.
-2. Copy and paste the contents of the `.sql` file.
-3. Run the query.
+| Variable | Where | Purpose |
+|----------|-------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `.env.local` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `.env.local` | Public API key |
+| `SUPABASE_SERVICE_ROLE_KEY` | `.env.local` | Bulk upload scripts only |
 
-### Initializing Storage
-To set up the `public-images` bucket:
-1. Run `CEUS/scripts/migrations/create_public_images_bucket.sql` in Supabase SQL editor.
-2. Sync local images to the bucket:
-   ```bash
-   # From CEUS/ directory
-   set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
-   ```
+Template: `CEUS/.env.example`
 
-### Seeding Data
-Seed scripts are available in `CEUS/scripts/`:
+## Key file locations
+
+```
+CEUS/
+├── .env.example / .env.local
+├── scripts/
+│   ├── migrations/              # SQL for Supabase SQL editor
+│   ├── upload-public-images-to-supabase.mjs
+│   └── seed-sponsors-2026.mjs
+├── src/
+│   ├── app/
+│   │   ├── admin/               # Admin dashboard
+│   │   ├── events/              # Events page
+│   │   ├── jobs/                # Job board
+│   │   ├── team/                # Team page
+│   │   ├── sponsors/            # Sponsors page
+│   │   └── contact/             # Contact form
+│   ├── components/
+│   │   ├── admin/               # Admin UI components
+│   │   └── ThreeDModelsInner.tsx
+│   ├── lib/
+│   │   ├── supabase.ts          # Supabase client + CRUD
+│   │   ├── storagePublicUrls.ts # Image URL helpers
+│   │   └── schemas.ts           # Zod validation
+│   ├── layouts/                 # Header, Footer, Navbar
+│   ├── types.ts                 # Shared types
+│   └── proxy.ts                 # Admin auth middleware
+└── docs/public-images.md        # Storage bucket guide
+```
+
+## Supabase migrations
+
+Run `.sql` files from `scripts/migrations/` in the Supabase SQL editor:
+
+| File | Purpose |
+|------|---------|
+| `create_public_images_bucket.sql` | Image storage bucket |
+| `create_jobs_table.sql` | Job board table |
+| `add_bronze_sponsor_tier.sql` | Bronze sponsor tier |
+| `rename_team_careers_to_industry.sql` | Team category rename |
+| `team_members_id_default.sql` | Team member ID default |
+
+## Common tasks
+
+### Update site content (recommended)
+
+Use the admin dashboard at `/admin`:
+
+1. Log in at `/admin/login`
+2. Navigate to Events, Sponsors, Team, Jobs, or Contacts
+3. Add, edit, or delete records
+4. Upload images through the form — they go to `public-images` in Supabase Storage
+
+### Add an admin user
+
+Supabase dashboard → **Authentication → Users → Add user**
+
+### Sync local images to Supabase
+
 ```bash
-# Seed sponsors for 2026
+cd CEUS
+set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
+```
+
+Requires `SUPABASE_SERVICE_ROLE_KEY`.
+
+### Seed sponsor data
+
+```bash
 node scripts/seed-sponsors-2026.mjs
 ```
 
-## File Locations
+### Add a new public page
 
-### Key Directories
+1. Create `src/app/your-page/page.tsx`
+2. Add a link in `src/layouts/Header.tsx` or `Navbar.tsx`
+3. Add metadata export for SEO
+
+### Re-enabling 3D models
+
+Three.js is currently disabled. To restore:
+
+```bash
+npm install three @react-three/fiber @react-three/drei @types/three
 ```
-CEUS/
-├── scripts/                # Migrations and bulk data scripts
-├── public/                 # Static assets (3D models, documents)
-├── src/
-│   ├── app/                # Next.js App Router pages
-│   │   ├── admin/          # Admin dashboard
-│   ├── components/         # Reusable UI components
-│   ├── lib/                # Shared logic (Supabase client)
-│   └── types.ts            # TypeScript types
-```
 
-### Important Files
-- **Supabase Client**: `src/lib/supabase.ts`
-- **Type Definitions**: `src/types.ts`
-- **Tailwind Config**: `tailwind.config.js`
+Then restore `src/components/ThreeDModelsInner.tsx` from git history.
 
-## Common Tasks
+## Admin routes
 
-### Managing Site Content
-Most content is now managed through the **Admin Dashboard** at `/admin`.
-1. Log in with your society executive credentials.
-2. Navigate to the relevant section (Events, Sponsors, Team).
-3. Use the forms to add, edit, or delete items.
-4. Images uploaded through the dashboard are automatically saved to Supabase Storage.
-
-### Adding a New Admin User
-Admin users are managed through the Supabase Dashboard under **Authentication** -> **Users**.
-1. Click "Add user" -> "Create new user".
-2. Enter email and password.
-3. The user can now log in to the site's admin panel.
-
-### Updating 3D Models
-1. Add new `.glb` or `.gltf` file to `CEUS/public/`.
-2. Update the configuration in `src/components/ThreeDModelsInner.tsx` (if hardcoded) or ensure it matches the expected model path.
+| Section | Route |
+|---------|-------|
+| Dashboard | `/admin` |
+| Events | `/admin/events` |
+| Sponsors | `/admin/sponsors` |
+| Team | `/admin/team` |
+| Jobs | `/admin/jobs` |
+| Contacts | `/admin/contacts` |
+| Login | `/admin/login` |
 
 ## Troubleshooting
 
-### Common Issues
+### Build errors
 
-#### Build Errors
 ```bash
-# Clear cache and reinstall
 rm -rf .next node_modules
 npm install
 npm run build
 ```
 
-#### Supabase Connection Issues
-- Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`.
-- Ensure your IP is not blocked by Supabase (if configured).
-- Check if the Supabase project is active (not paused).
+### Supabase connection issues
 
-#### Images Not Displaying
-- Check if the image exists in the Supabase `public-images` bucket.
-- Verify that the bucket has "Public" access enabled.
-- Check the console for "404 Not Found" or "403 Forbidden" errors from the Supabase storage URL.
+- Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
+- Confirm the Supabase project is active (not paused)
+- Check browser console for 401/403 from Supabase
 
-### Debug Commands
+### Images not displaying
+
+- Confirm `create_public_images_bucket.sql` has been run
+- Check the file exists in the `public-images` bucket
+- Verify `getImageUrl()` resolves to a valid Supabase Storage URL
+
+### Type errors
+
 ```bash
-# Check Node version (recommended 20+)
-node -v
-
-# Run linting with auto-fix
+npm run tsc
 npm run lint -- --fix
 ```
 
-## Useful Links
+## Links
+
+- [Getting Started](GETTING_STARTED.md)
+- [Architecture](ARCHITECTURE.md)
+- [API Documentation](API_DOCUMENTATION.md)
 - [Supabase Dashboard](https://supabase.com/dashboard)
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
+- [Next.js Docs](https://nextjs.org/docs)

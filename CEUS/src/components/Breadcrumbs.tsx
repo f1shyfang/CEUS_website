@@ -105,6 +105,12 @@ export const getBreadcrumbs = (pathname: string): BreadcrumbItem[] => {
         ...baseItems,
         { label: 'Publications', current: true }
       ]
+
+    case '/jobs':
+      return [
+        ...baseItems,
+        { label: 'Jobs', current: true }
+      ]
     
     default:
       return baseItems

@@ -1,51 +1,66 @@
-# CEUS Next.js Project
+# CEUS Next.js Application
 
-This directory contains the main Next.js application for the CEUS website.
+This directory contains the Next.js application for the CEUS website.
 
-## Getting Started
+## Quick start
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+cp .env.example .env.local   # add Supabase credentials
+npm run dev
+```
 
-2. **Set up Environment Variables**
-   Create a `.env.local` file with your Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-   ```
+Open [http://localhost:3000](http://localhost:3000).
 
-3. **Run Development Server**
-   ```bash
-   npm run dev
-   ```
+## Scripts
 
-4. **Build for Production**
-   ```bash
-   npm run build
-   ```
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Serve production build |
+| `npm run lint` | ESLint |
+| `npm run tsc` | TypeScript check |
+
+## Environment variables
+
+Copy `.env.example` to `.env.local` and fill in:
+
+- `NEXT_PUBLIC_SUPABASE_URL` — required
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — required
+- `SUPABASE_SERVICE_ROLE_KEY` — only for scripts in `scripts/`
+
+## Supabase setup
+
+### Database migrations
+
+Run SQL files in `scripts/migrations/` via the Supabase SQL editor. Key migrations:
+
+- `create_public_images_bucket.sql` — image storage
+- `create_jobs_table.sql` — job board
+
+### Image storage
+
+Site images are served from a single public bucket: `public-images`.
+
+1. Run `scripts/migrations/create_public_images_bucket.sql`
+2. Sync local images (optional):
+
+```bash
+set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
+```
+
+See [docs/public-images.md](docs/public-images.md) for folder layout and helpers.
+
+### Admin access
+
+The admin panel is at `/admin`. Create users in Supabase under **Authentication → Users**.
 
 ## Documentation
 
-For comprehensive documentation on the project architecture, features, and contribution guidelines, please refer to the **[root README](../README.md)** and the **[docs/](../docs/)** directory.
-
-## Supabase Integration
-
-This project uses Supabase for database, authentication, and storage.
-
-### Storage Setup
-Site images are stored in a public bucket named `public-images`.
-
-1. Run the migration: `scripts/migrations/create_public_images_bucket.sql`.
-2. Sync local images (optional):
-   ```bash
-   set -a && source .env.local && set +a && node scripts/upload-public-images-to-supabase.mjs
-   ```
-
-### Admin Access
-The admin panel is located at `/admin`. Authentication is handled via Supabase Auth.
-
----
-
-**[Go to Root Documentation](../README.md)**
+| Document | Location |
+|----------|----------|
+| Project overview | [../README.md](../README.md) |
+| Documentation index | [../docs/README.md](../docs/README.md) |
+| Getting started | [../docs/GETTING_STARTED.md](../docs/GETTING_STARTED.md) |
+| Quick reference | [../docs/QUICK_REFERENCE.md](../docs/QUICK_REFERENCE.md) |
