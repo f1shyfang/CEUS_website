@@ -35,6 +35,11 @@ const EventsClient: React.FC<EventsClientProps> = ({ events }) => {
   const pastSectionRef = useRef<HTMLDivElement>(null);
 
   const now = useMemo(() => new Date(), []);
+  const yearAgo = useMemo(() => {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    return d;
+  }, []);
 
   const upcomingEvents = useMemo(() => {
     return events
@@ -45,7 +50,7 @@ const EventsClient: React.FC<EventsClientProps> = ({ events }) => {
 
   const pastEvents = useMemo(() => {
     return events
-      .filter(event => new Date(event.date) < now)
+      .filter(event => new Date(event.date) < now && new Date(event.date) >= yearAgo)
       .filter(event => matchesFilter(event.category, pastFilter))
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [events, now, pastFilter]);
