@@ -32,9 +32,29 @@ export const TEAM_CATEGORIES = [
   'Information Technology',
   'Marketing',
   'Socials',
-  'Careers',
+  'Industry',
   'Admin',
 ] as const;
+
+export type TeamCategoryName = (typeof TEAM_CATEGORIES)[number];
+
+/** Maps legacy DB values to current category names. */
+export function normalizeTeamCategory(category: string): string {
+  return category === 'Careers' ? 'Industry' : category;
+}
+
+export function sortTeamCategories(categories: string[]): string[] {
+  return [...categories].sort((a, b) => {
+    const aName = normalizeTeamCategory(a);
+    const bName = normalizeTeamCategory(b);
+    const aIndex = TEAM_CATEGORIES.indexOf(aName as TeamCategoryName);
+    const bIndex = TEAM_CATEGORIES.indexOf(bName as TeamCategoryName);
+    if (aIndex === -1 && bIndex === -1) return aName.localeCompare(bName);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
+  });
+}
 
 // Event schema
 export const eventSchema = z.object({
@@ -67,47 +87,74 @@ export const teamMemberSchema = z.object({
   imageUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
   email: z.string().email('Invalid email').optional().or(z.literal('')),
   linkedInUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  category: z.string().min(1, 'Category is required'),
+  categories: z
+    .array(z.enum(TEAM_CATEGORIES))
+    .min(1, 'Select at least one category'),
   sortOrder: z.number().int().min(0, 'Sort order must be a positive number'),
 });
 
 export type TeamMemberFormData = z.infer<typeof teamMemberSchema>;
 
-// Job types and categories
+// Job types
 export const JOB_TYPES = [
-  'Full-time',
-  'Part-time',
   'Internship',
-  'Graduate',
+  'Graduate Program',
+  'Cadetship',
+  'Vacation Program',
+  'Part-time',
+  'Full-time',
   'Contract',
   'Casual',
+  'Volunteer',
+] as const;
+
+// Working rights options shown on the application form and used for filtering.
+export const WORKING_RIGHTS = [
+  'Australian Citizen',
+  'Australian Permanent Resident',
+  'Australian Work Visa',
+  'New Zealand Citizen',
+  'International Student',
+  'No Visa Required',
+] as const;
+
+// Industry fields. Free-form text is also accepted, but these power the filter dropdown.
+export const INDUSTRY_FIELDS = [
+  'Process Engineering',
+  'Pharmaceuticals',
+  'Food & Beverage',
+  'Oil & Gas',
+  'Mining & Minerals',
+  'Water Treatment',
+  'Energy & Renewables',
+  'Biotechnology',
+  'Chemicals & Manufacturing',
+  'Consulting',
+  'Research',
   'Other',
 ] as const;
 
-export const JOB_CATEGORIES = [
-  'Structural',
-  'Geotechnical',
-  'Water',
-  'Environmental',
-  'Transport',
-  'Construction',
-  'Project Management',
-  'General',
-  'Other',
-] as const;
+const jobCompanySchema = z.object({
+  name: z.string().min(1, 'Company name is required').max(200),
+  website: z.string().url('Invalid URL').optional().or(z.literal('')),
+  logo: z.string().url('Invalid URL').optional().or(z.literal('')),
+});
 
-// Job schema
+// Job schema for the CEUS job board.
 export const jobSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
-  company: z.string().min(1, 'Company is required').max(200, 'Company must be less than 200 characters'),
+  company: jobCompanySchema,
   description: z.string().min(1, 'Description is required'),
-  applicationUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
-  applicationDeadline: z.string().optional(),
-  location: z.string().optional(),
-  jobType: z.enum(JOB_TYPES),
-  category: z.enum(JOB_CATEGORIES),
-  logoUrl: z.string().optional().or(z.literal('')),
-  featured: z.boolean(),
+  oneLiner: z.string().max(200, 'One-liner must be less than 200 characters').optional().or(z.literal('')),
+  applicationUrl: z.string().url('Application URL must be a valid URL'),
+  sourceUrls: z.array(z.string().url('Source URL must be a valid URL')).default([]),
+  type: z.enum(JOB_TYPES),
+  locations: z.array(z.string().min(1)).min(1, 'At least one location is required'),
+  industryField: z.string().min(1, 'Industry field is required').max(100),
+  workingRights: z.array(z.enum(WORKING_RIGHTS)).default([]),
+  closeDate: z.string().optional().or(z.literal('')),
+  isSponsored: z.boolean(),
+  outdated: z.boolean(),
 });
 
 export type JobFormData = z.infer<typeof jobSchema>;

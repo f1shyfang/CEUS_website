@@ -8,10 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginFormData } from '@/lib/schemas';
 import { signIn, getSession } from '@/lib/supabase';
 import { FiMail, FiLock, FiAlertCircle, FiLoader } from 'react-icons/fi';
-
-function setAuthCookie(name: string, value: string) {
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
-}
+import posthog from 'posthog-js';
 
 function LoginForm() {
   const router = useRouter();
@@ -36,30 +33,31 @@ function LoginForm() {
         const session = await getSession();
         if (session) {
           router.replace(redirectTo);
-          return;
         }
       } catch {
         // Not authenticated, show login form
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     checkAuth();
   }, [router, redirectTo]);
 
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
-    
+
     try {
       const { session } = await signIn(data.email, data.password);
-      
+
       if (session) {
-        // Set cookies for middleware
-        setAuthCookie('sb-access-token', session.access_token);
-        setAuthCookie('sb-refresh-token', session.refresh_token);
-        
+        posthog.identify(data.email, { email: data.email, role: 'admin' });
+        posthog.capture('admin_logged_in', { email: data.email });
+        // Session cookies are managed by the Supabase browser client,
+        // so the proxy middleware sees the same session.
         router.replace(redirectTo);
       }
     } catch (err) {
+      posthog.captureException(err);
       setError(err instanceof Error ? err.message : 'Invalid email or password');
     }
   };

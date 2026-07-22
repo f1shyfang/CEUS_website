@@ -57,8 +57,8 @@ const socialsTeamMembers: Member[] = [
   { id: 'charlieI', name: 'Charlie Jiang', role: 'Intersociety Representative', imageUrl: teamImage('charlie.JPG'), linkedInUrl: 'http://www.linkedin.com/in/charlie-jiang-0065a6239' },
 ];
 
-// --- CAREERS/INDUSTRY TEAM ---
-const careersTeamMembers: Member[] = [
+// --- INDUSTRY TEAM ---
+const industryTeamMembers: Member[] = [
   { id: 'amelieVB', name: 'Amelie von Bibra', role: 'Industry VP', imageUrl: STORAGE_IMAGE_URLS.defaultTeam, linkedInUrl: 'https://www.linkedin.com/in/amelie-von-bibra-878b162b5/' },
   { id: 'gabbyS', name: 'Gabby', role: 'Sponsorship Director', imageUrl: teamImage('gabrielle.jpg'), linkedInUrl: 'https://www.linkedin.com/in/gabrielle-shoebridge-087479281/' },
   { id: 'jaymeS', name: 'Jayme Cheong', role: 'Sponsorship Director', imageUrl: teamImage('jayme.jpg'), linkedInUrl: 'https://www.linkedin.com/in/jayme-cheong-63332a2b2/' },
@@ -81,7 +81,7 @@ export const allTeams: TeamCategory[] = [
   { name: 'Information Technology', members: withSupabaseImageUrls(itMembers) },
   { name: 'Marketing', members: withSupabaseImageUrls(marketingTeamMembers) },
   { name: 'Socials', members: withSupabaseImageUrls(socialsTeamMembers) },
-  { name: 'Careers', members: withSupabaseImageUrls(careersTeamMembers) },
+  { name: 'Industry', members: withSupabaseImageUrls(industryTeamMembers) },
   { name: 'Admin', members: withSupabaseImageUrls(AdminMembers) },
 ];
 
@@ -90,7 +90,7 @@ export const mainFilterCategories = [
     { id: 'executives', label: 'Executives' },
     { id: 'yearRepresentatives', label: 'Year Representatives' },
     { id: 'Admin', label: 'Admin' },
-    { id: 'careers', label: 'Careers' },
+    { id: 'industry', label: 'Industry' },
     { id: 'socials', label: 'Socials' },
     { id: 'marketing', label: 'Marketing' },
     { id: 'informationTechnology', label: 'Information Technology' },

@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Script from 'next/script'
 import '../index.css'
+import AnalyticsProviders from '../components/analytics/AnalyticsProviders'
 import Header from '../layouts/Header'
 import Footer from '../layouts/Footer'
+import { TRPCReactProvider } from '../trpc/react'
 
 const SUPABASE_PUBLIC_BASE = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
 const SEO_LOGO_URL = `${SUPABASE_PUBLIC_BASE}/storage/v1/object/public/assets/assets/ceuslogo_noback_noname.png`;
@@ -39,9 +41,6 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL('https://www.ceusunsw.com'),
-  alternates: {
-    canonical: '/',
-  },
   icons: {
     icon: '/SVGlogo.svg',
     apple: '/SVGlogo.svg',
@@ -80,14 +79,18 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code', // Add your Google Search Console verification code
-  },
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION && {
+    verification: {
+      google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+    },
+  }),
   other: {
     'msapplication-TileColor': '#ffffff',
     'theme-color': '#ffffff',
   },
 }
+
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export default function RootLayout({
   children,
@@ -134,29 +137,36 @@ export default function RootLayout({
             })
           }}
         />
-        
-        {/* Google Analytics - using Next.js Script for better performance */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'GA_MEASUREMENT_ID');
-          `}
-        </Script>
+
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className={inter.className}>
-        <div className="flex flex-col min-h-screen bg-white">
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <AnalyticsProviders>
+          <TRPCReactProvider>
+            <div className="flex flex-col min-h-screen bg-white">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </TRPCReactProvider>
+        </AnalyticsProviders>
       </body>
     </html>
   )

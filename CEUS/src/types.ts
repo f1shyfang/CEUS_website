@@ -37,21 +37,6 @@ export interface Event {
 
 
 
-export interface Job {
-  id: string;
-  title: string;
-  company: string;
-  description: string;
-  applicationUrl: string;
-  applicationDeadline?: string;
-  location?: string;
-  jobType: string;
-  category: string;
-  logoUrl?: string;
-  featured?: boolean;
-  createdAt?: string;
-}
-
 // Expand tiers so the sponsors page can mirror CSESoc-style groupings.
 export type SponsorTier =
   | 'Diamond'
@@ -71,4 +56,48 @@ export interface Sponsor {
   description: string; // Text to display in the modal popup
   tier: SponsorTier;
   featured?: boolean; // Marks the sponsor for the spotlight section
+}
+
+export type JobType =
+  | 'Internship'
+  | 'Graduate Program'
+  | 'Cadetship'
+  | 'Vacation Program'
+  | 'Part-time'
+  | 'Full-time'
+  | 'Contract'
+  | 'Casual'
+  | 'Volunteer';
+
+export type WorkingRight =
+  | 'Australian Citizen'
+  | 'Australian Permanent Resident'
+  | 'Australian Work Visa'
+  | 'New Zealand Citizen'
+  | 'International Student'
+  | 'No Visa Required';
+
+export interface JobCompany {
+  name: string;
+  website?: string;
+  logo?: string;
+}
+
+export interface Job {
+  id: string;
+  title: string;
+  company: JobCompany;
+  description: string;
+  oneLiner?: string;
+  applicationUrl: string;
+  sourceUrls: string[];
+  type: JobType;
+  locations: string[];
+  industryField: string;
+  workingRights: WorkingRight[];
+  createdAt: string;
+  updatedAt: string;
+  closeDate?: string;
+  isSponsored: boolean;
+  outdated: boolean;
 }

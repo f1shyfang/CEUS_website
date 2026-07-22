@@ -11,7 +11,7 @@ import {
   FormModal,
   FormField,
   FormInput,
-  FormSelect,
+  FormCheckbox,
   FormActions,
   ImageUpload,
 } from '@/components/admin';
@@ -20,22 +20,26 @@ import {
   createTeamMember,
   updateTeamMember,
   deleteTeamMember,
+  GroupedTeamMember,
   STORAGE_BUCKETS,
   STORAGE_FOLDERS,
 } from '@/lib/supabase';
-import { teamMemberSchema, TeamMemberFormData, TEAM_CATEGORIES } from '@/lib/schemas';
-import { Member } from '@/types';
-
-type TeamMemberWithMeta = Member & { category: string; sortOrder: number };
+import {
+  teamMemberSchema,
+  TeamMemberFormData,
+  TEAM_CATEGORIES,
+  TeamCategoryName,
+} from '@/lib/schemas';
 
 export default function AdminTeamPage() {
-  const [members, setMembers] = useState<TeamMemberWithMeta[]>([]);
+  const [members, setMembers] = useState<GroupedTeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editingMember, setEditingMember] = useState<TeamMemberWithMeta | null>(null);
-  const [deletingMember, setDeletingMember] = useState<TeamMemberWithMeta | null>(null);
+  const [editingMember, setEditingMember] = useState<GroupedTeamMember | null>(null);
+  const [deletingMember, setDeletingMember] = useState<GroupedTeamMember | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const {
     register,
@@ -52,12 +56,13 @@ export default function AdminTeamPage() {
       imageUrl: '',
       email: '',
       linkedInUrl: '',
-      category: '',
+      categories: [],
       sortOrder: 0,
     },
   });
 
   const imageUrl = watch('imageUrl');
+  const selectedCategories = watch('categories');
 
   const loadMembers = async () => {
     try {
@@ -76,38 +81,48 @@ export default function AdminTeamPage() {
 
   const openCreateModal = () => {
     setEditingMember(null);
+    setSaveError(null);
     reset({
       name: '',
       role: '',
       imageUrl: '',
       email: '',
       linkedInUrl: '',
-      category: TEAM_CATEGORIES[0],
+      categories: [TEAM_CATEGORIES[0]],
       sortOrder: 0,
     });
     setIsModalOpen(true);
   };
 
-  const openEditModal = (member: TeamMemberWithMeta) => {
+  const openEditModal = (member: GroupedTeamMember) => {
     setEditingMember(member);
+    setSaveError(null);
     reset({
       name: member.name,
       role: member.role,
       imageUrl: member.imageUrl || '',
       email: member.email || '',
       linkedInUrl: member.linkedInUrl || '',
-      category: member.category,
+      categories: member.categories as TeamCategoryName[],
       sortOrder: member.sortOrder,
     });
     setIsModalOpen(true);
   };
 
-  const openDeleteModal = (member: TeamMemberWithMeta) => {
+  const openDeleteModal = (member: GroupedTeamMember) => {
     setDeletingMember(member);
     setIsDeleteModalOpen(true);
   };
 
+  const toggleCategory = (category: TeamCategoryName, checked: boolean) => {
+    const next = checked
+      ? [...selectedCategories, category]
+      : selectedCategories.filter((value) => value !== category);
+    setValue('categories', next, { shouldValidate: true });
+  };
+
   const onSubmit = async (data: TeamMemberFormData) => {
+    setSaveError(null);
     try {
       if (editingMember) {
         await updateTeamMember(String(editingMember.id), data);
@@ -117,13 +132,18 @@ export default function AdminTeamPage() {
       setIsModalOpen(false);
       loadMembers();
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Failed to save team member. Please try again.';
       console.error('Error saving team member:', error);
+      setSaveError(message);
     }
   };
 
   const handleDelete = async () => {
     if (!deletingMember) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteTeamMember(String(deletingMember.id));
@@ -143,11 +163,11 @@ export default function AdminTeamPage() {
     'Information Technology': 'bg-cyan-500/20 text-cyan-300',
     Marketing: 'bg-pink-500/20 text-pink-300',
     Socials: 'bg-orange-500/20 text-orange-300',
-    Careers: 'bg-green-500/20 text-green-300',
+    Industry: 'bg-green-500/20 text-green-300',
     Admin: 'bg-gray-500/20 text-gray-300',
   };
 
-  const columns: Column<TeamMemberWithMeta>[] = [
+  const columns: Column<GroupedTeamMember>[] = [
     {
       key: 'name',
       label: 'Member',
@@ -175,13 +195,20 @@ export default function AdminTeamPage() {
       ),
     },
     {
-      key: 'category',
-      label: 'Category',
+      key: 'categories',
+      label: 'Categories',
       sortable: true,
-      render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs ${categoryColors[value as string] || 'bg-gray-500/20 text-gray-400'}`}>
-          {value as string}
-        </span>
+      render: (_, row) => (
+        <div className="flex flex-wrap gap-1">
+          {row.categories.map((category) => (
+            <span
+              key={category}
+              className={`px-2 py-1 rounded text-xs ${categoryColors[category] || 'bg-gray-500/20 text-gray-400'}`}
+            >
+              {category}
+            </span>
+          ))}
+        </div>
       ),
     },
     {
@@ -224,7 +251,6 @@ export default function AdminTeamPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Team Members</h1>
@@ -239,7 +265,6 @@ export default function AdminTeamPage() {
         </button>
       </div>
 
-      {/* Table */}
       <DataTable
         columns={columns}
         data={members}
@@ -250,7 +275,6 @@ export default function AdminTeamPage() {
         emptyMessage="No team members found. Add your first team member!"
       />
 
-      {/* Create/Edit Modal */}
       <FormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -258,6 +282,12 @@ export default function AdminTeamPage() {
         isSubmitting={isSubmitting}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {saveError && (
+            <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {saveError}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField label="Name" error={errors.name?.message} required>
               <FormInput
@@ -276,36 +306,36 @@ export default function AdminTeamPage() {
             </FormField>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField label="Category" error={errors.category?.message} required>
-              <FormSelect {...register('category')} error={!!errors.category}>
-                <option value="">Select category</option>
-                {TEAM_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </FormSelect>
-            </FormField>
+          <FormField label="Categories" error={errors.categories?.message} required>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-gray-600 bg-gray-700/40 p-3">
+              {TEAM_CATEGORIES.map((category) => (
+                <FormCheckbox
+                  key={category}
+                  label={category}
+                  checked={selectedCategories.includes(category)}
+                  onChange={(event) => toggleCategory(category, event.target.checked)}
+                />
+              ))}
+            </div>
+          </FormField>
 
-            <FormField label="Sort Order" error={errors.sortOrder?.message} required>
-              <FormInput
-                {...register('sortOrder', { valueAsNumber: true })}
-                type="number"
-                min="0"
-                placeholder="0"
-                error={!!errors.sortOrder}
-              />
-            </FormField>
-          </div>
+          <FormField label="Sort Order" error={errors.sortOrder?.message} required>
+            <FormInput
+              {...register('sortOrder', { valueAsNumber: true })}
+              type="number"
+              min="0"
+              placeholder="0"
+              error={!!errors.sortOrder}
+            />
+          </FormField>
 
           <FormField label="Profile Photo" error={errors.imageUrl?.message}>
             <ImageUpload
               bucket={STORAGE_BUCKETS.PUBLIC_IMAGES}
               folder={STORAGE_FOLDERS.TEAM}
               currentUrl={imageUrl}
-              onUpload={(url) => setValue('imageUrl', url)}
-              onRemove={() => setValue('imageUrl', '')}
+              onUpload={(url) => setValue('imageUrl', url, { shouldValidate: true })}
+              onRemove={() => setValue('imageUrl', '', { shouldValidate: true })}
             />
           </FormField>
 
@@ -335,13 +365,12 @@ export default function AdminTeamPage() {
         </form>
       </FormModal>
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         title="Delete Team Member"
-        message={`Are you sure you want to delete "${deletingMember?.name}"? This action cannot be undone.`}
+        message={`Are you sure you want to delete "${deletingMember?.name}" from all categories? This action cannot be undone.`}
         isDeleting={isDeleting}
       />
     </div>

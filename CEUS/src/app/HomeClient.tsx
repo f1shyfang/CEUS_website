@@ -13,6 +13,7 @@ import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import { Event, Sponsor } from '../types';
 import EventCard from '../components/EventCard';
 import OptimizedImage from '../components/OptimizedImage';
+import posthog from 'posthog-js';
 
 interface HomeClientProps {
   events: Event[];
@@ -141,10 +142,10 @@ const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
         )}
 
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <Link href="/events" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+          <Link href="/events" onClick={() => posthog.capture('home_events_link_clicked')} className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
             View All Events
           </Link>
-          <a href="https://calendar.google.com/calendar/u/0?cid=ZWIwYjViOTgxYjJmMGE5NDM0NzczNjMzODU1MGRkZGFiMTYwMmQ1NDE2MTI5MjQ5ZmQzNzczZjQzNjQxYjlhN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
+          <a href="https://calendar.google.com/calendar/u/0?cid=ZWIwYjViOTgxYjJmMGE5NDM0NzczNjMzODU1MGRkZGFiMTYwMmQ1NDE2MTI5MjQ5ZmQzNzczZjQzNjQxYjlhN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer" onClick={() => posthog.capture('calendar_subscribed')} className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
             Subscribe to Calendar
           </a>
         </div>

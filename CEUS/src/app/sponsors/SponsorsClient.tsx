@@ -9,6 +9,7 @@ import SponsorLogo from '../../components/SponsorLogo';
 import SponsorModal from '../../components/SponsorModal';
 import OptimizedImage from '../../components/OptimizedImage';
 import { cn } from '../../lib/utils';
+import posthog from 'posthog-js';
 
 interface SponsorsClientProps {
   sponsors: SponsorType[];
@@ -52,6 +53,10 @@ const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
   const handleLogoClick = (sponsor: SponsorType) => {
     setSelectedSponsor(sponsor);
     setIsModalOpen(true);
+    posthog.capture('sponsor_modal_opened', {
+      sponsor_name: sponsor.name,
+      sponsor_tier: sponsor.tier,
+    });
   };
 
   const handleCloseModal = () => {
@@ -76,7 +81,7 @@ const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Become a Sponsor</Link>
+            <Link href="/contact" onClick={() => posthog.capture('become_a_sponsor_clicked', { location: 'hero' })} className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Become a Sponsor</Link>
             <Link href="/events" className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">View Our Events</Link>
           </div>
         </div>
@@ -168,7 +173,7 @@ const SponsorsClient: React.FC<SponsorsClientProps> = ({ sponsors }) => {
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">Interested in Sponsoring CEUS?</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Partner with CEUS to connect with talented Chemical Engineering students at UNSW and support the next generation of engineers.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Get In Touch</Link>
+            <Link href="/contact" onClick={() => posthog.capture('become_a_sponsor_clicked', { location: 'cta' })} className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all duration-300 transform hover:scale-105 shadow-lg">Get In Touch</Link>
           </div>
         </div>
       </section>

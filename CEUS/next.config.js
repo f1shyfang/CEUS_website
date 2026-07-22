@@ -55,31 +55,60 @@ const nextConfig = {
   },
   async rewrites() {
     const supabaseBase = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').replace(/\/+$/, '');
+    const rewrites = [];
 
-    if (!supabaseBase) {
-      return [];
+    if (supabaseBase) {
+      // Backward-compatibility layer for legacy local image paths.
+      rewrites.push(
+        {
+          source: '/images/assets/:path*',
+          destination: `${supabaseBase}/storage/v1/object/public/public-images/assets/:path*`,
+        },
+        {
+          source: '/images/events/:path*',
+          destination: `${supabaseBase}/storage/v1/object/public/events/:path*`,
+        },
+        {
+          source: '/images/sponsors/:path*',
+          destination: `${supabaseBase}/storage/v1/object/public/sponsors/:path*`,
+        },
+        {
+          source: '/images/team/:path*',
+          destination: `${supabaseBase}/storage/v1/object/public/team/:path*`,
+        },
+      );
     }
 
-    // Backward-compatibility layer for legacy local image paths.
-    return [
-      {
-        source: '/images/assets/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/public-images/assets/:path*`,
-      },
-      {
-        source: '/images/events/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/events/:path*`,
-      },
-      {
-        source: '/images/sponsors/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/sponsors/:path*`,
-      },
-      {
-        source: '/images/team/:path*',
-        destination: `${supabaseBase}/storage/v1/object/public/team/:path*`,
-      },
-    ];
+    if (process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      const configuredHost = (process.env.NEXT_PUBLIC_POSTHOG_HOST || '/ingest').replace(/\/+$/, '');
+      const posthogHost =
+        configuredHost === '/ingest' ? 'https://us.i.posthog.com' : configuredHost;
+
+      if (posthogHost.startsWith('https://')) {
+        const posthogAssetsHost = posthogHost
+          .replace('://us.i.posthog.com', '://us-assets.i.posthog.com')
+          .replace('://eu.i.posthog.com', '://eu-assets.i.posthog.com');
+
+        rewrites.push(
+          {
+            source: '/ingest/static/:path*',
+            destination: `${posthogAssetsHost}/static/:path*`,
+          },
+          {
+            source: '/ingest/array/:path*',
+            destination: `${posthogAssetsHost}/array/:path*`,
+          },
+          {
+            source: '/ingest/:path*',
+            destination: `${posthogHost}/:path*`,
+          },
+        );
+      }
+    }
+
+    return rewrites;
   },
+  skipTrailingSlashRedirect: true,
 }
 
 module.exports = nextConfig

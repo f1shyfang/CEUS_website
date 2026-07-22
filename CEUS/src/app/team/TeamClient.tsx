@@ -6,15 +6,9 @@ import MemberCard from '../../components/MemberCard';
 import FilterButton from '../../components/FilterButton';
 import { TeamCategory } from '../../types';
 
-const CATEGORY_ORDER = [
-  'Executives',
-  'Year Representatives',
-  'Admin',
-  'Careers',
-  'Socials',
-  'Marketing',
-  'Information Technology',
-];
+import { TEAM_CATEGORIES, normalizeTeamCategory } from '../../lib/schemas';
+
+const CATEGORY_ORDER = [...TEAM_CATEGORIES];
 
 interface TeamClientProps {
   categories: TeamCategory[];
@@ -23,8 +17,10 @@ interface TeamClientProps {
 const TeamClient: React.FC<TeamClientProps> = ({ categories }) => {
   const sortedCategories = useMemo(() => {
     return [...categories].sort((a, b) => {
-      const aIndex = CATEGORY_ORDER.indexOf(a.name);
-      const bIndex = CATEGORY_ORDER.indexOf(b.name);
+      const aName = normalizeTeamCategory(a.name);
+      const bName = normalizeTeamCategory(b.name);
+      const aIndex = CATEGORY_ORDER.indexOf(aName as (typeof CATEGORY_ORDER)[number]);
+      const bIndex = CATEGORY_ORDER.indexOf(bName as (typeof CATEGORY_ORDER)[number]);
       if (aIndex === -1 && bIndex === -1) return a.name.localeCompare(b.name);
       if (aIndex === -1) return 1;
       if (bIndex === -1) return -1;

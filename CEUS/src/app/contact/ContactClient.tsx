@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
 import { submitContactForm } from '../../lib/supabase';
 import { cn } from '@/lib/utils';
+import posthog from 'posthog-js';
 
 const ContactClient: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -33,11 +34,14 @@ const ContactClient: React.FC = () => {
         subject: formData.subject,
         message: formData.message,
       });
+      posthog.capture('contact_form_submitted', { subject: formData.subject });
       setSubmitStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       console.error('Failed to submit form:', error);
+      posthog.captureException(error);
+      posthog.capture('contact_form_failed', { subject: formData.subject });
       setSubmitStatus('error');
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {

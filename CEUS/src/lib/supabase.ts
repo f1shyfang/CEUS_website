@@ -1,13 +1,23 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
-import { Event, Sponsor, TeamCategory, Member, Job } from '../types';
+import { createBrowserClient } from '@supabase/ssr';
+import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight } from '../types';
+import { normalizeTeamCategory, sortTeamCategories } from './schemas';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Create a single supabase client for interacting with your database
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Single shared client. In the browser the session is stored in cookies
+// (via @supabase/ssr) so the proxy middleware sees the same, auto-refreshed
+// session as the client. On the server this module is only used for
+// anonymous public reads, so sessions are disabled there.
+export const supabase =
+  typeof window === 'undefined'
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: { persistSession: false, autoRefreshToken: false },
+      })
+    : createBrowserClient(supabaseUrl, supabaseAnonKey);
 
 // ============================================
 // Authentication Helpers
@@ -96,21 +106,6 @@ type TeamMemberRow = {
   sort_order: number;
 };
 
-type JobRow = {
-  id: string;
-  title: string;
-  company: string;
-  description: string;
-  application_url: string | null;
-  application_deadline: string | null;
-  location: string | null;
-  job_type: string;
-  category: string;
-  logo_url: string | null;
-  featured: boolean | null;
-  created_at: string | null;
-};
-
 export async function fetchEvents(): Promise<Event[]> {
   const { data, error } = await supabase
     .from('events')
@@ -184,10 +179,13 @@ export async function fetchTeamCategories(): Promise<TeamCategory[]> {
       email: row.email || undefined,
       linkedInUrl: row.linkedin_url || undefined,
     };
-    if (!grouped[row.category]) {
-      grouped[row.category] = [];
+    const category = normalizeTeamCategory(row.category);
+    if (!grouped[category]) {
+      grouped[category] = [];
     }
-    grouped[row.category].push(member);
+    if (!grouped[category].some((existing) => existing.id === member.id)) {
+      grouped[category].push(member);
+    }
   });
 
   return Object.entries(grouped).map(([name, members]) => ({
@@ -423,126 +421,61 @@ export async function deleteSponsor(id: string) {
 }
 
 // ============================================
-// Team Members CRUD Operations
-// ============================================
-
-export interface TeamMemberInput {
-  name: string;
-  role: string;
-  imageUrl?: string;
-  email?: string;
-  linkedInUrl?: string;
-  category: string;
-  sortOrder: number;
-}
-
-export async function fetchAllTeamMembers(): Promise<(Member & { category: string; sortOrder: number })[]> {
-  const { data, error } = await supabase
-    .from('team_members')
-    .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
-    .order('category', { ascending: true })
-    .order('sort_order', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching team members:', error);
-    throw error;
-  }
-
-  return (data as TeamMemberRow[] | null ?? []).map((row) => ({
-    id: row.id,
-    name: row.name,
-    role: row.role,
-    imageUrl: row.image_url || undefined,
-    email: row.email || undefined,
-    linkedInUrl: row.linkedin_url || undefined,
-    category: row.category,
-    sortOrder: row.sort_order,
-  }));
-}
-
-export async function createTeamMember(member: TeamMemberInput) {
-  const { data, error } = await supabase
-    .from('team_members')
-    .insert([
-      {
-        name: member.name,
-        role: member.role,
-        image_url: member.imageUrl || null,
-        email: member.email || null,
-        linkedin_url: member.linkedInUrl || null,
-        category: member.category,
-        sort_order: member.sortOrder,
-      },
-    ])
-    .select();
-
-  if (error) {
-    console.error('Error creating team member:', error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function updateTeamMember(id: string, member: Partial<TeamMemberInput>) {
-  const updateData: Record<string, unknown> = {};
-  if (member.name !== undefined) updateData.name = member.name;
-  if (member.role !== undefined) updateData.role = member.role;
-  if (member.imageUrl !== undefined) updateData.image_url = member.imageUrl;
-  if (member.email !== undefined) updateData.email = member.email;
-  if (member.linkedInUrl !== undefined) updateData.linkedin_url = member.linkedInUrl;
-  if (member.category !== undefined) updateData.category = member.category;
-  if (member.sortOrder !== undefined) updateData.sort_order = member.sortOrder;
-
-  const { data, error } = await supabase
-    .from('team_members')
-    .update(updateData)
-    .eq('id', id)
-    .select();
-
-  if (error) {
-    console.error('Error updating team member:', error);
-    throw error;
-  }
-
-  return data[0];
-}
-
-export async function deleteTeamMember(id: string) {
-  const { error } = await supabase
-    .from('team_members')
-    .delete()
-    .eq('id', id);
-
-  if (error) {
-    console.error('Error deleting team member:', error);
-    throw error;
-  }
-
-  return true;
-}
-
-// ============================================
 // Jobs CRUD Operations
 // ============================================
 
+type JobRow = {
+  id: string;
+  title: string;
+  company: { name?: string; website?: string; logo?: string } | null;
+  description: string;
+  one_liner: string | null;
+  application_url: string;
+  source_urls: string[] | null;
+  type: JobType;
+  locations: string[] | null;
+  industry_field: string;
+  working_rights: WorkingRight[] | null;
+  close_date: string | null;
+  is_sponsored: boolean | null;
+  outdated: boolean | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export interface JobInput {
   title: string;
-  company: string;
+  company: JobCompany;
   description: string;
-  applicationUrl?: string;
-  applicationDeadline?: string;
-  location?: string;
-  jobType: string;
-  category: string;
-  logoUrl?: string;
-  featured?: boolean;
+  applicationUrl: string;
+  type: JobType;
+  locations: string[];
+  industryField: string;
+  workingRights: WorkingRight[];
+  sourceUrls?: string[];
+  oneLiner?: string;
+  closeDate?: string;
+  isSponsored?: boolean;
+  outdated?: boolean;
+}
+
+function normalizeCompany(raw: JobRow['company']): JobCompany {
+  const name = raw?.name ?? '';
+  const websiteRaw = raw?.website || undefined;
+  const logoRaw = raw?.logo || undefined;
+  return {
+    name,
+    website: websiteRaw,
+    logo: logoRaw ? getImageUrl(logoRaw, '', STORAGE_BUCKETS.PUBLIC_IMAGES) : undefined,
+  };
 }
 
 export async function fetchJobs(): Promise<Job[]> {
   const { data, error } = await supabase
     .from('jobs')
-    .select('id, title, company, description, application_url, application_deadline, location, job_type, category, logo_url, featured, created_at')
+    .select(
+      'id, title, company, description, one_liner, application_url, source_urls, type, locations, industry_field, working_rights, close_date, is_sponsored, outdated, created_at, updated_at'
+    )
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -553,17 +486,29 @@ export async function fetchJobs(): Promise<Job[]> {
   return (data as JobRow[] | null ?? []).map((row) => ({
     id: row.id,
     title: row.title,
-    company: row.company,
+    company: normalizeCompany(row.company),
     description: row.description,
-    applicationUrl: row.application_url || '',
-    applicationDeadline: row.application_deadline || undefined,
-    location: row.location || undefined,
-    jobType: row.job_type,
-    category: row.category,
-    logoUrl: getImageUrl(row.logo_url, '', STORAGE_BUCKETS.JOBS),
-    featured: Boolean(row.featured),
-    createdAt: row.created_at || undefined,
+    oneLiner: row.one_liner || undefined,
+    applicationUrl: row.application_url,
+    sourceUrls: row.source_urls ?? [],
+    type: row.type,
+    locations: row.locations ?? [],
+    industryField: row.industry_field,
+    workingRights: row.working_rights ?? [],
+    closeDate: row.close_date || undefined,
+    isSponsored: Boolean(row.is_sponsored),
+    outdated: Boolean(row.outdated),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   }));
+}
+
+function buildCompanyPayload(company: JobCompany) {
+  return {
+    name: company.name,
+    website: company.website || undefined,
+    logo: company.logo || undefined,
+  };
 }
 
 export async function createJob(job: JobInput) {
@@ -572,15 +517,18 @@ export async function createJob(job: JobInput) {
     .insert([
       {
         title: job.title,
-        company: job.company,
+        company: buildCompanyPayload(job.company),
         description: job.description,
-        application_url: job.applicationUrl || null,
-        application_deadline: job.applicationDeadline || null,
-        location: job.location || null,
-        job_type: job.jobType,
-        category: job.category,
-        logo_url: job.logoUrl || null,
-        featured: job.featured || false,
+        one_liner: job.oneLiner || null,
+        application_url: job.applicationUrl,
+        source_urls: job.sourceUrls ?? [],
+        type: job.type,
+        locations: job.locations,
+        industry_field: job.industryField,
+        working_rights: job.workingRights,
+        close_date: job.closeDate || null,
+        is_sponsored: job.isSponsored ?? false,
+        outdated: job.outdated ?? false,
       },
     ])
     .select();
@@ -596,15 +544,18 @@ export async function createJob(job: JobInput) {
 export async function updateJob(id: string, job: Partial<JobInput>) {
   const updateData: Record<string, unknown> = {};
   if (job.title !== undefined) updateData.title = job.title;
-  if (job.company !== undefined) updateData.company = job.company;
+  if (job.company !== undefined) updateData.company = buildCompanyPayload(job.company);
   if (job.description !== undefined) updateData.description = job.description;
+  if (job.oneLiner !== undefined) updateData.one_liner = job.oneLiner || null;
   if (job.applicationUrl !== undefined) updateData.application_url = job.applicationUrl;
-  if (job.applicationDeadline !== undefined) updateData.application_deadline = job.applicationDeadline;
-  if (job.location !== undefined) updateData.location = job.location;
-  if (job.jobType !== undefined) updateData.job_type = job.jobType;
-  if (job.category !== undefined) updateData.category = job.category;
-  if (job.logoUrl !== undefined) updateData.logo_url = job.logoUrl;
-  if (job.featured !== undefined) updateData.featured = job.featured;
+  if (job.sourceUrls !== undefined) updateData.source_urls = job.sourceUrls;
+  if (job.type !== undefined) updateData.type = job.type;
+  if (job.locations !== undefined) updateData.locations = job.locations;
+  if (job.industryField !== undefined) updateData.industry_field = job.industryField;
+  if (job.workingRights !== undefined) updateData.working_rights = job.workingRights;
+  if (job.closeDate !== undefined) updateData.close_date = job.closeDate || null;
+  if (job.isSponsored !== undefined) updateData.is_sponsored = job.isSponsored;
+  if (job.outdated !== undefined) updateData.outdated = job.outdated;
 
   const { data, error } = await supabase
     .from('jobs')
@@ -635,6 +586,252 @@ export async function deleteJob(id: string) {
 }
 
 // ============================================
+// Team Members CRUD Operations
+// ============================================
+
+export interface TeamMemberInput {
+  name: string;
+  role: string;
+  imageUrl?: string;
+  email?: string;
+  linkedInUrl?: string;
+  categories: string[];
+  sortOrder: number;
+}
+
+export type GroupedTeamMember = Member & {
+  categories: string[];
+  sortOrder: number;
+};
+
+function buildTeamMemberRowPayload(id: string, member: TeamMemberInput, category: string) {
+  return {
+    id,
+    name: member.name,
+    role: member.role,
+    image_url: member.imageUrl || null,
+    email: member.email || null,
+    linkedin_url: member.linkedInUrl || null,
+    category,
+    sort_order: member.sortOrder,
+  };
+}
+
+function groupTeamMemberRows(
+  rows: TeamMemberRow[]
+): GroupedTeamMember[] {
+  const grouped = new Map<string, GroupedTeamMember>();
+
+  for (const row of rows) {
+    const category = normalizeTeamCategory(row.category);
+    const existing = grouped.get(row.id);
+
+    if (existing) {
+      if (!existing.categories.includes(category)) {
+        existing.categories.push(category);
+      }
+      continue;
+    }
+
+    grouped.set(row.id, {
+      id: row.id,
+      name: row.name,
+      role: row.role,
+      imageUrl: row.image_url || undefined,
+      email: row.email || undefined,
+      linkedInUrl: row.linkedin_url || undefined,
+      categories: [category],
+      sortOrder: row.sort_order,
+    });
+  }
+
+  return Array.from(grouped.values()).map((member) => ({
+    ...member,
+    categories: sortTeamCategories(member.categories),
+  }));
+}
+
+function buildTeamMemberId(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return `member${Date.now()}`;
+  }
+
+  const first = parts[0].replace(/[^a-zA-Z0-9]/g, '');
+  const initials = parts
+    .slice(1)
+    .map((part) => part.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(Boolean)
+    .map((part) => part.charAt(0))
+    .join('');
+
+  const raw = `${first}${initials}`;
+  const normalized = raw.charAt(0).toLowerCase() + raw.slice(1);
+  return normalized || `member${Date.now()}`;
+}
+
+async function resolveTeamMemberId(baseId: string): Promise<string> {
+  let candidate = baseId;
+  let suffix = 2;
+
+  while (true) {
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('id')
+      .eq('id', candidate)
+      .limit(1);
+
+    if (error) {
+      throw error;
+    }
+
+    if (!data?.length) {
+      return candidate;
+    }
+
+    candidate = `${baseId}${suffix}`;
+    suffix += 1;
+  }
+}
+
+export async function fetchAllTeamMembers(): Promise<GroupedTeamMember[]> {
+  const { data, error } = await supabase
+    .from('team_members')
+    .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
+    .order('category', { ascending: true })
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching team members:', error);
+    throw error;
+  }
+
+  return groupTeamMemberRows((data as TeamMemberRow[] | null) ?? []);
+}
+
+export async function createTeamMember(member: TeamMemberInput) {
+  const id = await resolveTeamMemberId(buildTeamMemberId(member.name));
+  const rows = member.categories.map((category) =>
+    buildTeamMemberRowPayload(id, member, category)
+  );
+
+  const { data, error } = await supabase.from('team_members').insert(rows).select();
+
+  if (error) {
+    console.error('Error creating team member:', error);
+    throw error;
+  }
+
+  return data;
+}
+
+export async function updateTeamMember(id: string, member: TeamMemberInput) {
+  const { error: legacyRenameError } = await supabase
+    .from('team_members')
+    .update({ category: 'Industry' })
+    .eq('id', id)
+    .eq('category', 'Careers');
+
+  if (legacyRenameError) {
+    console.error('Error renaming legacy team category:', legacyRenameError);
+    throw legacyRenameError;
+  }
+
+  const { data: existingRows, error: fetchError } = await supabase
+    .from('team_members')
+    .select('id, category')
+    .eq('id', id);
+
+  if (fetchError) {
+    console.error('Error fetching team member categories:', fetchError);
+    throw fetchError;
+  }
+
+  const sharedUpdate: Record<string, unknown> = {
+    name: member.name,
+    role: member.role,
+    image_url: member.imageUrl || null,
+    email: member.email || null,
+    linkedin_url: member.linkedInUrl || null,
+    sort_order: member.sortOrder,
+  };
+
+  const { error: updateError } = await supabase
+    .from('team_members')
+    .update(sharedUpdate)
+    .eq('id', id);
+
+  if (updateError) {
+    console.error('Error updating team member:', updateError);
+    throw updateError;
+  }
+
+  const currentCategories = new Set(
+    (existingRows ?? []).map((row) => normalizeTeamCategory(row.category))
+  );
+  const targetCategories = new Set(member.categories);
+
+  const categoriesToRemove = Array.from(currentCategories).filter(
+    (category) => !targetCategories.has(category)
+  );
+  const categoriesToAdd = member.categories.filter(
+    (category) => !currentCategories.has(category)
+  );
+
+  for (const category of categoriesToRemove) {
+    const legacyCategory = category === 'Industry' ? 'Careers' : category;
+    const { error: deleteError } = await supabase
+      .from('team_members')
+      .delete()
+      .eq('id', id)
+      .in('category', [category, legacyCategory]);
+
+    if (deleteError) {
+      console.error('Error removing team member category:', deleteError);
+      throw deleteError;
+    }
+  }
+
+  if (categoriesToAdd.length > 0) {
+    const rows = categoriesToAdd.map((category) =>
+      buildTeamMemberRowPayload(id, member, category)
+    );
+    const { error: insertError } = await supabase.from('team_members').insert(rows);
+
+    if (insertError) {
+      console.error('Error adding team member categories:', insertError);
+      throw insertError;
+    }
+  }
+
+  const { data, error } = await supabase
+    .from('team_members')
+    .select('id, name, role, image_url, email, linkedin_url, category, sort_order')
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error fetching updated team member:', error);
+    throw error;
+  }
+
+  return groupTeamMemberRows((data as TeamMemberRow[] | null) ?? [])[0];
+}
+
+export async function deleteTeamMember(id: string) {
+  const { error } = await supabase
+    .from('team_members')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error deleting team member:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+// ============================================
 // Supabase Storage Helpers
 // ============================================
 
@@ -644,7 +841,6 @@ export const STORAGE_BUCKETS = {
   EVENTS: 'events',
   SPONSORS: 'sponsors',
   TEAM: 'team',
-  JOBS: 'jobs',
   ASSETS: 'assets',
 } as const;
 
@@ -652,7 +848,6 @@ export const STORAGE_FOLDERS = {
   EVENTS: 'events',
   SPONSORS: 'sponsors',
   TEAM: 'team',
-  JOBS: 'jobs',
   ASSETS: 'assets',
 } as const;
 

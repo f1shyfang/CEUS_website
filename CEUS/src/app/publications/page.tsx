@@ -1,15 +1,21 @@
 // src/app/publications/page.tsx
 import React from 'react';
 import { Metadata } from 'next';
+import { pageMetadata } from '../../lib/seo';
+import { PageBreadcrumbs } from '../../components/PageBreadcrumbs';
 
-export const metadata: Metadata = {
-  title: 'Publications',
-  description: 'Access the CEUS Student and Career Handbooks - essential guides for Chemical Engineering students at UNSW.',
-};
+export const metadata: Metadata = pageMetadata(
+  'Publications',
+  'Download the CEUS Student and Careers Handbooks — essential guides for chemical engineering students at UNSW Sydney.',
+  '/publications',
+);
 
 export default function PublicationsPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <PageBreadcrumbs pathname="/publications" />
+      </div>
       <section className="text-center py-16 px-6 bg-white border-b border-gray-100">
         <h1 className="text-4xl md:text-6xl font-black mb-6 text-gray-900 tracking-tight">
           Publications
