@@ -34,7 +34,7 @@ export default function PublicationsPage() {
           <h2 className="text-2xl font-bold mb-6 text-gray-800">Student Handbook</h2>
           <div className="mb-6">
             <a 
-              href="https://drive.google.com/file/d/1hL5kVOKKlCutbcbejMFE8ao5ylMuqWqj/view?usp=sharing" 
+              href="https://drive.google.com/file/d/1Fum0CrKxDJwAZMTKhziD_ygrjunGh6cd/view?usp=sharing" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300"

@@ -8,7 +8,7 @@ export function getPublicStorageUrl(bucket: string, objectPath: string): string 
 // NOTE: Images are now stored in separate buckets (events, sponsors, team, assets)
 export const STATIC_ASSET_URLS = {
   logo: getPublicStorageUrl('assets', 'ceuslogo_noback_noname.png'),
-  heroBackground: getPublicStorageUrl('assets', 'Ceus_ball_group_edited.jpg'),
+  heroBackground: getPublicStorageUrl('assets', 'ceus_photo.jpg'),
   facebookIcon: getPublicStorageUrl('assets', 'facebook_icon.svg'),
   instagramIcon: getPublicStorageUrl('assets', 'instagram_icon.svg'),
   linkedinIcon: getPublicStorageUrl('assets', 'linkedin_icon.svg'),
