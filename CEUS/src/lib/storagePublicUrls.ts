@@ -9,9 +9,9 @@ export function getPublicStorageUrl(bucket: string, objectPath: string): string 
 export const STATIC_ASSET_URLS = {
   logo: getPublicStorageUrl('assets', 'ceuslogo_noback_noname.png'),
   heroBackground: getPublicStorageUrl('assets', 'ceus_photo.jpg'),
-  facebookIcon: getPublicStorageUrl('assets', 'facebook_icon.svg'),
-  instagramIcon: getPublicStorageUrl('assets', 'instagram_icon.svg'),
-  linkedinIcon: getPublicStorageUrl('assets', 'linkedin_icon.svg'),
+  facebookIcon: getPublicStorageUrl('assets', 'facebook-icon.svg'),
+  instagramIcon: getPublicStorageUrl('assets', 'instagram-icon.png'),
+  linkedinIcon: getPublicStorageUrl('assets', 'linkedin-icon.png'),
   arcIcon: getPublicStorageUrl('assets', 'Arc_icon.png'),
 };
 
