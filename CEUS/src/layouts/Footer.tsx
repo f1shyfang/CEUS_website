@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
       {/* Flex layout, responsive direction, space-between */}
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm">
         <div className="FooterCopyright mb-3 md:mb-0 text-white/50"> 
-          © 2025 UNSW CEUS. All Rights Reserved.
+          © 2026 UNSW CEUS. All Rights Reserved.
         </div>
         {/* Social links using flex and space-x instead of margin */}
         {/* space-x-12 approximates the 50px margin */}
