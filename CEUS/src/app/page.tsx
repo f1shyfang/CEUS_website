@@ -1,7 +1,7 @@
 // src/app/page.tsx
 import React from 'react';
 import { Metadata } from 'next';
-import { fetchEvents, fetchSponsors } from '../lib/supabase';
+import { fetchSponsors } from '../lib/supabase';
 import { pageMetadata } from '../lib/seo';
 import HomeClient from './HomeClient';
 
@@ -15,10 +15,7 @@ export const metadata: Metadata = pageMetadata(
 export const revalidate = 3600;
 
 export default async function Home() {
-  const [events, sponsors] = await Promise.all([
-    fetchEvents(),
-    fetchSponsors(),
-  ]);
+  const sponsors = await fetchSponsors();
 
-  return <HomeClient events={events} sponsors={sponsors} />;
+  return <HomeClient sponsors={sponsors} />;
 }

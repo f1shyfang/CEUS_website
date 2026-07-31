@@ -10,19 +10,25 @@ import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import LazyYouTube from '../components/LazyYouTube';
 import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
-import { Event, Sponsor } from '../types';
+import { Sponsor } from '../types';
 import EventCard from '../components/EventCard';
 import OptimizedImage from '../components/OptimizedImage';
+import useEvents from '@/lib/api/hooks/useEvents';
 import posthog from 'posthog-js';
 
 interface HomeClientProps {
-  events: Event[];
   sponsors: Sponsor[];
 }
 
-const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
+function parseRubricEventDate(startTime: string): Date | null {
+  const dateMatch = startTime.match(/(\d{1,2}\s+\w{3}\s+\d{4})/);
+  return dateMatch ? new Date(dateMatch[1]) : null;
+}
+
+const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
   const heroTitleRef = useRef<HTMLDivElement>(null);
   const heroSubtitleRef = useRef<HTMLDivElement>(null);
+  const { allEvents, isFetching, isError } = useEvents();
 
   useEffect(() => {
     if (heroTitleRef.current && heroSubtitleRef.current) {
@@ -44,10 +50,13 @@ const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
   const twoWeeksFromNow = new Date();
   twoWeeksFromNow.setDate(now.getDate() + 14);
 
-  const upcomingEventsNextTwoWeeks = events.filter(event => {
-    const eventDate = new Date(event.date);
+  const upcomingEventsNextTwoWeeks = (allEvents?.upcomingEvents ?? []).filter((event) => {
+    const eventDate = parseRubricEventDate(event.start_time);
+    if (!eventDate) return false;
     return eventDate >= now && eventDate <= twoWeeksFromNow;
   });
+
+  const isLoading = isFetching && !allEvents;
 
   const PrevArrow = (props: CustomArrowProps) => (
     <div className={props.className} style={{ ...props.style, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1 }} onClick={props.onClick} aria-label="Previous">
@@ -131,10 +140,31 @@ const HomeClient: React.FC<HomeClientProps> = ({ events, sponsors }) => {
       
       <section className="container mx-auto px-4 py-16 md:py-24">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-10">Happening Soon</h2>
-        {upcomingEventsNextTwoWeeks.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <div
+                key={`home-event-skeleton-${index}`}
+                className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 animate-pulse"
+              >
+                <div className="w-full h-56 bg-gray-200" />
+                <div className="p-6 space-y-4">
+                  <div className="h-4 bg-gray-200 rounded w-1/3" />
+                  <div className="h-6 bg-gray-200 rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 rounded w-full" />
+                  <div className="h-4 bg-gray-200 rounded w-5/6" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : isError ? (
+          <p className="text-center text-gray-600 text-lg">Unable to load upcoming events. Please try again later.</p>
+        ) : upcomingEventsNextTwoWeeks.length > 0 ? (
           <Slider {...eventSettings}>
             {upcomingEventsNextTwoWeeks.map(event => (
-              <EventCard key={event.id} event={event} variant="home" />
+              <div key={event.id} className="px-3 h-full">
+                <EventCard event={event} />
+              </div>
             ))}
           </Slider>
         ) : (
