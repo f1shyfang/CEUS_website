@@ -685,10 +685,26 @@ export async function createBlogPost(post: BlogPostInput): Promise<BlogPost> {
   return (await setRequestedFeaturedBlogPost(data.id, post)) ?? toBlogPost(data as BlogPostRow);
 }
 
-export async function updateBlogPost(id: string, post: BlogPostInput): Promise<BlogPost> {
+export async function updateBlogPost(id: string, post: BlogPostInput | Pick<BlogPostInput, 'isFeatured'>): Promise<BlogPost> {
+  if (Object.keys(post).length === 1 && 'isFeatured' in post) {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .update({ is_featured: post.isFeatured })
+      .eq('id', id)
+      .select(BLOG_POST_COLUMNS)
+      .single();
+
+    if (error) {
+      console.error('Error updating blog post:', error);
+      throw error;
+    }
+
+    return toBlogPost(data as BlogPostRow);
+  }
+
   const { data, error } = await supabase
     .from('blog_posts')
-    .update(buildBlogPostPayload(post))
+    .update(buildBlogPostPayload(post as BlogPostInput))
     .eq('id', id)
     .select(BLOG_POST_COLUMNS)
     .single();
@@ -698,7 +714,7 @@ export async function updateBlogPost(id: string, post: BlogPostInput): Promise<B
     throw error;
   }
 
-  return (await setRequestedFeaturedBlogPost(id, post)) ?? toBlogPost(data as BlogPostRow);
+  return (await setRequestedFeaturedBlogPost(id, post as BlogPostInput)) ?? toBlogPost(data as BlogPostRow);
 }
 
 export async function deleteBlogPost(id: string) {
