@@ -1,5 +1,6 @@
 // src/lib/schemas.ts
 import { z } from 'zod';
+import { BLOG_CATEGORIES } from '@/types';
 
 // Event categories
 export const EVENT_CATEGORIES = [
@@ -166,3 +167,37 @@ export const loginSchema = z.object({
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;
+
+export const blogPostSchema = z
+  .object({
+    title: z.string().min(1, 'Title is required').max(160),
+    slug: z.string().min(1, 'Slug is required').max(100),
+    category: z.enum(BLOG_CATEGORIES),
+    excerpt: z.string().min(1, 'Excerpt is required').max(320),
+    authorName: z.string().min(1, 'Author name is required').max(100),
+    body: z.string().min(1, 'Body is required'),
+    coverImageUrl: z.string().url('Invalid URL').or(z.literal('')),
+    coverImageAlt: z.string().optional(),
+    status: z.enum(['draft', 'published']),
+    isFeatured: z.boolean(),
+    publishedAt: z.string().optional(),
+  })
+  .superRefine((post, context) => {
+    if (post.coverImageUrl && !post.coverImageAlt?.trim()) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['coverImageAlt'],
+        message: 'Cover image alternative text is required when a cover image is supplied',
+      });
+    }
+
+    if (post.isFeatured && post.status !== 'published') {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['isFeatured'],
+        message: 'Only published posts can be featured',
+      });
+    }
+  });
+
+export type BlogPostFormData = z.infer<typeof blogPostSchema>;
