@@ -53,6 +53,7 @@ export default function AdminBlogPage() {
   const [deletingPost, setDeletingPost] = useState<BlogPost | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [slugWasEdited, setSlugWasEdited] = useState(false);
 
   const {
@@ -76,13 +77,14 @@ export default function AdminBlogPage() {
       setPosts(await fetchAdminBlogPosts());
     } catch (error) {
       console.error('Error loading blog posts:', error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    loadPosts();
+    void loadPosts().catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -100,7 +102,7 @@ export default function AdminBlogPage() {
   const openEditModal = (post: BlogPost) => {
     setEditingPost(post);
     setSaveError(null);
-    setSlugWasEdited(true);
+    setSlugWasEdited(post.slug !== slugify(post.title));
     reset({
       title: post.title,
       slug: post.slug,
@@ -140,8 +142,8 @@ export default function AdminBlogPage() {
         await updateBlogPost(editingPost.id, { isFeatured: false });
       }
 
-      setIsModalOpen(false);
       await loadPosts();
+      setIsModalOpen(false);
     } catch (error) {
       console.error('Error saving blog post:', error);
       setSaveError(error instanceof Error ? error.message : 'Unable to save blog post. Please try again.');
@@ -154,11 +156,12 @@ export default function AdminBlogPage() {
     setIsDeleting(true);
     try {
       await deleteBlogPost(deletingPost.id);
+      await loadPosts();
       setIsDeleteModalOpen(false);
       setDeletingPost(null);
-      await loadPosts();
     } catch (error) {
       console.error('Error deleting blog post:', error);
+      setDeleteError(error instanceof Error ? error.message : 'Unable to delete blog post. Please try again.');
     } finally {
       setIsDeleting(false);
     }
@@ -237,6 +240,7 @@ export default function AdminBlogPage() {
         onEdit={openEditModal}
         onDelete={(post) => {
           setDeletingPost(post);
+          setDeleteError(null);
           setIsDeleteModalOpen(true);
         }}
         isLoading={isLoading}
@@ -291,7 +295,7 @@ export default function AdminBlogPage() {
         </form>
       </FormModal>
 
-      <DeleteConfirmModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} title="Delete blog post" message={`Are you sure you want to delete “${deletingPost?.title}”? This action cannot be undone.`} isDeleting={isDeleting} />
+      <DeleteConfirmModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} title="Delete blog post" message={deleteError || `Are you sure you want to delete “${deletingPost?.title}”? This action cannot be undone.`} isDeleting={isDeleting} />
     </div>
   );
 }
