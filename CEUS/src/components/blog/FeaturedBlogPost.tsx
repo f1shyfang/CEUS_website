@@ -10,7 +10,7 @@ export default function FeaturedBlogPost({ post }: { post: BlogPost }) {
         <div className="relative min-h-64 md:min-h-full">
           <Image
             src={post.coverImageUrl}
-            alt={post.coverImageAlt || ''}
+            alt={post.coverImageAlt || `Cover image for ${post.title}`}
             fill
             priority
             sizes="(max-width: 768px) 100vw, 50vw"

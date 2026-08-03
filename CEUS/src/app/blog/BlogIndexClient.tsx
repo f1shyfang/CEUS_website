@@ -36,7 +36,7 @@ export default function BlogIndexClient({ posts }: { posts: BlogPost[] }) {
             type="button"
             aria-pressed={selectedCategory === filter.value}
             onClick={() => startTransition(() => setSelectedCategory(filter.value))}
-            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-blue-700 hover:text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 aria-[pressed=true]:border-blue-700 aria-[pressed=true]:bg-blue-700 aria-[pressed=true]:text-white"
+            className="rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition motion-reduce:transition-none hover:border-blue-700 hover:text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 aria-[pressed=true]:border-blue-700 aria-[pressed=true]:bg-blue-700 aria-[pressed=true]:text-white"
           >
             {filter.label}
           </button>

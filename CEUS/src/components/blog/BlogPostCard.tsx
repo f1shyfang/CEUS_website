@@ -10,7 +10,7 @@ export default function BlogPostCard({ post }: { post: BlogPost }) {
         <div className="relative order-first aspect-[16/9] overflow-hidden md:order-last md:aspect-[4/3]">
           <Image
             src={post.coverImageUrl}
-            alt={post.coverImageAlt || ''}
+            alt={post.coverImageAlt || `Cover image for ${post.title}`}
             fill
             sizes="(max-width: 768px) 100vw, 240px"
             className="object-cover"
