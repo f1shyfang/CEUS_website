@@ -86,6 +86,37 @@ describe('AdminBlogPage', () => {
     expect(mocks.setFeaturedBlogPost).not.toHaveBeenCalled();
   });
 
+  it('unpublishes a featured post with a non-featured persisted payload', async () => {
+    const featuredPost = { ...publishedPost, isFeatured: true };
+    mocks.fetchAdminBlogPosts.mockResolvedValue([featuredPost]);
+    mocks.updateBlogPost.mockResolvedValue({ ...featuredPost, status: 'draft', isFeatured: false });
+    render(<AdminBlogPage />);
+
+    await screen.findByText('Original title');
+    fireEvent.click(screen.getByTitle('Edit'));
+    fireEvent.change(document.querySelector('[name="status"]')!, { target: { value: 'draft' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Update post' }));
+
+    await waitFor(() => expect(mocks.updateBlogPost).toHaveBeenCalled());
+    expect(mocks.updateBlogPost).toHaveBeenCalledWith('post-1', expect.objectContaining({
+      status: 'draft',
+      isFeatured: false,
+    }));
+    expect(mocks.setFeaturedBlogPost).not.toHaveBeenCalled();
+  });
+
+  it('gives key blog fields accessible names', async () => {
+    render(<AdminBlogPage />);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Add post' }));
+
+    expect(screen.getByRole('textbox', { name: 'Title*' })).toBeVisible();
+    expect(screen.getByRole('textbox', { name: 'URL slug*' })).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Category*' })).toBeVisible();
+    expect(screen.getByRole('textbox', { name: 'Article body (Markdown)*' })).toBeVisible();
+    expect(screen.getByRole('combobox', { name: 'Status*' })).toBeVisible();
+  });
+
   it('updates an auto-derived slug while editing a post', async () => {
     mocks.fetchAdminBlogPosts.mockResolvedValue([publishedPost]);
     render(<AdminBlogPage />);

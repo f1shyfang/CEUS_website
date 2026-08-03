@@ -61,6 +61,27 @@ export function buildBlogPostingSchema(post: BlogPost) {
   };
 }
 
+export function buildBlogListSchema(posts: BlogPost[]) {
+  if (posts.length === 0) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'CEUS Blog',
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        url: `${SITE_URL}/blog/${post.slug}`,
+        datePublished: post.publishedAt ?? post.createdAt,
+      },
+    })),
+  };
+}
+
 export function buildBreadcrumbSchema(items: { label: string; href?: string }[]) {
   return {
     '@context': 'https://schema.org',

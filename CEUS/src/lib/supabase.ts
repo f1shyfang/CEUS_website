@@ -605,6 +605,7 @@ function buildBlogPostPayload(post: BlogPostInput) {
     cover_image_alt: post.coverImageAlt || null,
     status: post.status,
     published_at: post.publishedAt || null,
+    ...(post.status === 'draft' ? { is_featured: false } : {}),
   };
 }
 

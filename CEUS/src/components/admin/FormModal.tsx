@@ -52,15 +52,16 @@ export default function FormModal({
 
 interface FormFieldProps {
   label: string;
+  id?: string;
   error?: string;
   required?: boolean;
   children: React.ReactNode;
 }
 
-export function FormField({ label, error, required, children }: FormFieldProps) {
+export function FormField({ label, id, error, required, children }: FormFieldProps) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-300">
+      <label htmlFor={id} className="block text-sm font-medium text-gray-300">
         {label}
         {required && <span className="text-red-400 ml-1">*</span>}
       </label>

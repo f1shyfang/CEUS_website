@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { BlogPost } from '@/types';
-import { buildBlogPostingSchema } from './seo';
+import { buildBlogListSchema, buildBlogPostingSchema } from './seo';
 
 const fixturePost: BlogPost = {
   id: 'first-year-guide',
@@ -22,6 +22,22 @@ describe('buildBlogPostingSchema', () => {
     expect(buildBlogPostingSchema(fixturePost)).toMatchObject({
       '@type': 'BlogPosting',
       mainEntityOfPage: 'https://www.ceusunsw.com/blog/first-year-guide',
+    });
+  });
+});
+
+describe('buildBlogListSchema', () => {
+  it('builds an ItemList that points to canonical blog article URLs', () => {
+    expect(buildBlogListSchema([fixturePost])).toMatchObject({
+      '@type': 'ItemList',
+      name: 'CEUS Blog',
+      itemListElement: [{
+        position: 1,
+        item: {
+          '@type': 'BlogPosting',
+          url: 'https://www.ceusunsw.com/blog/first-year-guide',
+        },
+      }],
     });
   });
 });

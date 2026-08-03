@@ -250,8 +250,9 @@ export default function AdminBlogPage() {
       <FormModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={editingPost ? 'Edit post' : 'Create post'} isSubmitting={isSubmitting}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {saveError && <p role="alert" className="rounded bg-red-500/10 p-3 text-sm text-red-300">{saveError}</p>}
-          <FormField label="Title" error={errors.title?.message} required>
+          <FormField id="blog-title" label="Title" error={errors.title?.message} required>
             <FormInput
+              id="blog-title"
               {...register('title', {
                 onChange: (event) => {
                   if (!slugWasEdited) setValue('slug', slugify(event.target.value), { shouldValidate: true });
@@ -260,31 +261,31 @@ export default function AdminBlogPage() {
               error={!!errors.title}
             />
           </FormField>
-          <FormField label="URL slug" error={errors.slug?.message} required>
-            <FormInput {...register('slug', { onChange: () => setSlugWasEdited(true) })} error={!!errors.slug} />
+          <FormField id="blog-slug" label="URL slug" error={errors.slug?.message} required>
+            <FormInput id="blog-slug" {...register('slug', { onChange: () => setSlugWasEdited(true) })} error={!!errors.slug} />
           </FormField>
-          <FormField label="Category" error={errors.category?.message} required>
-            <FormSelect {...register('category')} error={!!errors.category}>
+          <FormField id="blog-category" label="Category" error={errors.category?.message} required>
+            <FormSelect id="blog-category" {...register('category')} error={!!errors.category}>
               {BLOG_CATEGORIES.map((category) => <option key={category} value={category}>{category}</option>)}
             </FormSelect>
           </FormField>
-          <FormField label="Excerpt" error={errors.excerpt?.message} required>
-            <FormTextarea {...register('excerpt')} rows={3} error={!!errors.excerpt} />
+          <FormField id="blog-excerpt" label="Excerpt" error={errors.excerpt?.message} required>
+            <FormTextarea id="blog-excerpt" {...register('excerpt')} rows={3} error={!!errors.excerpt} />
           </FormField>
-          <FormField label="Author" error={errors.authorName?.message} required>
-            <FormInput {...register('authorName')} error={!!errors.authorName} />
+          <FormField id="blog-author" label="Author" error={errors.authorName?.message} required>
+            <FormInput id="blog-author" {...register('authorName')} error={!!errors.authorName} />
           </FormField>
-          <FormField label="Cover image" error={errors.coverImageUrl?.message}>
-            <ImageUpload bucket={STORAGE_BUCKETS.PUBLIC_IMAGES} folder="blog" currentUrl={coverImageUrl} onUpload={(url) => setValue('coverImageUrl', url, { shouldValidate: true })} onRemove={() => setValue('coverImageUrl', '', { shouldValidate: true })} />
+          <FormField id="blog-cover-image" label="Cover image" error={errors.coverImageUrl?.message}>
+            <ImageUpload id="blog-cover-image" bucket={STORAGE_BUCKETS.PUBLIC_IMAGES} folder="blog" currentUrl={coverImageUrl} onUpload={(url) => setValue('coverImageUrl', url, { shouldValidate: true })} onRemove={() => setValue('coverImageUrl', '', { shouldValidate: true })} />
           </FormField>
-          <FormField label="Cover image alternative text" error={errors.coverImageAlt?.message}>
-            <FormInput {...register('coverImageAlt')} error={!!errors.coverImageAlt} />
+          <FormField id="blog-cover-image-alt" label="Cover image alternative text" error={errors.coverImageAlt?.message}>
+            <FormInput id="blog-cover-image-alt" {...register('coverImageAlt')} error={!!errors.coverImageAlt} />
           </FormField>
-          <FormField label="Article body (Markdown)" error={errors.body?.message} required>
-            <FormTextarea {...register('body')} rows={12} error={!!errors.body} />
+          <FormField id="blog-body" label="Article body (Markdown)" error={errors.body?.message} required>
+            <FormTextarea id="blog-body" {...register('body')} rows={12} error={!!errors.body} />
           </FormField>
-          <FormField label="Status" error={errors.status?.message} required>
-            <FormSelect {...register('status')} error={!!errors.status}>
+          <FormField id="blog-status" label="Status" error={errors.status?.message} required>
+            <FormSelect id="blog-status" {...register('status')} error={!!errors.status}>
               <option value="draft">Draft</option>
               <option value="published">Published</option>
             </FormSelect>

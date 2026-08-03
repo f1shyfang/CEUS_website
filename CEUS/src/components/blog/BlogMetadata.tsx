@@ -2,7 +2,7 @@ import { calculateReadingTime } from '@/lib/blog';
 import type { BlogPost } from '@/types';
 
 const categoryLabels = {
-  news: 'News',
+  news: 'CEUS News',
   'student-guides': 'Student Guides',
   'careers-industry': 'Careers & Industry',
 } as const;

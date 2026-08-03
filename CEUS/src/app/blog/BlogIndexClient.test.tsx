@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it } from 'vitest';
 import type { BlogPost } from '@/types';
 import BlogIndexClient from './BlogIndexClient';
 
@@ -35,6 +35,8 @@ const fixturePosts: BlogPost[] = [
 ];
 
 describe('BlogIndexClient', () => {
+  afterEach(cleanup);
+
   it('filters the feed without removing the category controls', () => {
     render(<BlogIndexClient posts={fixturePosts} />);
 
@@ -43,5 +45,12 @@ describe('BlogIndexClient', () => {
     expect(screen.getByText('First-year survival guide')).toBeVisible();
     expect(screen.queryByText('CAMP recap')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'All posts' })).toBeVisible();
+  });
+
+  it('uses CEUS News for both the filter and article metadata', () => {
+    render(<BlogIndexClient posts={fixturePosts} />);
+
+    expect(screen.getByRole('button', { name: 'CEUS News' })).toBeVisible();
+    expect(screen.getAllByText('CEUS News')).toHaveLength(2);
   });
 });

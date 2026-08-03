@@ -8,7 +8,7 @@ import type { BlogCategory, BlogPost } from '@/types';
 
 const filters: Array<{ value: BlogCategory | 'all'; label: string }> = [
   { value: 'all', label: 'All posts' },
-  { value: 'news', label: 'News' },
+  { value: 'news', label: 'CEUS News' },
   { value: 'student-guides', label: 'Student Guides' },
   { value: 'careers-industry', label: 'Careers & Industry' },
 ];
