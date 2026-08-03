@@ -60,6 +60,32 @@ describe('AdminBlogPage', () => {
     expect(feature).not.toBeChecked();
   });
 
+  it('does not persist a draft as featured after a feature attempt', async () => {
+    mocks.createBlogPost.mockResolvedValue({ ...publishedPost, status: 'draft', isFeatured: false });
+    render(<AdminBlogPage />);
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Add post' }));
+    const status = screen.getAllByRole('combobox')[1];
+    const feature = screen.getByLabelText('Feature this post');
+    fireEvent.change(status, { target: { value: 'published' } });
+    fireEvent.click(feature);
+    fireEvent.change(status, { target: { value: 'draft' } });
+    // A stale client value must not bypass the draft persistence guard.
+    fireEvent.change(feature, { target: { checked: true } });
+    fireEvent.change(document.querySelector('[name="excerpt"]')!, { target: { value: 'A draft summary.' } });
+    fireEvent.change(document.querySelector('[name="authorName"]')!, { target: { value: 'CEUS' } });
+    fireEvent.change(document.querySelector('[name="body"]')!, { target: { value: '# Draft' } });
+    fireEvent.change(document.querySelector('[name="title"]')!, { target: { value: 'Draft post' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create post' }));
+
+    await waitFor(() => expect(mocks.createBlogPost).toHaveBeenCalled());
+    expect(mocks.createBlogPost).toHaveBeenCalledWith(expect.objectContaining({
+      status: 'draft',
+      isFeatured: false,
+    }));
+    expect(mocks.setFeaturedBlogPost).not.toHaveBeenCalled();
+  });
+
   it('updates an auto-derived slug while editing a post', async () => {
     mocks.fetchAdminBlogPosts.mockResolvedValue([publishedPost]);
     render(<AdminBlogPage />);
