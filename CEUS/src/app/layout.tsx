@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Literata } from 'next/font/google'
 import Script from 'next/script'
 import '../index.css'
 import AnalyticsProviders from '../components/analytics/AnalyticsProviders'
@@ -14,6 +14,12 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   preload: true
+})
+
+const literata = Literata({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-literata',
 })
 
 export const metadata: Metadata = {
@@ -155,7 +161,7 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} ${literata.variable}`}>
         <AnalyticsProviders>
           <TRPCReactProvider>
             <div className="flex flex-col min-h-screen bg-white">
