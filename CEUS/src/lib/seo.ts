@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import type { Event, Job, Member } from '../types';
+import type { BlogPost, Event, Job, Member } from '../types';
 
 export const SITE_URL = 'https://www.ceusunsw.com';
 export const SITE_NAME = 'CEUS - Chemical Engineering Undergraduate Society';
@@ -38,6 +38,47 @@ export function pageMetadata(
       title,
       description,
     },
+  };
+}
+
+export function buildBlogPostingSchema(post: BlogPost) {
+  const publishedAt = post.publishedAt ?? post.createdAt;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: publishedAt,
+    dateModified: post.updatedAt,
+    author: {
+      '@type': 'Person',
+      name: post.authorName,
+    },
+    publisher: CEUS_ORGANIZER,
+    ...(post.coverImageUrl ? { image: post.coverImageUrl } : {}),
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
+  };
+}
+
+export function buildBlogListSchema(posts: BlogPost[]) {
+  if (posts.length === 0) return null;
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'CEUS Blog',
+    itemListElement: posts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        url: `${SITE_URL}/blog/${post.slug}`,
+        datePublished: post.publishedAt ?? post.createdAt,
+      },
+    })),
   };
 }
 

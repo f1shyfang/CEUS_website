@@ -7,6 +7,7 @@ import { uploadFile, STORAGE_BUCKETS } from '@/lib/supabase';
 type BucketName = typeof STORAGE_BUCKETS[keyof typeof STORAGE_BUCKETS];
 
 interface ImageUploadProps {
+  id?: string;
   bucket: BucketName;
   folder?: string;
   currentUrl?: string;
@@ -16,6 +17,7 @@ interface ImageUploadProps {
 }
 
 export default function ImageUpload({
+  id,
   bucket,
   folder,
   currentUrl,
@@ -100,6 +102,7 @@ export default function ImageUpload({
           }`}
         >
           <input
+            id={id}
             ref={inputRef}
             type="file"
             accept="image/*"

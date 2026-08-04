@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight } from 'react-icons/fi';
+import { FiBookOpen, FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight } from 'react-icons/fi';
 import { StatCard } from '@/components/admin';
 import {
   fetchEvents,
   fetchSponsors,
   fetchTeamCategories,
   getContactSubmissions,
+  fetchAdminBlogPosts,
 } from '@/lib/supabase';
 
 interface DashboardStats {
@@ -17,6 +18,7 @@ interface DashboardStats {
   teamMembers: number;
   contacts: number;
   newContacts: number;
+  blogPosts: number;
 }
 
 export default function AdminDashboardPage() {
@@ -26,17 +28,19 @@ export default function AdminDashboardPage() {
     teamMembers: 0,
     contacts: 0,
     newContacts: 0,
+    blogPosts: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [events, sponsors, teamCategories, contacts] = await Promise.all([
+        const [events, sponsors, teamCategories, contacts, blogPosts] = await Promise.all([
           fetchEvents(),
           fetchSponsors(),
           fetchTeamCategories(),
           getContactSubmissions(),
+          fetchAdminBlogPosts(),
         ]);
 
         const teamMemberCount = new Set(
@@ -53,6 +57,7 @@ export default function AdminDashboardPage() {
           teamMembers: teamMemberCount,
           contacts: (contacts || []).length,
           newContacts: newContactCount,
+          blogPosts: blogPosts.length,
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -69,6 +74,7 @@ export default function AdminDashboardPage() {
     { href: '/admin/sponsors', label: 'Manage Sponsors', icon: FiAward },
     { href: '/admin/team', label: 'Manage Team', icon: FiUsers },
     { href: '/admin/contacts', label: 'View Contacts', icon: FiMail },
+    { href: '/admin/blog', label: 'Manage blog posts', icon: FiBookOpen },
   ];
 
   return (
@@ -100,6 +106,13 @@ export default function AdminDashboardPage() {
           value={stats.teamMembers}
           icon={<FiUsers className="w-6 h-6" />}
           color="green"
+          isLoading={isLoading}
+        />
+        <StatCard
+          title="Blog Posts"
+          value={stats.blogPosts}
+          icon={<FiBookOpen className="w-6 h-6" />}
+          color="blue"
           isLoading={isLoading}
         />
         <StatCard

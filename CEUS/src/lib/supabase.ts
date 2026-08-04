@@ -1,8 +1,9 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js';
 import { createBrowserClient } from '@supabase/ssr';
-import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight } from '../types';
+import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight, BlogPost, BlogPostInput } from '../types';
 import { normalizeTeamCategory, sortTeamCategories } from './schemas';
+import { BlogPostRow, toBlogPost } from './blog';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -583,6 +584,162 @@ export async function deleteJob(id: string) {
   }
 
   return true;
+}
+
+// ============================================
+// Blog post persistence
+// ============================================
+
+const BLOG_POST_COLUMNS =
+  'id, title, slug, category, excerpt, author_name, body, cover_image_url, cover_image_alt, status, is_featured, published_at, created_at, updated_at';
+
+function buildBlogPostPayload(post: BlogPostInput) {
+  return {
+    title: post.title,
+    slug: post.slug,
+    category: post.category,
+    excerpt: post.excerpt,
+    author_name: post.authorName,
+    body: post.body,
+    cover_image_url: post.coverImageUrl || null,
+    cover_image_alt: post.coverImageAlt || null,
+    status: post.status,
+    published_at: post.publishedAt || null,
+    ...(post.status === 'draft' ? { is_featured: false } : {}),
+  };
+}
+
+async function setRequestedFeaturedBlogPost(id: string, post: BlogPostInput) {
+  if (!post.isFeatured || post.status !== 'published') {
+    return undefined;
+  }
+
+  const { data, error } = await supabase.rpc('set_featured_blog_post', {
+    target_post_id: id,
+  });
+
+  if (error) {
+    console.error('Error setting featured blog post:', error);
+    throw error;
+  }
+
+  return toBlogPost(data as BlogPostRow);
+}
+
+export async function fetchPublishedBlogPosts(): Promise<BlogPost[]> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select(BLOG_POST_COLUMNS)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching published blog posts:', error);
+    throw error;
+  }
+
+  return ((data as BlogPostRow[] | null) ?? []).map(toBlogPost);
+}
+
+export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select(BLOG_POST_COLUMNS)
+    .eq('slug', slug)
+    .eq('status', 'published')
+    .maybeSingle();
+
+  if (error) {
+    console.error('Error fetching blog post:', error);
+    throw error;
+  }
+
+  return data ? toBlogPost(data as BlogPostRow) : undefined;
+}
+
+export async function fetchAdminBlogPosts(): Promise<BlogPost[]> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select(BLOG_POST_COLUMNS)
+    .order('updated_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching admin blog posts:', error);
+    throw error;
+  }
+
+  return ((data as BlogPostRow[] | null) ?? []).map(toBlogPost);
+}
+
+export async function createBlogPost(post: BlogPostInput): Promise<BlogPost> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .insert(buildBlogPostPayload(post))
+    .select(BLOG_POST_COLUMNS)
+    .single();
+
+  if (error) {
+    console.error('Error creating blog post:', error);
+    throw error;
+  }
+
+  return (await setRequestedFeaturedBlogPost(data.id, post)) ?? toBlogPost(data as BlogPostRow);
+}
+
+export async function updateBlogPost(id: string, post: BlogPostInput | Pick<BlogPostInput, 'isFeatured'>): Promise<BlogPost> {
+  if (Object.keys(post).length === 1 && 'isFeatured' in post) {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .update({ is_featured: post.isFeatured })
+      .eq('id', id)
+      .select(BLOG_POST_COLUMNS)
+      .single();
+
+    if (error) {
+      console.error('Error updating blog post:', error);
+      throw error;
+    }
+
+    return toBlogPost(data as BlogPostRow);
+  }
+
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .update(buildBlogPostPayload(post as BlogPostInput))
+    .eq('id', id)
+    .select(BLOG_POST_COLUMNS)
+    .single();
+
+  if (error) {
+    console.error('Error updating blog post:', error);
+    throw error;
+  }
+
+  return (await setRequestedFeaturedBlogPost(id, post as BlogPostInput)) ?? toBlogPost(data as BlogPostRow);
+}
+
+export async function deleteBlogPost(id: string) {
+  const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+
+  if (error) {
+    console.error('Error deleting blog post:', error);
+    throw error;
+  }
+
+  return true;
+}
+
+export async function setFeaturedBlogPost(id: string): Promise<BlogPost> {
+  const { data, error } = await supabase.rpc('set_featured_blog_post', {
+    target_post_id: id,
+  });
+
+  if (error) {
+    console.error('Error setting featured blog post:', error);
+    throw error;
+  }
+
+  return toBlogPost(data as BlogPostRow);
 }
 
 // ============================================

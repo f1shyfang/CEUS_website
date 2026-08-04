@@ -101,3 +101,28 @@ export interface Job {
   isSponsored: boolean;
   outdated: boolean;
 }
+
+export const BLOG_CATEGORIES = ['news', 'student-guides', 'careers-industry'] as const;
+
+export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
+
+export type BlogPostStatus = 'draft' | 'published';
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  category: BlogCategory;
+  excerpt: string;
+  authorName: string;
+  body: string;
+  coverImageUrl?: string;
+  coverImageAlt?: string;
+  status: BlogPostStatus;
+  isFeatured: boolean;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type BlogPostInput = Omit<BlogPost, 'id' | 'createdAt' | 'updatedAt'>;
