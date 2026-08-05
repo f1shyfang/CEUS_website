@@ -1,61 +1,17 @@
 'use client'
 import React from 'react';
-import type { Event as LegacyEvent } from '../types';
 import type { Event as RubricEvent } from '@/lib/api/types';
 import { FaCalendarAlt, FaExternalLinkAlt, FaMapMarkerAlt } from 'react-icons/fa';
 import { FALLBACK_IMAGE_URLS } from '../lib/storagePublicUrls';
-import { formatEventDate, cn } from '../lib/utils';
+import { cn } from '../lib/utils';
 import OptimizedImage from './OptimizedImage';
 import posthog from 'posthog-js';
 
-/**
- * EventCard supports two data shapes, discriminated by `variant`:
- *  - `home`    → the legacy Supabase event (still used on the homepage carousel)
- *  - default   → the Rubric event returned by the tRPC `events` router
- */
-type EventCardProps =
-  | { variant: 'home'; event: LegacyEvent }
-  | { variant?: 'default'; event: RubricEvent };
+type EventCardProps = {
+  event: RubricEvent;
+};
 
-const EventCard: React.FC<EventCardProps> = (props) => {
-  // --- Home variant: legacy Supabase event -----------------------------------
-  if (props.variant === 'home') {
-    const { event } = props;
-    const formattedDate = formatEventDate(event.date);
-
-    return (
-      <div className="group px-4 block focus:outline-none rounded-md cursor-pointer">
-        <a
-          href={event.facebookEventLink || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <div className="relative mx-auto h-[260px] w-full overflow-hidden rounded-lg shadow-md group-hover:shadow-xl transition-shadow duration-300">
-            <OptimizedImage
-              src={event.imageUrl || FALLBACK_IMAGE_URLS.event}
-              alt={event.title}
-              fill
-              className="group-hover:scale-110"
-              fallbackSrc={FALLBACK_IMAGE_URLS.event}
-            />
-            <div className="absolute inset-0 bg-black/70 flex flex-col justify-center items-center text-white p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <h3 className="text-xl font-bold text-center mb-2">{event.title}</h3>
-              <p className="text-sm text-center mb-2 opacity-90 line-clamp-3">{event.description}</p>
-              <p className="text-xs text-center opacity-75 font-medium">
-                {formattedDate}
-              </p>
-            </div>
-          </div>
-          <h3 className="text-2xl font-semibold text-center mt-5 group-hover:text-blue-600 transition-all duration-300 group-hover:opacity-100 truncate">
-            {event.title}
-          </h3>
-        </a>
-      </div>
-    );
-  }
-
-  // --- Default variant: Rubric event -----------------------------------------
-  const { event } = props;
+const EventCard: React.FC<EventCardProps> = ({ event }) => {
   // Rubric provides an already-formatted date string, so render it as-is.
   const dateLabel = event.start_time?.trim() ? event.start_time : 'Date TBD';
   const blurb = event.description?.trim() || event.info?.trim() || '';
