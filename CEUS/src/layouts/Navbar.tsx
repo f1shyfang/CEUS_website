@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
         <Link href="/events" className={linkClasses('/events')}>Events</Link>
         <Link href="/blog" className={linkClasses('/blog')}>Blog</Link>
         <Link href="/jobs" className={linkClasses('/jobs')}>Jobs</Link>
-        <Link href="/publications" className={linkClasses('/publications')}>Publications</Link>
+        
         <Link href="/sponsors" className={linkClasses('/sponsors')}>Sponsors</Link>
         <Link href="/contact" className={linkClasses('/contact')}>Contact Us</Link>
       </div>
