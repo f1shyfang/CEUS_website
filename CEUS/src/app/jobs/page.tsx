@@ -17,8 +17,10 @@ export const revalidate = 600;
 
 export default async function JobsPage() {
   let jobs: Job[] = [];
+  const today = new Date();
   try {
-    jobs = await fetchJobs();
+    const allJobs = await fetchJobs();
+    jobs = allJobs.filter(job => !job.closeDate || new Date(job.closeDate) > today);
   } catch (error) {
     console.error('Error loading jobs:', error);
   }
