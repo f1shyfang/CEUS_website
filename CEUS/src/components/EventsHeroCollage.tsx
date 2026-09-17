@@ -51,6 +51,11 @@ const EventsHeroCollage: React.FC<EventsHeroCollageProps> = ({ photos }) => {
                       key={`${src}-${index}`}
                       className="w-full aspect-square overflow-hidden bg-blue-800 mb-3 sm:mb-4"
                     >
+                      {/* next/image cannot optimise these while
+                          images.unoptimized is set in next.config.js, so the
+                          collage uses plain img elements and relies on the
+                          stored photos being sized for display. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={src}
                         alt=""
