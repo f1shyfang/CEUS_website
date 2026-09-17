@@ -1,7 +1,6 @@
 'use client';
 // src/components/EventsHeroCollage.tsx
 import React from 'react';
-import Image from 'next/image';
 import { cn } from '../lib/utils';
 
 // Each column gets its own rotation of the photo set so neighbouring columns
@@ -15,12 +14,6 @@ const COLUMNS = [
   { offset: 6, duration: 50, visibility: 'hidden lg:block' },
   { offset: 2, duration: 56, visibility: 'hidden xl:block' },
 ];
-
-// The column count steps up with each breakpoint (2 at base, then 3/4/5/6), so
-// a tile is roughly 100/columns vw. Without this the optimiser would serve a
-// full-width image for a tile that never exceeds a fraction of the viewport.
-const TILE_SIZES =
-  '(min-width: 1280px) 17vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 34vw, 50vw';
 
 interface EventsHeroCollageProps {
   // Resolved by the events server component, so the photos are in the first
@@ -56,17 +49,14 @@ const EventsHeroCollage: React.FC<EventsHeroCollageProps> = ({ photos }) => {
                   {[...columnPhotos, ...columnPhotos].map((src, index) => (
                     <div
                       key={`${src}-${index}`}
-                      className="relative w-full aspect-square overflow-hidden bg-blue-800 mb-3 sm:mb-4"
+                      className="w-full aspect-square overflow-hidden bg-blue-800 mb-3 sm:mb-4"
                     >
-                      <Image
+                      <img
                         src={src}
                         alt=""
-                        fill
-                        sizes={TILE_SIZES}
-                        // Only the tiles visible before any scrolling are worth
-                        // preloading; the rest of the treadmill can wait.
-                        priority={columnIndex < 2 && index < 2}
-                        className="object-cover"
+                        loading={columnIndex < 2 && index < 2 ? 'eager' : 'lazy'}
+                        decoding="async"
+                        className="h-full w-full object-cover"
                       />
                     </div>
                   ))}
