@@ -34,8 +34,17 @@ const nextConfig = {
         hostname: 'encrypted-tbn0.gstatic.com',
         pathname: '/**',
       },
+      {
+        // YouTube video thumbnails used by LazyYouTube.
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/vi/**',
+      },
       ...supabaseRemotePatterns,
     ],
+    // Every quality passed to next/image must be listed. 75 is the default;
+    // 85 is what OptimizedImage falls back to when no quality is given.
+    qualities: [75, 85],
   },
   // Turbopack configuration (Next.js 16 uses Turbopack by default)
   // Turbopack handles .glb and .gltf files as assets automatically, no config needed
