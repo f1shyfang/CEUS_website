@@ -36,7 +36,6 @@ const nextConfig = {
       },
       ...supabaseRemotePatterns,
     ],
-    unoptimized: true, // Allow unoptimized images for static export
   },
   // Turbopack configuration (Next.js 16 uses Turbopack by default)
   // Turbopack handles .glb and .gltf files as assets automatically, no config needed

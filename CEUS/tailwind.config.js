@@ -11,6 +11,17 @@ module.exports = {
       fontFamily: {
         editorial: ['var(--font-literata)', 'Georgia', 'serif'],
       },
+      keyframes: {
+        'collage-scroll': {
+          // Starts one full photo-set above its resting position and settles
+          // back to it, so the duplicated track loops without a visible seam.
+          from: { transform: 'translateY(-50%)' },
+          to: { transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'collage-scroll': 'collage-scroll 50s linear infinite',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

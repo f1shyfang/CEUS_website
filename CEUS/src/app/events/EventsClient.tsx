@@ -2,13 +2,19 @@
 // src/app/events/EventsClient.tsx
 import React, { useRef, useState } from 'react';
 import EventCard from '../../components/EventCard';
+import EventsHeroCollage from '../../components/EventsHeroCollage';
 import { FaCalendarAlt, FaClock, FaHistory } from 'react-icons/fa';
 import { cn } from '../../lib/utils';
 import type { Event } from '@/lib/api/types';
 import useEvents from '@/lib/api/hooks/useEvents';
 import posthog from 'posthog-js';
 
-const EventsClient: React.FC = () => {
+interface EventsClientProps {
+  // Listed on the server so the hero renders with its photos already in place.
+  heroPhotos: string[];
+}
+
+const EventsClient: React.FC<EventsClientProps> = ({ heroPhotos }) => {
   const { allEvents, isFetching, isError } = useEvents();
 
   const [activeSection, setActiveSection] = useState<'upcoming' | 'past'>('upcoming');
@@ -92,19 +98,16 @@ const EventsClient: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      <div className="relative h-[60vh] bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-72 h-72 bg-white opacity-10 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/2 translate-y-1/2"></div>
-        </div>
+      <div className="relative h-[60vh] bg-blue-700 overflow-hidden">
+        <EventsHeroCollage photos={heroPhotos} />
 
         <div className="relative z-10 h-full flex items-center justify-center text-white">
           <div className="text-center px-4 max-w-4xl mx-auto">
             <div className="mb-6">
-              <FaCalendarAlt className="w-16 h-16 mx-auto mb-4 text-blue-200" />
+              <FaCalendarAlt className="w-16 h-16 mx-auto mb-4 text-blue-100 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-4">Events</h1>
-            <p className="text-xl sm:text-2xl text-blue-100 max-w-2xl mx-auto">Join us for exciting events, workshops, and social gatherings</p>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight mb-4 drop-shadow-[0_2px_12px_rgba(0,0,0,0.45)]">Events</h1>
+            <p className="text-xl sm:text-2xl text-blue-50 max-w-2xl mx-auto drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">Join us for exciting events, workshops, and social gatherings</p>
           </div>
         </div>
       </div>
