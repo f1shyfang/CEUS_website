@@ -2,19 +2,18 @@
 import { supabase } from './supabase';
 import { getPublicStorageUrl } from './storagePublicUrls';
 
-// Hero collage photos live in the `event-photos` folder of the public `events`
-// bucket. The folder is listed rather than hard-coded so photos added in the
-// Supabase dashboard appear on the page without a code change.
-const BUCKET = 'events';
-const FOLDER = 'event-photos';
+// Hero collage photos live at the root of the public `homepage-gallery` bucket.
+// The bucket is listed rather than hard-coded so photos added in the Supabase
+// dashboard appear on the page without a code change.
+const BUCKET = 'homepage-gallery';
+// const FOLDER = 'event-photos';
 
 // Supabase leaves a .emptyFolderPlaceholder in every folder, and the dashboard
 // allows non-image uploads, so the listing is filtered down to real images.
 const IMAGE_EXTENSION = /\.(jpe?g|png|webp|avif|gif)$/i;
 
-// Object names can contain spaces, so every path segment is encoded.
-const photoUrl = (filename: string) =>
-  getPublicStorageUrl(BUCKET, `${encodeURIComponent(FOLDER)}/${encodeURIComponent(filename)}`);
+// Object names can contain spaces, so the filename is encoded.
+const photoUrl = (filename: string) => getPublicStorageUrl(BUCKET, encodeURIComponent(filename));
 
 /**
  * Lists the collage photos. Called from the events server component so the URLs
@@ -28,7 +27,7 @@ const photoUrl = (filename: string) =>
 export async function fetchEventCollagePhotos(): Promise<string[]> {
   const { data, error } = await supabase.storage
     .from(BUCKET)
-    .list(FOLDER, { limit: 100, sortBy: { column: 'name', order: 'asc' } });
+    .list('', { limit: 100, sortBy: { column: 'name', order: 'asc' } });
 
   if (error || !data) {
     console.error('Error loading events hero collage photos:', error);
