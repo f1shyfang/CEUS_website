@@ -999,6 +999,7 @@ export const STORAGE_BUCKETS = {
   SPONSORS: 'sponsors',
   TEAM: 'team',
   ASSETS: 'assets',
+  HOMEPAGE_GALLERY: 'homepage-gallery',
 } as const;
 
 export const STORAGE_FOLDERS = {

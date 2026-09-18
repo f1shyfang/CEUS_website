@@ -2,7 +2,12 @@ const rawSupabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const normalizedSupabaseUrl = rawSupabaseUrl.replace(/\/+$/, '');
 
 export function getPublicStorageUrl(bucket: string, objectPath: string): string {
-  return `${normalizedSupabaseUrl}/storage/v1/object/public/${bucket}/${objectPath}`;
+  const encodedPath = objectPath
+    .split('/')
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `${normalizedSupabaseUrl}/storage/v1/object/public/${bucket}/${encodedPath}`;
 }
 
 // NOTE: Images are now stored in separate buckets (events, sponsors, team, assets)
@@ -13,6 +18,7 @@ export const STATIC_ASSET_URLS = {
   instagramIcon: getPublicStorageUrl('assets', 'instagram-white-icon.webp'),
   linkedinIcon: getPublicStorageUrl('assets', 'linkedin-white-icon.png'),
   arcIcon: getPublicStorageUrl('assets', 'Arc_icon.png'),
+  discordIcon: getPublicStorageUrl('assets', 'discord-white-icon.png'),
 };
 
 export const FALLBACK_IMAGE_URLS = {
