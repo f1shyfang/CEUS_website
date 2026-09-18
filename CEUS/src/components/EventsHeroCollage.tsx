@@ -3,17 +3,38 @@
 import React from 'react';
 import { cn } from '../lib/utils';
 
-// Each column gets its own rotation of the photo set so neighbouring columns
-// never show the same image side by side, plus its own speed so the treadmill
-// reads as a collage rather than one sliding sheet.
+// The photos are dealt out across the columns rather than repeated in each, so
+// no photo shows up in two columns at once. Every column keeps its own speed so
+// the treadmill reads as a collage rather than one sliding sheet.
 const COLUMNS = [
-  { offset: 0, duration: 46, visibility: '' },
-  { offset: 3, duration: 58, visibility: '' },
-  { offset: 5, duration: 40, visibility: 'hidden sm:block' },
-  { offset: 1, duration: 64, visibility: 'hidden md:block' },
-  { offset: 6, duration: 50, visibility: 'hidden lg:block' },
-  { offset: 2, duration: 56, visibility: 'hidden xl:block' },
+  { duration: 76, visibility: '' },
+  { duration: 68, visibility: '' },
+  { duration: 80, visibility: 'hidden sm:block' },
+  { duration: 74, visibility: 'hidden md:block' },
+  { duration: 60, visibility: 'hidden lg:block' },
+  { duration: 66, visibility: 'hidden xl:block' },
 ];
+
+// A column's photos repeat until the loop is at least this many tiles, as a
+// tile is about as wide as the column and the hero is several tiles tall. With
+// fewer than this a short column would run out of photos and show a gap.
+const MIN_TILES_PER_LOOP = 5;
+
+// Dealt round-robin, so the columns differ by at most one photo and each photo
+// lands in exactly one column.
+const dealIntoColumns = (photos: string[], columnCount: number): string[][] => {
+  const columns: string[][] = Array.from({ length: columnCount }, () => []);
+  photos.forEach((photo, index) => columns[index % columnCount].push(photo));
+  return columns;
+};
+
+// The track holds its photos twice over; sliding it up by exactly half its
+// height lands on an identical frame, so the loop has no visible seam.
+const buildTrack = (columnPhotos: string[]): string[] => {
+  const repeats = Math.ceil(MIN_TILES_PER_LOOP / columnPhotos.length);
+  const loop = Array.from({ length: repeats }, () => columnPhotos).flat();
+  return [...loop, ...loop];
+};
 
 interface EventsHeroCollageProps {
   // Resolved by the events server component, so the photos are in the first
@@ -22,12 +43,10 @@ interface EventsHeroCollageProps {
 }
 
 const EventsHeroCollage: React.FC<EventsHeroCollageProps> = ({ photos }) => {
-  // Offsets are taken modulo the set size so every column stays in range
-  // whatever number of photos the folder happens to hold.
-  const rotate = (offset: number) => {
-    const pivot = offset % photos.length;
-    return [...photos.slice(pivot), ...photos.slice(0, pivot)];
-  };
+  // Fewer photos than columns would leave the tail columns empty, so only as
+  // many columns as there are photos are laid out.
+  const columnCount = Math.min(COLUMNS.length, photos.length);
+  const dealtColumns = dealIntoColumns(photos, Math.max(columnCount, 1));
 
   return (
     <div aria-hidden="true" className="absolute inset-0 overflow-hidden bg-blue-600">
@@ -35,18 +54,16 @@ const EventsHeroCollage: React.FC<EventsHeroCollageProps> = ({ photos }) => {
           leaves the blue background and overlays, which the headline sits on. */}
       {photos.length > 0 && (
         <div className="flex h-full w-full gap-3 sm:gap-4">
-          {COLUMNS.map(({ offset, duration, visibility }, columnIndex) => {
-            const columnPhotos = rotate(offset);
+          {COLUMNS.slice(0, columnCount).map(({ duration, visibility }, columnIndex) => {
+            const track = buildTrack(dealtColumns[columnIndex]);
 
             return (
               <div key={columnIndex} className={cn('flex-1 min-w-0 overflow-hidden', visibility)}>
-                {/* The track holds the photo set twice; sliding it down by exactly
-                    half its height lands on an identical frame, so the loop is seamless. */}
                 <div
                   className="flex w-full flex-col animate-collage-scroll motion-reduce:animate-none"
                   style={{ animationDuration: `${duration}s` }}
                 >
-                  {[...columnPhotos, ...columnPhotos].map((src, index) => (
+                  {track.map((src, index) => (
                     <div
                       key={`${src}-${index}`}
                       className="w-full aspect-square overflow-hidden bg-blue-800 mb-3 sm:mb-4"
