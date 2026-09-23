@@ -18,6 +18,8 @@ import posthog from 'posthog-js';
 
 interface HomeClientProps {
   sponsors: Sponsor[];
+  heroGalleryImagesDesktop: string[];
+  heroGalleryImagesMobile: string[];
 }
 
 function parseRubricEventDate(startTime: string): Date | null {
@@ -25,7 +27,11 @@ function parseRubricEventDate(startTime: string): Date | null {
   return dateMatch ? new Date(dateMatch[1]) : null;
 }
 
-const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
+const HomeClient: React.FC<HomeClientProps> = ({
+  sponsors,
+  heroGalleryImagesDesktop,
+  heroGalleryImagesMobile,
+}) => {
   const heroTitleRef = useRef<HTMLDivElement>(null);
   const heroSubtitleRef = useRef<HTMLDivElement>(null);
   const heroCtaRef = useRef<HTMLAnchorElement>(null);
@@ -112,7 +118,10 @@ const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
   return (
     <> 
       <section className="relative w-full h-[75vh] max-h-[600px] overflow-hidden"> 
-        <HeroPhotoGallery />
+        <HeroPhotoGallery
+          imagesDesktop={heroGalleryImagesDesktop}
+          imagesMobile={heroGalleryImagesMobile}
+        />
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         
         <div className="relative z-20 h-full flex items-center container mx-auto px-4"> 
