@@ -155,7 +155,7 @@ export default function AdminGalleryPage() {
         <div>
           <h1 className="text-2xl font-bold text-white">Hero Gallery</h1>
           <p className="mt-1 text-gray-400 max-w-2xl">
-            Desktop and mobile maps are independent lists (seeded the same initially). Numbers
+            Desktop and mobile maps are independent lists. Numbers
             match frontpage slots for the selected map. Aim for about {slotHint}+ images so that
             band fills without heavy wrapping. Uploads go to the{' '}
             <code className="text-gray-300">homepage-gallery</code> bucket.
