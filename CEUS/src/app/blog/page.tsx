@@ -19,8 +19,8 @@ const handbooks = [
   },
   {
     title: 'Careers Handbook',
-    file: '/Careers Handbook 2023.pdf',
-    alternateLink: 'https://drive.google.com/file/d/1aD-fqH9IADhLh9yeuZzlnBpjwmNS0Scs/view?usp=sharing',
+    file: '/Career Handbook 2026.pdf',
+    alternateLink: 'https://drive.google.com/file/d/1CXw2l1jtR_1dF11koIV7fDyxa692uwCg/view',
   },
 ];
 
