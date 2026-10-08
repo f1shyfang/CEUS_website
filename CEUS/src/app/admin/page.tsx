@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FiBookOpen, FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight } from 'react-icons/fi';
+import { FiBookOpen, FiCalendar, FiUsers, FiAward, FiMail, FiArrowRight, FiImage } from 'react-icons/fi';
 import { StatCard } from '@/components/admin';
 import {
   fetchEvents,
@@ -73,6 +73,7 @@ export default function AdminDashboardPage() {
     { href: '/admin/events', label: 'Manage Events', icon: FiCalendar },
     { href: '/admin/sponsors', label: 'Manage Sponsors', icon: FiAward },
     { href: '/admin/team', label: 'Manage Team', icon: FiUsers },
+    { href: '/admin/gallery', label: 'Hero Gallery', icon: FiImage },
     { href: '/admin/contacts', label: 'View Contacts', icon: FiMail },
     { href: '/admin/blog', label: 'Manage blog posts', icon: FiBookOpen },
   ];

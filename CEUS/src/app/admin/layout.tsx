@@ -16,6 +16,7 @@ import {
   FiMenu,
   FiX,
   FiLoader,
+  FiImage,
 } from 'react-icons/fi';
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { href: '/admin/blog', label: 'Blog', icon: FiBookOpen },
   { href: '/admin/sponsors', label: 'Sponsors', icon: FiAward },
   { href: '/admin/team', label: 'Team', icon: FiUsers },
+  { href: '/admin/gallery', label: 'Hero Gallery', icon: FiImage },
   { href: '/admin/contacts', label: 'Contacts', icon: FiMail },
 ];
 

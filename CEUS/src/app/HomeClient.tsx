@@ -9,15 +9,17 @@ import 'slick-carousel/slick/slick-theme.css';
 import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import LazyYouTube from '../components/LazyYouTube';
-import { STATIC_ASSET_URLS } from '../lib/storagePublicUrls';
 import { Sponsor } from '../types';
 import EventCard from '../components/EventCard';
+import HeroPhotoGallery from '../components/HeroPhotoGallery';
 import OptimizedImage from '../components/OptimizedImage';
 import useEvents from '@/lib/api/hooks/useEvents';
 import posthog from 'posthog-js';
 
 interface HomeClientProps {
   sponsors: Sponsor[];
+  heroGalleryImagesDesktop: string[];
+  heroGalleryImagesMobile: string[];
 }
 
 function parseRubricEventDate(startTime: string): Date | null {
@@ -25,25 +27,34 @@ function parseRubricEventDate(startTime: string): Date | null {
   return dateMatch ? new Date(dateMatch[1]) : null;
 }
 
-const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
+const HomeClient: React.FC<HomeClientProps> = ({
+  sponsors,
+  heroGalleryImagesDesktop,
+  heroGalleryImagesMobile,
+}) => {
   const heroTitleRef = useRef<HTMLDivElement>(null);
   const heroSubtitleRef = useRef<HTMLDivElement>(null);
+  const heroCtaRef = useRef<HTMLAnchorElement>(null);
   const { allEvents, isFetching, isError } = useEvents();
 
   useEffect(() => {
-    if (heroTitleRef.current && heroSubtitleRef.current) {
-      const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
-      tl.fromTo(heroTitleRef.current, 
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, delay: 0.3 }
-      ); 
-      tl.fromTo(heroSubtitleRef.current, 
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0 },
-        "-=0.6"
-      ); 
-      return () => { tl.kill(); };
-    }
+    const title = heroTitleRef.current;
+    const subtitle = heroSubtitleRef.current;
+    const cta = heroCtaRef.current;
+    if (!title || !subtitle || !cta) return;
+
+    const tl = gsap.timeline({ defaults: { duration: 0.8, ease: 'power2.out' } });
+    tl.fromTo(title, { opacity: 0, y: 20 }, { opacity: 1, y: 0, delay: 0.3 });
+    tl.fromTo(subtitle, { opacity: 0, y: 20 }, { opacity: 1, y: 0 }, '-=0.6');
+    // Opacity only — avoid GSAP transform fighting Tailwind -translate-x-1/2
+    tl.fromTo(cta, { opacity: 0 }, { opacity: 1 }, '-=0.5');
+
+    return () => {
+      tl.kill();
+      // Strict Mode remount can kill mid-animation and leave opacity: 0
+      gsap.set([title, subtitle], { opacity: 1, y: 0 });
+      gsap.set(cta, { opacity: 1 });
+    };
   }, []);
 
   const now = new Date();
@@ -107,13 +118,9 @@ const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
   return (
     <> 
       <section className="relative w-full h-[75vh] max-h-[600px] overflow-hidden"> 
-        <OptimizedImage 
-          src={STATIC_ASSET_URLS.heroBackground}
-          alt="CEUS Ball Group Photo" 
-          fill
-          priority
-          className="object-cover object-center" 
-          containerClassName="absolute inset-0"
+        <HeroPhotoGallery
+          imagesDesktop={heroGalleryImagesDesktop}
+          imagesMobile={heroGalleryImagesMobile}
         />
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         
@@ -127,6 +134,27 @@ const HomeClient: React.FC<HomeClientProps> = ({ sponsors }) => {
             </div>
           </div>
         </div>
+
+        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center sm:bottom-8 md:bottom-10">
+          <a
+            ref={heroCtaRef}
+            href="https://campus.hellorubric.com/?s=613"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-rubric-cta pointer-events-auto rounded-full bg-[#1B397E] px-6 py-2.5 text-sm font-semibold tracking-wide text-white border border-white/25 shadow-md transition-all duration-300 hover:scale-105 hover:border-white/50 sm:px-8 sm:py-3 sm:text-base md:px-10 md:py-3.5 md:text-lg lg:px-12 lg:py-4 lg:text-xl"
+          >
+            Join us on Rubric →
+          </a>
+        </div>
+
+        <style>{`
+          .hero-rubric-cta:hover {
+            box-shadow:
+              0 0 12px rgba(27, 57, 126, 0.85),
+              0 0 28px rgba(27, 57, 126, 0.65),
+              0 0 48px rgba(27, 57, 126, 0.4);
+          }
+        `}</style>
       </section>
 
       <section className="container mx-auto px-4 py-16 md:py-24 text-left">

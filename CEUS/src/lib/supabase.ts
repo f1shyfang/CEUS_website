@@ -4,6 +4,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { Event, Sponsor, TeamCategory, Member, Job, JobType, JobCompany, WorkingRight, BlogPost, BlogPostInput } from '../types';
 import { normalizeTeamCategory, sortTeamCategories } from './schemas';
 import { BlogPostRow, toBlogPost } from './blog';
+import { getPublicStorageUrl } from './storagePublicUrls';
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -999,6 +1000,7 @@ export const STORAGE_BUCKETS = {
   SPONSORS: 'sponsors',
   TEAM: 'team',
   ASSETS: 'assets',
+  HOMEPAGE_GALLERY: 'homepage-gallery',
 } as const;
 
 export const STORAGE_FOLDERS = {
@@ -1141,4 +1143,253 @@ export async function listFiles(bucket: BucketName, folder?: string) {
   }
 
   return data;
+}
+
+// ============================================
+// Homepage Gallery CRUD
+// ============================================
+
+export type HomepageGalleryVariant = 'desktop' | 'mobile';
+
+export type HomepageGalleryImage = {
+  id: string;
+  storagePath: string;
+  sortOrder: number;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type HomepageGalleryImageRow = {
+  id: string;
+  storage_path: string;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+const HOMEPAGE_GALLERY_TABLES: Record<HomepageGalleryVariant, string> = {
+  desktop: 'homepage_gallery_images',
+  mobile: 'homepage_gallery_images_mobile',
+};
+
+function homepageGalleryTable(variant: HomepageGalleryVariant): string {
+  return HOMEPAGE_GALLERY_TABLES[variant];
+}
+
+function toHomepageGalleryImage(row: HomepageGalleryImageRow): HomepageGalleryImage {
+  return {
+    id: row.id,
+    storagePath: row.storage_path,
+    sortOrder: row.sort_order,
+    url: getPublicStorageUrl(STORAGE_BUCKETS.HOMEPAGE_GALLERY, row.storage_path),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/** True if any gallery row (desktop or mobile) still references this path. */
+async function isHomepageGalleryPathInUse(
+  storagePath: string,
+  exclude?: { variant: HomepageGalleryVariant; id: string }
+): Promise<boolean> {
+  for (const variant of ['desktop', 'mobile'] as const) {
+    let query = supabase
+      .from(homepageGalleryTable(variant))
+      .select('id')
+      .eq('storage_path', storagePath)
+      .limit(1);
+
+    if (exclude && exclude.variant === variant) {
+      query = query.neq('id', exclude.id);
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.warn(`Error checking gallery path usage (${variant}):`, error);
+      // Fail closed: treat as in-use so we do not delete a shared file.
+      return true;
+    }
+    if ((data?.length ?? 0) > 0) return true;
+  }
+  return false;
+}
+
+async function maybeDeleteHomepageGalleryFile(
+  storagePath: string,
+  exclude?: { variant: HomepageGalleryVariant; id: string }
+) {
+  const stillUsed = await isHomepageGalleryPathInUse(storagePath, exclude);
+  if (stillUsed) return;
+  try {
+    await deleteFile(STORAGE_BUCKETS.HOMEPAGE_GALLERY, storagePath);
+  } catch (storageError) {
+    console.warn('Gallery storage cleanup failed:', storageError);
+  }
+}
+
+export async function fetchHomepageGalleryImages(
+  variant: HomepageGalleryVariant = 'desktop'
+): Promise<HomepageGalleryImage[]> {
+  const { data, error } = await supabase
+    .from(homepageGalleryTable(variant))
+    .select('id, storage_path, sort_order, created_at, updated_at')
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error(`Error fetching homepage gallery images (${variant}):`, error);
+    throw error;
+  }
+
+  return (data as HomepageGalleryImageRow[] | null ?? []).map(toHomepageGalleryImage);
+}
+
+/** Ordered public URLs for both frontpage marquees. */
+export async function fetchHomepageGalleryUrls(): Promise<{
+  desktop: string[];
+  mobile: string[];
+}> {
+  const [desktop, mobile] = await Promise.all([
+    fetchHomepageGalleryImages('desktop'),
+    fetchHomepageGalleryImages('mobile'),
+  ]);
+  return {
+    desktop: desktop.map((image) => image.url),
+    mobile: mobile.map((image) => image.url),
+  };
+}
+
+export async function createHomepageGalleryImage(
+  storagePath: string,
+  variant: HomepageGalleryVariant = 'desktop'
+) {
+  const table = homepageGalleryTable(variant);
+  const { data: existing, error: existingError } = await supabase
+    .from(table)
+    .select('sort_order')
+    .order('sort_order', { ascending: false })
+    .limit(1);
+
+  if (existingError) {
+    console.error(`Error reading gallery sort order (${variant}):`, existingError);
+    throw existingError;
+  }
+
+  const nextOrder =
+    existing && existing.length > 0
+      ? ((existing[0] as { sort_order: number }).sort_order ?? -1) + 1
+      : 0;
+
+  const { data, error } = await supabase
+    .from(table)
+    .insert([{ storage_path: storagePath, sort_order: nextOrder }])
+    .select('id, storage_path, sort_order, created_at, updated_at')
+    .single();
+
+  if (error) {
+    console.error(`Error creating homepage gallery image (${variant}):`, error);
+    throw error;
+  }
+
+  return toHomepageGalleryImage(data as HomepageGalleryImageRow);
+}
+
+export async function updateHomepageGalleryImage(
+  id: string,
+  storagePath: string,
+  variant: HomepageGalleryVariant = 'desktop'
+) {
+  const table = homepageGalleryTable(variant);
+
+  const { data: existing, error: fetchError } = await supabase
+    .from(table)
+    .select('storage_path')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error(`Error loading gallery image for update (${variant}):`, fetchError);
+    throw fetchError;
+  }
+
+  const oldPath = (existing as { storage_path?: string } | null)?.storage_path;
+
+  const { data, error } = await supabase
+    .from(table)
+    .update({ storage_path: storagePath })
+    .eq('id', id)
+    .select('id, storage_path, sort_order, created_at, updated_at')
+    .single();
+
+  if (error) {
+    console.error(`Error updating homepage gallery image (${variant}):`, error);
+    throw error;
+  }
+
+  if (oldPath && oldPath !== storagePath) {
+    await maybeDeleteHomepageGalleryFile(oldPath, { variant, id });
+  }
+
+  return toHomepageGalleryImage(data as HomepageGalleryImageRow);
+}
+
+async function compactHomepageGallerySortOrders(variant: HomepageGalleryVariant) {
+  const table = homepageGalleryTable(variant);
+  const images = await fetchHomepageGalleryImages(variant);
+  await Promise.all(
+    images.map((image, index) =>
+      supabase.from(table).update({ sort_order: index }).eq('id', image.id)
+    )
+  );
+}
+
+export async function deleteHomepageGalleryImage(
+  id: string,
+  variant: HomepageGalleryVariant = 'desktop'
+) {
+  const table = homepageGalleryTable(variant);
+  const { data: row, error: fetchError } = await supabase
+    .from(table)
+    .select('storage_path')
+    .eq('id', id)
+    .maybeSingle();
+
+  if (fetchError) {
+    console.error(`Error loading homepage gallery image for delete (${variant}):`, fetchError);
+    throw fetchError;
+  }
+
+  const { error } = await supabase.from(table).delete().eq('id', id);
+
+  if (error) {
+    console.error(`Error deleting homepage gallery image (${variant}):`, error);
+    throw error;
+  }
+
+  if (row?.storage_path) {
+    await maybeDeleteHomepageGalleryFile(row.storage_path as string);
+  }
+
+  await compactHomepageGallerySortOrders(variant);
+  return true;
+}
+
+/** Reorder by ordered list of ids (0..n-1). */
+export async function reorderHomepageGalleryImages(
+  orderedIds: string[],
+  variant: HomepageGalleryVariant = 'desktop'
+) {
+  const table = homepageGalleryTable(variant);
+  const updates = orderedIds.map((id, index) =>
+    supabase.from(table).update({ sort_order: index }).eq('id', id)
+  );
+
+  const results = await Promise.all(updates);
+  const firstError = results.find((result) => result.error)?.error;
+  if (firstError) {
+    console.error(`Error reordering homepage gallery images (${variant}):`, firstError);
+    throw firstError;
+  }
+
+  return fetchHomepageGalleryImages(variant);
 }
