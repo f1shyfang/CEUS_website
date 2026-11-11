@@ -24,6 +24,9 @@ const Footer: React.FC = () => {
           <a href="https://www.linkedin.com/company/ceusunsw/" target="_blank" rel="noopener noreferrer">
             <Image src={STATIC_ASSET_URLS.linkedinIcon} alt="LinkedIn" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
           </a>
+          <a href="https://discord.gg/CXUF8WbZt" target="_blank" rel="noopener noreferrer">
+            <Image src={STATIC_ASSET_URLS.discordIcon} alt="Discord" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
+            </a>
           <a href="https://www.arc.unsw.edu.au/get-involved/opportunity?name=Chemical%20Engineering%20Undergraduate%20Society" target="_blank" rel="noopener noreferrer">
             <Image src={STATIC_ASSET_URLS.arcIcon} alt="Arc UNSW" width={28} height={28} className="transition-opacity duration-200 hover:opacity-75" />
           </a>

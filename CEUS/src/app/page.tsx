@@ -1,7 +1,7 @@
 // src/app/page.tsx
 import React from 'react';
 import { Metadata } from 'next';
-import { fetchSponsors } from '../lib/supabase';
+import { fetchHomepageGalleryUrls, fetchSponsors } from '../lib/supabase';
 import { pageMetadata } from '../lib/seo';
 import HomeClient from './HomeClient';
 
@@ -15,7 +15,19 @@ export const metadata: Metadata = pageMetadata(
 export const revalidate = 3600;
 
 export default async function Home() {
-  const sponsors = await fetchSponsors();
+  const [sponsors, heroGallery] = await Promise.all([
+    fetchSponsors(),
+    fetchHomepageGalleryUrls().catch((error) => {
+      console.error('Error fetching homepage gallery:', error);
+      return { desktop: [] as string[], mobile: [] as string[] };
+    }),
+  ]);
 
-  return <HomeClient sponsors={sponsors} />;
+  return (
+    <HomeClient
+      sponsors={sponsors}
+      heroGalleryImagesDesktop={heroGallery.desktop}
+      heroGalleryImagesMobile={heroGallery.mobile}
+    />
+  );
 }
