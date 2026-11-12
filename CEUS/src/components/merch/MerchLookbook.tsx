@@ -318,7 +318,10 @@ export default function MerchLookbook() {
     let layout = placePlateAtWindow();
 
     gsap.set(plate, { autoAlpha: 0, zIndex: 15, force3D: true });
-    gsap.set(bannerWrap, { autoAlpha: 1, scale: 1, zIndex: 1 });
+    // Opacity only (not autoAlpha) so visibility stays visible — browsers
+    // often dump large remote bitmaps under visibility:hidden, then fail
+    // to restore the banner when scrubbing back up.
+    gsap.set(bannerWrap, { opacity: 1, visibility: "visible", scale: 1, zIndex: 1 });
     gsap.set(buttons, { autoAlpha: 1, zIndex: 20 });
     gsap.set(tags, { autoAlpha: 0 });
 
@@ -396,7 +399,7 @@ export default function MerchLookbook() {
     tl.to(
       bannerWrap,
       {
-        autoAlpha: 0,
+        opacity: 0,
         ease: "none",
         duration: zoomEnd * 0.55,
       },
