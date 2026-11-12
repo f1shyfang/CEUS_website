@@ -19,6 +19,7 @@ export const STATIC_ASSET_URLS = {
   linkedinIcon: getPublicStorageUrl('assets', 'linkedin-white-icon.png'),
   arcIcon: getPublicStorageUrl('assets', 'Arc_icon.png'),
   discordIcon: getPublicStorageUrl('assets', 'discord-white-icon.png'),
+  youtubeIcon: getPublicStorageUrl('assets', 'youtube-white-icon.webp'),
 };
 
 export const MERCH_ASSET_URLS = {
