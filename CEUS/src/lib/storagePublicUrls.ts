@@ -10,7 +10,7 @@ export function getPublicStorageUrl(bucket: string, objectPath: string): string 
   return `${normalizedSupabaseUrl}/storage/v1/object/public/${bucket}/${encodedPath}`;
 }
 
-// NOTE: Images are now stored in separate buckets (events, sponsors, team, assets)
+// NOTE: Images are now stored in separate buckets (events, sponsors, team, assets, merch)
 export const STATIC_ASSET_URLS = {
   logo: getPublicStorageUrl('assets', 'ceuslogo_noback_noname.png'),
   heroBackground: getPublicStorageUrl('assets', 'ceus_photo.jpg'),
@@ -19,6 +19,11 @@ export const STATIC_ASSET_URLS = {
   linkedinIcon: getPublicStorageUrl('assets', 'linkedin-white-icon.png'),
   arcIcon: getPublicStorageUrl('assets', 'Arc_icon.png'),
   discordIcon: getPublicStorageUrl('assets', 'discord-white-icon.png'),
+};
+
+export const MERCH_ASSET_URLS = {
+  banner: getPublicStorageUrl('merch', 'merch_banner.webp'),
+  arcade: getPublicStorageUrl('merch', 'DSCF0701.webp'),
 };
 
 export const FALLBACK_IMAGE_URLS = {

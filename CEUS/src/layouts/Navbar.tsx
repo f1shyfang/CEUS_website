@@ -46,6 +46,7 @@ const Navbar: React.FC = () => {
       {/* Desktop Navigation */}
       <div className="hidden md:flex flex-wrap gap-2 justify-end">
         <Link href="/" className={linkClasses('/')}>Home</Link>
+        <Link href="/merch" className={linkClasses('/merch')}>Merch</Link>
         <Link href="/team" className={linkClasses('/team')}>Team</Link>
         <Link href="/events" className={linkClasses('/events')}>Events</Link>
         <Link href="/blog" className={linkClasses('/blog')}>Blog</Link>
@@ -92,6 +93,9 @@ const Navbar: React.FC = () => {
             <div className="py-1">
               <Link href="/" className={mobileLinkClasses('/')} onClick={() => setIsMenuOpen(false)}>
                 Home
+              </Link>
+              <Link href="/merch" className={mobileLinkClasses('/merch')} onClick={() => setIsMenuOpen(false)}>
+                Merch
               </Link>
               <Link href="/team" className={mobileLinkClasses('/team')} onClick={() => setIsMenuOpen(false)}>
                 Team

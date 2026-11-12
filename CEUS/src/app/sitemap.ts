@@ -4,6 +4,7 @@ import { fetchPublishedBlogPosts } from '../lib/supabase';
 
 const PUBLIC_ROUTES: MetadataRoute.Sitemap = [
   { url: `${SITE_URL}/`, changeFrequency: 'daily', priority: 1 },
+  { url: `${SITE_URL}/merch`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE_URL}/events`, changeFrequency: 'weekly', priority: 0.9 },
   { url: `${SITE_URL}/jobs`, changeFrequency: 'daily', priority: 0.9 },
   { url: `${SITE_URL}/team`, changeFrequency: 'monthly', priority: 0.8 },
