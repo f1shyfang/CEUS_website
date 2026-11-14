@@ -1001,6 +1001,7 @@ export const STORAGE_BUCKETS = {
   TEAM: 'team',
   ASSETS: 'assets',
   HOMEPAGE_GALLERY: 'homepage-gallery',
+  MERCH: 'merch',
 } as const;
 
 export const STORAGE_FOLDERS = {

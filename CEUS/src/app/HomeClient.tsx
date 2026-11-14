@@ -2,10 +2,12 @@
 // src/app/HomeClient.tsx
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Slider from 'react-slick';
 import type { CustomArrowProps, Settings } from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import LazyYouTube from '../components/LazyYouTube';
@@ -14,7 +16,10 @@ import EventCard from '../components/EventCard';
 import HeroPhotoGallery from '../components/HeroPhotoGallery';
 import OptimizedImage from '../components/OptimizedImage';
 import useEvents from '@/lib/api/hooks/useEvents';
+import { MERCH_ASSET_URLS } from '@/lib/storagePublicUrls';
 import posthog from 'posthog-js';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface HomeClientProps {
   sponsors: Sponsor[];
@@ -35,6 +40,9 @@ const HomeClient: React.FC<HomeClientProps> = ({
   const heroTitleRef = useRef<HTMLDivElement>(null);
   const heroSubtitleRef = useRef<HTMLDivElement>(null);
   const heroCtaRef = useRef<HTMLAnchorElement>(null);
+  const merchTeaserRef = useRef<HTMLElement>(null);
+  const merchCopyRef = useRef<HTMLDivElement>(null);
+  const merchImageRef = useRef<HTMLDivElement>(null);
   const { allEvents, isFetching, isError } = useEvents();
 
   useEffect(() => {
@@ -54,6 +62,49 @@ const HomeClient: React.FC<HomeClientProps> = ({
       // Strict Mode remount can kill mid-animation and leave opacity: 0
       gsap.set([title, subtitle], { opacity: 1, y: 0 });
       gsap.set(cta, { opacity: 1 });
+    };
+  }, []);
+
+  useEffect(() => {
+    const section = merchTeaserRef.current;
+    const copy = merchCopyRef.current;
+    const image = merchImageRef.current;
+    if (!section || !copy || !image) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    gsap.set([copy, image], { opacity: 0, y: 24 });
+
+    const ctx = gsap.context(() => {
+      gsap.to(copy, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+      gsap.to(image, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        ease: 'power2.out',
+        delay: 0.12,
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 80%',
+          toggleActions: 'play none none none',
+        },
+      });
+    }, section);
+
+    return () => {
+      ctx.revert();
+      gsap.set([copy, image], { opacity: 1, y: 0 });
     };
   }, []);
 
@@ -163,6 +214,47 @@ const HomeClient: React.FC<HomeClientProps> = ({
           <p>Welcome to the Chemical Engineering Undergraduate Society (CEUS)! We are a vibrant, student-run organisation representing all students within the School of Chemical Engineering at the University of New South Wales (UNSW).</p>
           <p>Our mission is to enrich the university experience by supporting the academic, social, and professional growth of our members. Through a diverse range of events, industry networking opportunities, and community initiatives, CEUS fosters connection, collaboration, and a strong sense of belonging among chemical engineering students.</p>
           <p>Whether you’re looking to build your career, meet like-minded peers, or simply make the most of your time at UNSW, CEUS is here to help you get involved and thrive.</p>
+        </div>
+      </section>
+
+      <section ref={merchTeaserRef} className="bg-[#EEF1F8] py-16 md:py-24">
+        <div className="container mx-auto grid grid-cols-1 items-center gap-10 px-4 md:grid-cols-2 md:gap-14 lg:gap-20">
+          <div
+            ref={merchImageRef}
+            className="order-1 md:order-2"
+          >
+            <Image
+              src={MERCH_ASSET_URLS.teaser}
+              alt="CEUS members wearing the new charcoal hoodie merch drop"
+              width={5184}
+              height={3456}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="h-auto w-full"
+              priority={false}
+            />
+          </div>
+          <div
+            ref={merchCopyRef}
+            className="order-2 md:order-1 text-center md:text-left"
+          >
+            <h2 className="text-5xl font-bold tracking-tight leading-[1.05] text-black sm:text-6xl md:text-7xl lg:text-8xl">
+              Check out
+              <br />
+              our new
+              <br />
+              merch drop.
+            </h2>
+            <p className="mt-6 text-xl leading-relaxed text-gray-600 sm:text-2xl md:text-3xl">
+              Hoodies and tees — order online, pick up on campus.
+            </p>
+            <Link
+              href="/merch"
+              onClick={() => posthog.capture('home_merch_link_clicked')}
+              className="mt-10 inline-block rounded-md bg-[#1B397E] px-10 py-4 text-lg font-extrabold text-white transition-colors duration-200 hover:bg-[#14295B] focus:outline-none focus:ring-2 focus:ring-[#1B397E] focus:ring-offset-2 sm:px-12 sm:py-5 sm:text-xl md:text-2xl"
+            >
+              Shop merch
+            </Link>
+          </div>
         </div>
       </section>
       
