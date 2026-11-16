@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MERCH_ASSET_URLS } from "@/lib/storagePublicUrls";
@@ -268,6 +268,9 @@ function ReducedMotionLookbook() {
 
 export default function MerchLookbook() {
   const reducedMotion = usePrefersReducedMotion();
+  // Outer shell is what React mounts/unmounts. ScrollTrigger must never pin
+  // this node — pin wraps with a pin-spacer and breaks removeChild on navigate.
+  const rootRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const bannerWrapRef = useRef<HTMLDivElement>(null);
@@ -284,160 +287,215 @@ export default function MerchLookbook() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
-  useEffect(() => {
+  // useLayoutEffect so pin revert runs before React mutates the DOM on leave.
+  useLayoutEffect(() => {
     if (reducedMotion) return;
 
+    const root = rootRef.current;
     const section = sectionRef.current;
     const stage = stageRef.current;
     const bannerWrap = bannerWrapRef.current;
     const buttons = buttonsRef.current;
     const plate = plateRef.current;
-    if (!section || !stage || !bannerWrap || !buttons || !plate) return;
+    if (!root || !section || !stage || !bannerWrap || !buttons || !plate) return;
 
     const tags = tagRefs.current.filter(Boolean) as HTMLDivElement[];
     const media = stage.querySelector<HTMLElement>("[data-lookbook-media]");
     if (!media) return;
 
+    let alive = true;
     const fitMode: FitMode = isMobile ? "cover" : "contain";
+    let refresh: (() => void) | undefined;
+    let trigger: ScrollTrigger | undefined;
+    let reverted = false;
+    let ctx: gsap.Context | undefined;
 
-    const placePlateAtWindow = () => {
-      media.style.top = "0";
-      media.style.bottom = "0";
-      const { width: mediaW, height: mediaH } = media.getBoundingClientRect();
-      const rect = arcadeWindowRect(mediaW, mediaH, fitMode);
-      const frame = stageRect(mediaW, mediaH);
-      gsap.set(plate, {
-        left: rect.left,
-        top: rect.top,
-        width: rect.width,
-        height: rect.height,
-      });
-      return { mediaW, mediaH, rect, frame };
+    const revertPin = () => {
+      if (reverted) return;
+      reverted = true;
+      alive = false;
+      if (refresh) {
+        window.removeEventListener("load", refresh);
+      }
+      // Must undo pin-spacer before React's removeChild on client navigations.
+      trigger?.kill(true);
+      ctx?.revert();
+      document.body.style.removeProperty("overflow");
+      document.documentElement.style.removeProperty("overflow");
     };
 
-    let layout = placePlateAtWindow();
-
-    gsap.set(plate, { autoAlpha: 0, zIndex: 15, force3D: true });
-    // Opacity only (not autoAlpha) so visibility stays visible — browsers
-    // often dump large remote bitmaps under visibility:hidden, then fail
-    // to restore the banner when scrubbing back up.
-    gsap.set(bannerWrap, { opacity: 1, visibility: "visible", scale: 1, zIndex: 1 });
-    gsap.set(buttons, { autoAlpha: 1, zIndex: 20 });
-    gsap.set(tags, { autoAlpha: 0 });
-
-    const zoomEnd = isMobile ? 1.6 : 2.1;
-    // Banner → arcade zoom → price tags only (no further film).
-    const scrollVh = isMobile ? 3.2 : 4.2;
-
-    const syncLayoutSize = () => {
-      media.style.top = "0";
-      media.style.bottom = "0";
-      const { width: mediaW, height: mediaH } = media.getBoundingClientRect();
-      layout = {
-        mediaW,
-        mediaH,
-        rect: arcadeWindowRect(mediaW, mediaH, fitMode),
-        frame: stageRect(mediaW, mediaH),
+    ctx = gsap.context(() => {
+      const placePlateAtWindow = () => {
+        media.style.top = "0";
+        media.style.bottom = "0";
+        const { width: mediaW, height: mediaH } = media.getBoundingClientRect();
+        const rect = arcadeWindowRect(mediaW, mediaH, fitMode);
+        const frame = stageRect(mediaW, mediaH);
+        gsap.set(plate, {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+        });
+        return { mediaW, mediaH, rect, frame };
       };
-    };
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        // CEUS header is not sticky — pin flush to the viewport so the
-        // arcade plate can fill the screen without a white gap on top.
-        start: "top top",
-        end: () => `+=${window.innerHeight * scrollVh}`,
-        scrub: 0.45,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onRefresh: syncLayoutSize,
-      },
-    });
+      let layout = placePlateAtWindow();
 
-    // Plate is live from the first tick — fade in over a tiny beat so the
-    // zoom reads immediately instead of waiting on a long opacity ramp.
-    tl.fromTo(
-      plate,
-      { autoAlpha: 0 },
-      {
-        autoAlpha: 1,
-        ease: "none",
-        duration: zoomEnd * 0.04,
-      },
-      0,
-    );
-    tl.fromTo(
-      plate,
-      {
-        left: () => layout.rect.left,
-        top: () => layout.rect.top,
-        width: () => layout.rect.width,
-        height: () => layout.rect.height,
-      },
-      {
-        left: () => layout.frame.left,
-        top: () => layout.frame.top,
-        width: () => layout.frame.width,
-        height: () => layout.frame.height,
-        ease: "none",
-        duration: zoomEnd,
-      },
-      0,
-    );
-    tl.to(
-      buttons,
-      {
-        autoAlpha: 0,
-        ease: "none",
-        duration: Math.min(0.45, zoomEnd * 0.28),
-      },
-      0,
-    );
-    // Banner falls away behind the growing plate
-    tl.to(
-      bannerWrap,
-      {
-        opacity: 0,
-        ease: "none",
-        duration: zoomEnd * 0.55,
-      },
-      zoomEnd * 0.2,
-    );
-    // After the arcade fills the screen, hold briefly then reveal price tags
-    const tagsAt = zoomEnd + 0.25;
-    tags.forEach((tag, i) => {
-      tl.to(
-        tag,
+      gsap.set(plate, { autoAlpha: 0, zIndex: 15, force3D: true });
+      // Opacity only (not autoAlpha) so visibility stays visible — browsers
+      // often dump large remote bitmaps under visibility:hidden, then fail
+      // to restore the banner when scrubbing back up.
+      gsap.set(bannerWrap, {
+        opacity: 1,
+        visibility: "visible",
+        scale: 1,
+        zIndex: 1,
+      });
+      gsap.set(buttons, { autoAlpha: 1, zIndex: 20 });
+      gsap.set(tags, { autoAlpha: 0 });
+
+      const zoomEnd = isMobile ? 1.6 : 2.1;
+      // Banner → arcade zoom → price tags only (no further film).
+      const scrollVh = isMobile ? 3.2 : 4.2;
+
+      const syncLayoutSize = () => {
+        if (!alive || !media.isConnected) return;
+        media.style.top = "0";
+        media.style.bottom = "0";
+        const { width: mediaW, height: mediaH } = media.getBoundingClientRect();
+        layout = {
+          mediaW,
+          mediaH,
+          rect: arcadeWindowRect(mediaW, mediaH, fitMode),
+          frame: stageRect(mediaW, mediaH),
+        };
+      };
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          // Pin the inner section only — outer root stays React's stable host.
+          pin: section,
+          // CEUS header is not sticky — pin flush to the viewport so the
+          // arcade plate can fill the screen without a white gap on top.
+          start: "top top",
+          end: () => `+=${window.innerHeight * scrollVh}`,
+          scrub: 0.45,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onRefresh: syncLayoutSize,
+        },
+      });
+      trigger = tl.scrollTrigger ?? undefined;
+
+      // Plate is live from the first tick — fade in over a tiny beat so the
+      // zoom reads immediately instead of waiting on a long opacity ramp.
+      tl.fromTo(
+        plate,
+        { autoAlpha: 0 },
         {
           autoAlpha: 1,
           ease: "none",
-          duration: 0.35,
+          duration: zoomEnd * 0.04,
         },
-        tagsAt + 0.08 + i * 0.12,
+        0,
       );
-    });
+      tl.fromTo(
+        plate,
+        {
+          left: () => layout.rect.left,
+          top: () => layout.rect.top,
+          width: () => layout.rect.width,
+          height: () => layout.rect.height,
+        },
+        {
+          left: () => layout.frame.left,
+          top: () => layout.frame.top,
+          width: () => layout.frame.width,
+          height: () => layout.frame.height,
+          ease: "none",
+          duration: zoomEnd,
+        },
+        0,
+      );
+      tl.to(
+        buttons,
+        {
+          autoAlpha: 0,
+          ease: "none",
+          duration: Math.min(0.45, zoomEnd * 0.28),
+        },
+        0,
+      );
+      // Banner falls away behind the growing plate
+      tl.to(
+        bannerWrap,
+        {
+          opacity: 0,
+          ease: "none",
+          duration: zoomEnd * 0.55,
+        },
+        zoomEnd * 0.2,
+      );
+      // After the arcade fills the screen, hold briefly then reveal price tags
+      const tagsAt = zoomEnd + 0.25;
+      tags.forEach((tag, i) => {
+        tl.to(
+          tag,
+          {
+            autoAlpha: 1,
+            ease: "none",
+            duration: 0.35,
+          },
+          tagsAt + 0.08 + i * 0.12,
+        );
+      });
 
-    // Hold on the tagged arcade plate before unpinning into the page below.
-    tl.to({}, { duration: isMobile ? 0.7 : 0.9 });
+      // Hold on the tagged arcade plate before unpinning into the page below.
+      tl.to({}, { duration: isMobile ? 0.7 : 0.9 });
 
-    const refresh = () => {
-      syncLayoutSize();
-      ScrollTrigger.refresh();
+      refresh = () => {
+        if (!alive) return;
+        syncLayoutSize();
+        ScrollTrigger.refresh();
+      };
+      window.addEventListener("load", refresh);
+      const plateImg = plate.querySelector("img");
+      if (plateImg && !plateImg.complete) {
+        plateImg.addEventListener("load", refresh, { once: true });
+      } else {
+        refresh();
+      }
+    }, root);
+
+    // Revert pin on in-app link click *before* Next soft-navigates / React
+    // unmounts — useLayoutEffect cleanup alone is too late for removeChild.
+    const onDocumentClickCapture = (event: MouseEvent) => {
+      if (event.defaultPrevented) return;
+      if (event.button !== 0) return;
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = (event.target as Element | null)?.closest?.("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      if (anchor.target === "_blank" || anchor.hasAttribute("download")) return;
+      const href = anchor.getAttribute("href");
+      if (!href || href.startsWith("#")) return;
+      try {
+        const url = new URL(href, window.location.href);
+        if (url.origin !== window.location.origin) return;
+        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+          return;
+        }
+      } catch {
+        return;
+      }
+      revertPin();
     };
-    window.addEventListener("load", refresh);
-    const plateImg = plate.querySelector("img");
-    if (plateImg && !plateImg.complete) {
-      plateImg.addEventListener("load", refresh, { once: true });
-    } else {
-      refresh();
-    }
+    document.addEventListener("click", onDocumentClickCapture, true);
 
     return () => {
-      window.removeEventListener("load", refresh);
-      tl.scrollTrigger?.kill();
-      tl.kill();
+      document.removeEventListener("click", onDocumentClickCapture, true);
+      revertPin();
     };
   }, [reducedMotion, isMobile]);
 
@@ -446,67 +504,69 @@ export default function MerchLookbook() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative z-0 w-full bg-white"
-      aria-label="Merch lookbook"
-    >
-      <div
-        ref={stageRef}
-        className="relative h-[100svh] w-full overflow-hidden bg-white"
+    <div ref={rootRef} className="relative z-0 w-full bg-white">
+      <section
+        ref={sectionRef}
+        className="relative z-0 w-full bg-white"
+        aria-label="Merch lookbook"
       >
         <div
-          data-lookbook-media
-          className="absolute inset-0 overflow-hidden"
+          ref={stageRef}
+          className="relative h-[100svh] w-full overflow-hidden bg-white"
         >
-          <div ref={bannerWrapRef} className="absolute inset-0 z-[1]">
-            {/*
-              Mobile: fill the stage and crop.
-              Desktop: banner keeps its native aspect at the top — white bar below.
-            */}
-            <div className="relative h-full w-full md:h-auto md:aspect-[3240/1350]">
-              <Image
-                src={MERCH_ASSET_URLS.banner}
-                alt="CEUS Merch 2026 banner"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover object-[center_45%]"
-              />
-              <div
-                ref={buttonsRef}
-                className="absolute top-[66%] left-[44%] right-[3%] z-20 -translate-y-1/2 sm:left-auto sm:right-[8%] sm:w-[46%] md:right-[14%] md:w-[40%]"
-              >
-                <HeroButtons />
+          <div
+            data-lookbook-media
+            className="absolute inset-0 overflow-hidden"
+          >
+            <div ref={bannerWrapRef} className="absolute inset-0 z-[1]">
+              {/*
+                Mobile: fill the stage and crop.
+                Desktop: banner keeps its native aspect at the top — white bar below.
+              */}
+              <div className="relative h-full w-full md:h-auto md:aspect-[3240/1350]">
+                <Image
+                  src={MERCH_ASSET_URLS.banner}
+                  alt="CEUS Merch 2026 banner"
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover object-[center_45%]"
+                />
+                <div
+                  ref={buttonsRef}
+                  className="absolute top-[66%] left-[44%] right-[3%] z-20 -translate-y-1/2 sm:left-auto sm:right-[8%] sm:w-[46%] md:right-[14%] md:w-[40%]"
+                >
+                  <HeroButtons />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Sharp photo plate — expands from the arcade window to full frame */}
-          <div
-            ref={plateRef}
-            className="absolute z-[15] overflow-hidden will-change-transform"
-            aria-hidden="true"
-          >
-            <CroppedPhoto
-              src={OPENING.src}
-              alt={OPENING.alt}
-              verticalCrop={OPENING.verticalCrop}
-              priority
-            />
-            {ARCADE_TAGS.map((tag, i) => (
-              <MerchPriceTag
-                key={tag.name}
-                {...tag}
-                tagRef={(el) => {
-                  tagRefs.current[i] = el;
-                }}
+            {/* Sharp photo plate — expands from the arcade window to full frame */}
+            <div
+              ref={plateRef}
+              className="absolute z-[15] overflow-hidden will-change-transform"
+              aria-hidden="true"
+            >
+              <CroppedPhoto
+                src={OPENING.src}
+                alt={OPENING.alt}
+                verticalCrop={OPENING.verticalCrop}
+                priority
               />
-            ))}
+              {ARCADE_TAGS.map((tag, i) => (
+                <MerchPriceTag
+                  key={tag.name}
+                  {...tag}
+                  tagRef={(el) => {
+                    tagRefs.current[i] = el;
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
 
