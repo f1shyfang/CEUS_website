@@ -1,5 +1,6 @@
 import { pageMetadata } from '@/lib/seo';
 import MerchLookbook, { ORDER_FORM_URL } from '@/components/merch/MerchLookbook';
+import NestedScrollArea from '@/components/merch/NestedScrollArea';
 
 export const metadata = pageMetadata(
   "Merch '26 | CEUS UNSW",
@@ -109,16 +110,17 @@ export default function MerchPage() {
                 <h3 className="mb-4 text-center text-2xl font-bold uppercase tracking-wide md:text-3xl">
                   {chart.garment}
                 </h3>
-
-                <div className="overflow-x-auto rounded-lg border border-black/10 bg-white shadow-2xl">
-                  <table className="w-full min-w-[560px] text-left">
+                <NestedScrollArea className="overflow-x-auto overscroll-x-contain rounded-lg border border-black/10 bg-white shadow-2xl">
+                  <table className="w-full min-w-[36rem] border-collapse text-left">
                     <thead className="bg-[#1B397E] text-white">
                       <tr>
-                        <th className="px-6 py-4 font-extrabold">Measurement</th>
+                        <th className="sticky left-0 z-10 bg-[#1B397E] px-4 py-3 text-left text-sm font-extrabold sm:px-6 sm:py-4 sm:text-base">
+                          Measurement
+                        </th>
                         {chart.sizes.map((size) => (
                           <th
                             key={size}
-                            className="px-4 py-4 text-center font-extrabold"
+                            className="px-3 py-3 text-center text-sm font-extrabold sm:px-4 sm:py-4 sm:text-base"
                           >
                             {size}
                           </th>
@@ -131,13 +133,13 @@ export default function MerchPage() {
                           key={row.measurement}
                           className="border-t border-black/10"
                         >
-                          <td className="px-6 py-3 font-extrabold text-[#1B397E]">
+                          <td className="sticky left-0 z-10 bg-white px-4 py-3 text-sm font-extrabold text-[#1B397E] sm:px-6 sm:text-base">
                             {row.measurement}
                           </td>
                           {row.values.map((value, i) => (
                             <td
                               key={chart.sizes[i]}
-                              className="px-4 py-3 text-center tabular-nums"
+                              className="px-3 py-3 text-center text-sm tabular-nums sm:px-4 sm:text-base"
                             >
                               {value}
                             </td>
@@ -146,7 +148,7 @@ export default function MerchPage() {
                       ))}
                     </tbody>
                   </table>
-                </div>
+                </NestedScrollArea>
               </div>
             ))}
           </div>

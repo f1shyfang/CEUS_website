@@ -5,70 +5,70 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MERCH_ASSET_URLS } from "@/lib/storagePublicUrls";
+import {
+  disableMerchNormalize,
+  enableMerchNormalize,
+} from "./merchScrollNormalizer";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const ORDER_FORM_URL = "https://www.trybooking.com/DQRYV";
 
-type LookbookFrame = {
+type ArcadeRect = { x: number; y: number; w: number; h: number };
+
+type BannerConfig = {
   src: string;
-  alt: string;
+  w: number;
+  h: number;
+  arcade: ArcadeRect;
+  /** How the banner is fitted in the stage. */
+  fit: "cover" | "contain";
   /**
-   * How this photo is cropped when it is taller than the screen.
-   *   0    — keep the top, crop the bottom
-   *   0.5  — crop the top and bottom equally
-   *   1    — keep the bottom, crop the top
+   * object-position / layout anchor (0 = top/left, 1 = bottom/right).
+   * Mobile uses bottom so wider viewports crop the top first.
    */
-  verticalCrop: number;
+  posX: number;
+  posY: number;
 };
 
-/** Opening frame — grows from the arcade window on the banner (no image swap). */
-const OPENING: LookbookFrame = {
-  src: MERCH_ASSET_URLS.arcade, // Jess, Mitch, Lucy, Josiah in arcade
+const BANNER_DESKTOP: BannerConfig = {
+  src: MERCH_ASSET_URLS.banner,
+  w: 3240,
+  h: 1350,
+  arcade: { x: 2260, y: 64, w: 490, h: 390 },
+  fit: "contain",
+  posX: 0.5,
+  posY: 0,
+};
+
+const BANNER_MOBILE: BannerConfig = {
+  src: MERCH_ASSET_URLS.bannerMobile,
+  w: 1080,
+  h: 1920,
+  arcade: { x: 32, y: 1180, w: 487, h: 337 },
+  // Cover the stage; pin to the bottom so wider devices crop MERCH/top first
+  // and keep the asphalt dead space + arcade inset.
+  fit: "cover",
+  posX: 0.5,
+  posY: 1,
+};
+
+/** Opening plate — grows from the arcade window on the banner. */
+const OPENING = {
+  src: MERCH_ASSET_URLS.arcade,
   alt: "CEUS merch at the arcade",
-  verticalCrop: 1,
+  /** Desktop: keep bottom of the landscape plate. */
+  objectPositionDesktop: "center 100%",
+  /**
+   * Mobile: frame the two middle people (white tee + charcoal hoodie)
+   * so both stay readable in a portrait viewport.
+   */
+  // Keep the two middle torsos (tee + hoodie graphics) centered in portrait.
+  objectPositionMobile: "50% 52%",
 };
 
-/** Banner collage pixel size and the arcade window (DSCF0701) inside it. */
-const BANNER = { w: 3240, h: 1350 };
-const ARCADE_PHOTO = { x: 2260, y: 64, w: 490, h: 390 };
-/** `object-position` for one photo's verticalCrop (0 = top, 1 = bottom). */
-function photoObjectPosition(verticalCrop: number) {
-  return `center ${verticalCrop * 100}%`;
-}
-
-/** Full-bleed photo. Crop is on the img itself so it updates with the number. */
-function CroppedPhoto({
-  src,
-  alt,
-  verticalCrop,
-  priority = false,
-}: {
-  src: string;
-  alt: string;
-  verticalCrop: number;
-  priority?: boolean;
-}) {
-  return (
-    <img
-      src={encodeURI(src)}
-      alt={alt}
-      data-crop={verticalCrop}
-      fetchPriority={priority ? "high" : "auto"}
-      className="absolute inset-0 h-full w-full"
-      style={{
-        objectFit: "cover",
-        objectPosition: photoObjectPosition(verticalCrop),
-      }}
-    />
-  );
-}
 /** Nudge past the thin window border so the plate matches photo content. */
 const CHROME_INSET = { top: 0.04, side: 0.025, bottom: 0.03 };
-/** Matches `object-[center_45%]` on the banner (cover / mobile). */
-const BANNER_OBJECT_POS = { x: 0.5, y: 0.45 };
-
-type FitMode = "cover" | "contain";
 
 /** object-cover / object-contain layout of an image inside a box. */
 function imageLayout(
@@ -78,7 +78,7 @@ function imageLayout(
   boxH: number,
   posX: number,
   posY: number,
-  mode: FitMode,
+  mode: "cover" | "contain",
 ) {
   const scale =
     mode === "cover"
@@ -91,25 +91,21 @@ function imageLayout(
   return { scale, left, top, drawnW, drawnH };
 }
 
-/** On-screen rect of the arcade photo content within the media box. */
-function arcadeWindowRect(mediaW: number, mediaH: number, mode: FitMode) {
-  // Desktop: contain + top so any leftover space is a white bar at the bottom.
-  // Mobile: cover + existing focal point (crops).
-  const posX = BANNER_OBJECT_POS.x;
-  const posY = mode === "contain" ? 0 : BANNER_OBJECT_POS.y;
+/** On-screen rect of the arcade photo within the media box. */
+function arcadeWindowRect(mediaW: number, mediaH: number, banner: BannerConfig) {
   const fit = imageLayout(
-    BANNER.w,
-    BANNER.h,
+    banner.w,
+    banner.h,
     mediaW,
     mediaH,
-    posX,
-    posY,
-    mode,
+    banner.posX,
+    banner.posY,
+    banner.fit,
   );
-  let left = fit.left + ARCADE_PHOTO.x * fit.scale;
-  let top = fit.top + ARCADE_PHOTO.y * fit.scale;
-  let width = ARCADE_PHOTO.w * fit.scale;
-  let height = ARCADE_PHOTO.h * fit.scale;
+  let left = fit.left + banner.arcade.x * fit.scale;
+  let top = fit.top + banner.arcade.y * fit.scale;
+  let width = banner.arcade.w * fit.scale;
+  let height = banner.arcade.h * fit.scale;
 
   left += width * CHROME_INSET.side;
   top += height * CHROME_INSET.top;
@@ -119,7 +115,7 @@ function arcadeWindowRect(mediaW: number, mediaH: number, mode: FitMode) {
   return { left, top, width, height };
 }
 
-/** Full-screen rect. Vertical crop is object-position on the image, not this box. */
+/** Full-screen rect. Crop is object-position on the image, not this box. */
 function stageRect(mediaW: number, mediaH: number) {
   return { left: 0, top: 0, width: mediaW, height: mediaH };
 }
@@ -127,18 +123,15 @@ function stageRect(mediaW: number, mediaH: number) {
 type MerchTagSpec = {
   name: string;
   price: string;
-  /** Percent position of the hotspot on the arcade plate. */
   left: string;
   top: string;
-  /** Which side the label sits relative to the dot. */
   side: "left" | "right";
 };
 
-const ARCADE_TAGS: MerchTagSpec[] = [
+const ARCADE_TAGS_DESKTOP: MerchTagSpec[] = [
   {
     name: "Catalyst Tee",
     price: "$35",
-    // Hotspot on the white tee; label sits in the gap to the right
     left: "44%",
     top: "54%",
     side: "right",
@@ -146,9 +139,32 @@ const ARCADE_TAGS: MerchTagSpec[] = [
   {
     name: "Charcoal hoodie",
     price: "$60",
-    // Hotspot on the hoodie print; label sits further right
     left: "61%",
     top: "60%",
+    side: "right",
+  },
+];
+
+/**
+ * Portrait crop of the middle two.
+ * Dots sit on the garment prints (tee burst / hoodie graphic);
+ * labels open away from each other so they never overlap.
+ */
+const ARCADE_TAGS_MOBILE: MerchTagSpec[] = [
+  {
+    name: "Catalyst Tee",
+    price: "$35",
+    // Lower on the tee body — clears heads and the back graphic
+    left: "30%",
+    top: "62%",
+    side: "left",
+  },
+  {
+    name: "Charcoal hoodie",
+    price: "$60",
+    // Lower on the hoodie body — nudged left so the card fits on iPhone widths
+    left: "62%",
+    top: "62%",
     side: "right",
   },
 ];
@@ -160,17 +176,37 @@ function MerchPriceTag({
   top,
   side,
   tagRef,
-}: MerchTagSpec & { tagRef: (el: HTMLDivElement | null) => void }) {
+  compact = false,
+}: MerchTagSpec & {
+  tagRef: (el: HTMLDivElement | null) => void;
+  compact?: boolean;
+}) {
   const card = (
-    <div className="shrink-0 rounded-sm bg-white px-3 py-2 shadow-md">
-      <p className="text-[11px] font-extrabold tracking-wide text-[#1B397E] uppercase sm:text-xs">
+    <div
+      className={`shrink-0 rounded-sm bg-white shadow-md ${
+        compact ? "px-2 py-1.5" : "px-3 py-2"
+      }`}
+    >
+      <p
+        className={`font-extrabold tracking-wide text-[#1B397E] uppercase ${
+          compact ? "text-[10px]" : "text-[11px] sm:text-xs"
+        }`}
+      >
         {name}
       </p>
-      <p className="mt-0.5 text-sm font-bold tabular-nums text-black sm:text-base">
+      <p
+        className={`font-bold tabular-nums text-black ${
+          compact ? "mt-0.5 text-xs" : "mt-0.5 text-sm sm:text-base"
+        }`}
+      >
         {price}
       </p>
     </div>
   );
+
+  // Stem starts at the dot's outer edge (half of h-3 / h-3.5) so it doesn't float.
+  const stemOffset = compact ? "translate-x-1.5" : "translate-x-[7px]";
+  const stemOffsetLeft = compact ? "-translate-x-1.5" : "-translate-x-[7px]";
 
   return (
     <div
@@ -178,10 +214,11 @@ function MerchPriceTag({
       className="pointer-events-none absolute z-20 opacity-0"
       style={{ left, top }}
     >
-      {/* Anchor at the hotspot; keep transforms off the GSAP node so labels stay level */}
       <div className="relative">
         <span
-          className="absolute top-0 left-0 z-10 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#1B397E] shadow-[0_0_0_1px_rgba(0,0,0,0.25)]"
+          className={`absolute top-0 left-0 z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[#1B397E] shadow-[0_0_0_1px_rgba(0,0,0,0.25)] ${
+            compact ? "h-3 w-3" : "h-3.5 w-3.5"
+          }`}
           aria-hidden
         >
           <span className="absolute inset-1 rounded-full bg-white/90" />
@@ -189,11 +226,14 @@ function MerchPriceTag({
         <div
           className={`absolute top-0 flex -translate-y-1/2 items-center ${
             side === "right"
-              ? "left-0 flex-row pl-2"
-              : "right-0 flex-row-reverse pr-2"
+              ? `left-0 flex-row ${stemOffset}`
+              : `right-0 flex-row-reverse ${stemOffsetLeft}`
           }`}
         >
-          <span className="h-px w-6 shrink-0 bg-white sm:w-8" aria-hidden />
+          <span
+            className={`h-px shrink-0 bg-white ${compact ? "w-4" : "w-6 sm:w-8"}`}
+            aria-hidden
+          />
           {card}
         </div>
       </div>
@@ -238,32 +278,14 @@ function HeroButtons({ className = "" }: { className?: string }) {
   );
 }
 
-function ReducedMotionLookbook() {
-  return (
-    <div className="bg-white">
-      <section className="relative w-full">
-        <Image
-          src={MERCH_ASSET_URLS.banner}
-          alt="CEUS Merch 2026 banner"
-          width={3240}
-          height={1350}
-          priority
-          className="block h-auto w-full"
-        />
-        <div className="absolute top-[66%] left-[44%] right-[3%] flex -translate-y-1/2 sm:left-auto sm:right-[8%] sm:w-[46%] md:right-[14%] md:w-[40%]">
-          <HeroButtons />
-        </div>
-      </section>
-
-      <div className="relative aspect-[3/4] w-full sm:aspect-[4/5] md:aspect-[3/2]">
-        <CroppedPhoto
-          src={OPENING.src}
-          alt={OPENING.alt}
-          verticalCrop={OPENING.verticalCrop}
-        />
-      </div>
-    </div>
-  );
+/** True for phone / touch layouts — not only narrow CSS width (iOS can lie). */
+function getMobileLayout(): boolean {
+  if (typeof window === "undefined") return false;
+  const narrow = window.matchMedia("(max-width: 767px)").matches;
+  const touchUi =
+    window.matchMedia("(hover: none) and (pointer: coarse)").matches &&
+    window.innerWidth < 1024;
+  return narrow || touchUi;
 }
 
 export default function MerchLookbook() {
@@ -276,15 +298,24 @@ export default function MerchLookbook() {
   const bannerWrapRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const plateRef = useRef<HTMLDivElement>(null);
-  const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [isMobile, setIsMobile] = useState(false);
+  const mobileTagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const desktopTagRefs = useRef<(HTMLDivElement | null)[]>([]);
+  // Layout mode used only for GSAP math; visuals are CSS (md:) so SSR matches.
+  const [layoutMobile, setLayoutMobile] = useState(false);
 
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mq.matches);
-    const onChange = () => setIsMobile(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+  useLayoutEffect(() => {
+    const apply = () => setLayoutMobile(getMobileLayout());
+    apply();
+    const mqNarrow = window.matchMedia("(max-width: 767px)");
+    const mqTouch = window.matchMedia("(hover: none) and (pointer: coarse)");
+    mqNarrow.addEventListener("change", apply);
+    mqTouch.addEventListener("change", apply);
+    window.addEventListener("resize", apply);
+    return () => {
+      mqNarrow.removeEventListener("change", apply);
+      mqTouch.removeEventListener("change", apply);
+      window.removeEventListener("resize", apply);
+    };
   }, []);
 
   // useLayoutEffect so pin revert runs before React mutates the DOM on leave.
@@ -299,16 +330,26 @@ export default function MerchLookbook() {
     const plate = plateRef.current;
     if (!root || !section || !stage || !bannerWrap || !buttons || !plate) return;
 
+    const mobile = getMobileLayout();
+    const activeBanner = mobile ? BANNER_MOBILE : BANNER_DESKTOP;
+    const tagRefs = mobile ? mobileTagRefs : desktopTagRefs;
     const tags = tagRefs.current.filter(Boolean) as HTMLDivElement[];
     const media = stage.querySelector<HTMLElement>("[data-lookbook-media]");
     if (!media) return;
 
     let alive = true;
-    const fitMode: FitMode = isMobile ? "cover" : "contain";
     let refresh: (() => void) | undefined;
     let trigger: ScrollTrigger | undefined;
     let reverted = false;
     let ctx: gsap.Context | undefined;
+
+    // Plain always-on normalizeScroll — no allowNestedScroll (that desyncs
+    // when reversing back into the pin). Size tables pause this Observer
+    // only during a locked horizontal drag via NestedScrollArea.
+    const isTouch = ScrollTrigger.isTouch === 1;
+    if (isTouch) {
+      enableMerchNormalize();
+    }
 
     const revertPin = () => {
       if (reverted) return;
@@ -320,6 +361,9 @@ export default function MerchLookbook() {
       // Must undo pin-spacer before React's removeChild on client navigations.
       trigger?.kill(true);
       ctx?.revert();
+      if (isTouch) {
+        disableMerchNormalize();
+      }
       document.body.style.removeProperty("overflow");
       document.documentElement.style.removeProperty("overflow");
     };
@@ -329,7 +373,7 @@ export default function MerchLookbook() {
         media.style.top = "0";
         media.style.bottom = "0";
         const { width: mediaW, height: mediaH } = media.getBoundingClientRect();
-        const rect = arcadeWindowRect(mediaW, mediaH, fitMode);
+        const rect = arcadeWindowRect(mediaW, mediaH, activeBanner);
         const frame = stageRect(mediaW, mediaH);
         gsap.set(plate, {
           left: rect.left,
@@ -355,9 +399,9 @@ export default function MerchLookbook() {
       gsap.set(buttons, { autoAlpha: 1, zIndex: 20 });
       gsap.set(tags, { autoAlpha: 0 });
 
-      const zoomEnd = isMobile ? 1.6 : 2.1;
+      const zoomEnd = mobile ? 1.6 : 2.1;
       // Banner → arcade zoom → price tags only (no further film).
-      const scrollVh = isMobile ? 3.2 : 4.2;
+      const scrollVh = mobile ? 3.2 : 4.2;
 
       const syncLayoutSize = () => {
         if (!alive || !media.isConnected) return;
@@ -367,7 +411,7 @@ export default function MerchLookbook() {
         layout = {
           mediaW,
           mediaH,
-          rect: arcadeWindowRect(mediaW, mediaH, fitMode),
+          rect: arcadeWindowRect(mediaW, mediaH, activeBanner),
           frame: stageRect(mediaW, mediaH),
         };
       };
@@ -377,6 +421,8 @@ export default function MerchLookbook() {
           trigger: section,
           // Pin the inner section only — outer root stays React's stable host.
           pin: section,
+          // Transform pin is more reliable on iOS than position:fixed.
+          pinType: isTouch ? "transform" : "fixed",
           // CEUS header is not sticky — pin flush to the viewport so the
           // arcade plate can fill the screen without a white gap on top.
           start: "top top",
@@ -453,7 +499,7 @@ export default function MerchLookbook() {
       });
 
       // Hold on the tagged arcade plate before unpinning into the page below.
-      tl.to({}, { duration: isMobile ? 0.7 : 0.9 });
+      tl.to({}, { duration: mobile ? 0.7 : 0.9 });
 
       refresh = () => {
         if (!alive) return;
@@ -483,7 +529,10 @@ export default function MerchLookbook() {
       try {
         const url = new URL(href, window.location.href);
         if (url.origin !== window.location.origin) return;
-        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+        if (
+          url.pathname === window.location.pathname &&
+          url.search === window.location.search
+        ) {
           return;
         }
       } catch {
@@ -497,10 +546,49 @@ export default function MerchLookbook() {
       document.removeEventListener("click", onDocumentClickCapture, true);
       revertPin();
     };
-  }, [reducedMotion, isMobile]);
+  }, [reducedMotion, layoutMobile]);
 
   if (reducedMotion) {
-    return <ReducedMotionLookbook />;
+    return (
+      <div className="bg-white">
+        <section className="relative w-full">
+          <Image
+            src={MERCH_ASSET_URLS.bannerMobile}
+            alt="CEUS Merch 2026 banner"
+            width={1080}
+            height={1920}
+            priority
+            className="block h-auto w-full md:hidden"
+          />
+          <Image
+            src={MERCH_ASSET_URLS.banner}
+            alt="CEUS Merch 2026 banner"
+            width={3240}
+            height={1350}
+            priority
+            className="hidden h-auto w-full md:block"
+          />
+          <div className="absolute bottom-8 left-1/2 flex w-[82%] -translate-x-1/2 md:top-[66%] md:bottom-auto md:left-auto md:right-[14%] md:w-[40%] md:translate-x-0 md:-translate-y-1/2">
+            <HeroButtons />
+          </div>
+        </section>
+
+        <div className="relative aspect-[3/4] w-full md:aspect-[3/2]">
+          <img
+            src={encodeURI(OPENING.src)}
+            alt={OPENING.alt}
+            className="absolute inset-0 h-full w-full object-cover md:hidden"
+            style={{ objectPosition: OPENING.objectPositionMobile }}
+          />
+          <img
+            src={encodeURI(OPENING.src)}
+            alt={OPENING.alt}
+            className="absolute inset-0 hidden h-full w-full object-cover md:block"
+            style={{ objectPosition: OPENING.objectPositionDesktop }}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -512,29 +600,33 @@ export default function MerchLookbook() {
       >
         <div
           ref={stageRef}
-          className="relative h-[100svh] w-full overflow-hidden bg-white"
+          className="relative h-[100dvh] min-h-[100svh] w-full overflow-hidden bg-white"
         >
-          <div
-            data-lookbook-media
-            className="absolute inset-0 overflow-hidden"
-          >
+          <div data-lookbook-media className="absolute inset-0 overflow-hidden">
             <div ref={bannerWrapRef} className="absolute inset-0 z-[1]">
               {/*
-                Mobile: fill the stage and crop.
-                Desktop: banner keeps its native aspect at the top — white bar below.
+                CSS (not React state) picks the banner so phones always get
+                cover+bottom even before JS hydration. Desktop: contain+top.
               */}
-              <div className="relative h-full w-full md:h-auto md:aspect-[3240/1350]">
-                <Image
-                  src={MERCH_ASSET_URLS.banner}
+              <div className="absolute inset-0">
+                {/* Plain <img> + inline object-* so iOS can't drop Tailwind on Next/Image. */}
+                <img
+                  src={BANNER_MOBILE.src}
                   alt="CEUS Merch 2026 banner"
-                  fill
-                  priority
-                  sizes="100vw"
-                  className="object-cover object-[center_45%]"
+                  fetchPriority="high"
+                  className="absolute inset-0 h-full w-full md:hidden"
+                  style={{ objectFit: "cover", objectPosition: "bottom" }}
+                />
+                <img
+                  src={encodeURI(BANNER_DESKTOP.src)}
+                  alt="CEUS Merch 2026 banner"
+                  fetchPriority="high"
+                  className="absolute inset-0 hidden h-full w-full md:block"
+                  style={{ objectFit: "contain", objectPosition: "top" }}
                 />
                 <div
                   ref={buttonsRef}
-                  className="absolute top-[66%] left-[44%] right-[3%] z-20 -translate-y-1/2 sm:left-auto sm:right-[8%] sm:w-[46%] md:right-[14%] md:w-[40%]"
+                  className="absolute bottom-8 left-1/2 z-20 w-[82%] -translate-x-1/2 md:top-[66%] md:bottom-auto md:left-auto md:right-[14%] md:w-[40%] md:translate-x-0 md:-translate-y-1/2"
                 >
                   <HeroButtons />
                 </div>
@@ -547,21 +639,43 @@ export default function MerchLookbook() {
               className="absolute z-[15] overflow-hidden will-change-transform"
               aria-hidden="true"
             >
-              <CroppedPhoto
-                src={OPENING.src}
+              <img
+                src={encodeURI(OPENING.src)}
                 alt={OPENING.alt}
-                verticalCrop={OPENING.verticalCrop}
-                priority
+                fetchPriority="high"
+                className="absolute inset-0 h-full w-full object-cover md:hidden"
+                style={{ objectPosition: OPENING.objectPositionMobile }}
               />
-              {ARCADE_TAGS.map((tag, i) => (
-                <MerchPriceTag
-                  key={tag.name}
-                  {...tag}
-                  tagRef={(el) => {
-                    tagRefs.current[i] = el;
-                  }}
-                />
-              ))}
+              <img
+                src={encodeURI(OPENING.src)}
+                alt={OPENING.alt}
+                fetchPriority="high"
+                className="absolute inset-0 hidden h-full w-full object-cover md:block"
+                style={{ objectPosition: OPENING.objectPositionDesktop }}
+              />
+              <div className="contents md:hidden">
+                {ARCADE_TAGS_MOBILE.map((tag, i) => (
+                  <MerchPriceTag
+                    key={`m-${tag.name}`}
+                    {...tag}
+                    compact
+                    tagRef={(el) => {
+                      mobileTagRefs.current[i] = el;
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="hidden md:contents">
+                {ARCADE_TAGS_DESKTOP.map((tag, i) => (
+                  <MerchPriceTag
+                    key={`d-${tag.name}`}
+                    {...tag}
+                    tagRef={(el) => {
+                      desktopTagRefs.current[i] = el;
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
