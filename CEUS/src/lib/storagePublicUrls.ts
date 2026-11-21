@@ -24,6 +24,7 @@ export const STATIC_ASSET_URLS = {
 
 export const MERCH_ASSET_URLS = {
   banner: getPublicStorageUrl('merch', 'merch_banner.webp'),
+  bannerMobile: getPublicStorageUrl('merch', 'merch_banner_mobile.webp'),
   arcade: getPublicStorageUrl('merch', 'DSCF0701.webp'),
   teaser: getPublicStorageUrl('assets', 'IMG_5071.JPG'),
 };
